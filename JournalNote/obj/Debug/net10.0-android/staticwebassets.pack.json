@@ -1,0 +1,53 @@
+{
+  "Files": [
+    {
+      "Id": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-android/scopedcss/bundle/JournalNote.styles.css",
+      "PackagePath": "staticwebassets/JournalNote.styles.css"
+    },
+    {
+      "Id": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/wwwroot/app.css",
+      "PackagePath": "staticwebassets/app.css"
+    },
+    {
+      "Id": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/wwwroot/index.html",
+      "PackagePath": "staticwebassets/index.html"
+    },
+    {
+      "Id": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.min.css"
+    },
+    {
+      "Id": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.min.css.map"
+    },
+    {
+      "Id": "/Users/hritadutta/.nuget/packages/microsoft.aspnetcore.components.webview/10.0.0/staticwebassets/blazor.modules.json",
+      "PackagePath": "staticwebassets/_framework/blazor.modules.json"
+    },
+    {
+      "Id": "/Users/hritadutta/.nuget/packages/microsoft.aspnetcore.components.webview/10.0.0/staticwebassets/blazor.webview.js",
+      "PackagePath": "staticwebassets/_framework/blazor.webview.js"
+    },
+    {
+      "Id": "obj/Debug/net10.0-android/staticwebassets/msbuild.JournalNote.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj/Debug/net10.0-android/staticwebassets/msbuild.JournalNote.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net10.0-android/staticwebassets/msbuild.build.JournalNote.props",
+      "PackagePath": "build\\JournalNote.props"
+    },
+    {
+      "Id": "obj/Debug/net10.0-android/staticwebassets/msbuild.buildMultiTargeting.JournalNote.props",
+      "PackagePath": "buildMultiTargeting\\JournalNote.props"
+    },
+    {
+      "Id": "obj/Debug/net10.0-android/staticwebassets/msbuild.buildTransitive.JournalNote.props",
+      "PackagePath": "buildTransitive\\JournalNote.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
