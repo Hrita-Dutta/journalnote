@@ -3,104 +3,129 @@ using JournalNote.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace JournalNote.Services
 {
     public class DatabaseService
     {
-        private SQLiteAsyncConnection?  _database;
-        private readonly string _dbPath;
+        private SQLiteAsyncConnection _database;
+        private readonly string _databasePath;
 
         public DatabaseService()
         {
-            // Set database path based on platform
-            _dbPath = Path. Combine(
-                Environment.GetFolderPath(Environment. SpecialFolder.LocalApplicationData),
-                "journalnote.db3"
-            );
+            _databasePath = Path.Combine(FileSystem.AppDataDirectory, "journal.db");
         }
 
-        // Initialize database connection
         private async Task InitAsync()
         {
             if (_database != null)
                 return;
 
-            _database = new SQLiteAsyncConnection(_dbPath);
-            await _database.CreateTableAsync<JournalEntry>();
+            _database = new SQLiteAsyncConnection(_databasePath);
+            await _database. CreateTableAsync<JournalEntry>();
         }
 
-        // Get entry for a specific date
-        public async Task<JournalEntry?> GetEntryByDateAsync(DateTime date)
-        {
-            await InitAsync();
-            var dateOnly = date.Date;
-            return await _database.Table<JournalEntry>()
-                .Where(e => e.EntryDate.Date == dateOnly)
-                .FirstOrDefaultAsync();
-        }
-
-        // Get today's entry
-        public async Task<JournalEntry?> GetTodayEntryAsync()
-        {
-            return await GetEntryByDateAsync(DateTime.Today);
-        }
-
-        // Create or Update entry
-        public async Task<int> SaveEntryAsync(JournalEntry entry)
+        // ====== CREATE ======
+        public async Task<int> AddJournalEntryAsync(JournalEntry journalEntry)
         {
             await InitAsync();
 
-            // Ensure only one entry per day
-            var existingEntry = await GetEntryByDateAsync(entry.EntryDate);
-
-            if (entry.Id != 0)
+            // Check if entry already exists for this date
+            var existingEntry = await GetJournalEntryByDateAsync(journalEntry.Date);
+            if (existingEntry != null)
             {
-                // Update existing entry
-                entry.UpdatedAt = DateTime.Now;
-                return await _database.UpdateAsync(entry);
+                throw new Exception("An entry already exists for this date.  Please update it instead.");
             }
-            else
-            {
-                if (existingEntry != null)
-                {
-                    // Update the existing entry instead of creating new
-                    existingEntry.Title = entry.Title;
-                    existingEntry. Content = entry.Content;
-                    existingEntry.UpdatedAt = DateTime.Now;
-                    return await _database.UpdateAsync(existingEntry);
-                }
 
-                // Create new entry
-                entry.CreatedAt = DateTime.Now;
-                entry.UpdatedAt = DateTime.Now;
-                entry.EntryDate = entry.EntryDate.Date; // Normalize to date only
-                return await _database.InsertAsync(entry);
+            journalEntry.CreatedAt = DateTime.Now;
+            journalEntry.UpdatedAt = DateTime.Now;
+
+            return await _database.InsertAsync(journalEntry);
+        }
+
+        // ====== READ - Get journal entry by date ======
+        public async Task<JournalEntry> GetJournalEntryByDateAsync(string date)
+        {
+            await InitAsync();
+            
+            try
+            {
+                return await _database.Table<JournalEntry>()
+                    .Where(e => e.Date == date)
+                    .FirstOrDefaultAsync();
+            }
+            catch
+            {
+                return null;
             }
         }
 
-        // Delete entry
-        public async Task<int> DeleteEntryAsync(JournalEntry entry)
+        // ====== READ - Get all journal entries ======
+        public async Task<List<JournalEntry>> GetAllJournalEntriesAsync()
         {
             await InitAsync();
-            return await _database.DeleteAsync(entry);
-        }
-
-        // Get all entries (for future list view)
-        public async Task<List<JournalEntry>> GetAllEntriesAsync()
-        {
-            await InitAsync();
+            
             return await _database.Table<JournalEntry>()
-                .OrderByDescending(e => e. EntryDate)
+                .OrderByDescending(e => e.Date)
                 .ToListAsync();
         }
 
-        // Get entries count
-        public async Task<int> GetEntriesCountAsync()
+        // ====== READ - Get journal entry by ID ======
+        public async Task<JournalEntry> GetJournalEntryByIdAsync(int id)
         {
             await InitAsync();
+            
+            return await _database.Table<JournalEntry>()
+                .Where(e => e.Id == id)
+                .FirstOrDefaultAsync();
+        }
+
+        // ====== UPDATE ======
+        public async Task<int> UpdateJournalEntryAsync(JournalEntry journalEntry)
+        {
+            await InitAsync();
+            
+            journalEntry.UpdatedAt = DateTime.Now;
+            
+            return await _database.UpdateAsync(journalEntry);
+        }
+
+        // ====== DELETE ======
+        public async Task<int> DeleteJournalEntryAsync(JournalEntry journalEntry)
+        {
+            await InitAsync();
+            
+            return await _database.DeleteAsync(journalEntry);
+        }
+
+        // ====== DELETE by ID ======
+        public async Task<int> DeleteJournalEntryByIdAsync(int id)
+        {
+            await InitAsync();
+            
+            var journalEntry = await GetJournalEntryByIdAsync(id);
+            if (journalEntry != null)
+            {
+                return await _database.DeleteAsync(journalEntry);
+            }
+            return 0;
+        }
+
+        // ====== Check if journal entry exists for date ======
+        public async Task<bool> HasJournalEntryForDateAsync(string date)
+        {
+            await InitAsync();
+            
+            var journalEntry = await GetJournalEntryByDateAsync(date);
+            return journalEntry != null;
+        }
+
+        // ====== Get total journal entry count ======
+        public async Task<int> GetJournalEntryCountAsync()
+        {
+            await InitAsync();
+            
             return await _database.Table<JournalEntry>().CountAsync();
         }
     }

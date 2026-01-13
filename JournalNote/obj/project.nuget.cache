@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "C8ncIWmdmyI=",
+  "dgSpecHash": "Ijqo2yyXFl4=",
   "success": true,
   "projectFilePath": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/JournalNote.csproj",
   "expectedPackageFiles": [
@@ -48,9 +48,10 @@
     "/Users/hritadutta/.nuget/packages/microsoft.net.illink.tasks/10.0.0/microsoft.net.illink.tasks.10.0.0.nupkg.sha512",
     "/Users/hritadutta/.nuget/packages/sqlite-net-pcl/1.10.196-beta/sqlite-net-pcl.1.10.196-beta.nupkg.sha512",
     "/Users/hritadutta/.nuget/packages/sqlitepclraw.bundle_green/2.1.11/sqlitepclraw.bundle_green.2.1.11.nupkg.sha512",
-    "/Users/hritadutta/.nuget/packages/sqlitepclraw.core/2.1.11/sqlitepclraw.core.2.1.11.nupkg.sha512",
+    "/Users/hritadutta/.nuget/packages/sqlitepclraw.core/3.0.2/sqlitepclraw.core.3.0.2.nupkg.sha512",
     "/Users/hritadutta/.nuget/packages/sqlitepclraw.lib.e_sqlite3/2.1.11/sqlitepclraw.lib.e_sqlite3.2.1.11.nupkg.sha512",
     "/Users/hritadutta/.nuget/packages/sqlitepclraw.lib.e_sqlite3.android/2.1.11/sqlitepclraw.lib.e_sqlite3.android.2.1.11.nupkg.sha512",
+    "/Users/hritadutta/.nuget/packages/sqlitepclraw.provider.dynamic_cdecl/3.0.2/sqlitepclraw.provider.dynamic_cdecl.3.0.2.nupkg.sha512",
     "/Users/hritadutta/.nuget/packages/sqlitepclraw.provider.e_sqlite3/2.1.11/sqlitepclraw.provider.e_sqlite3.2.1.11.nupkg.sha512",
     "/Users/hritadutta/.nuget/packages/sqlitepclraw.provider.sqlite3/2.1.11/sqlitepclraw.provider.sqlite3.2.1.11.nupkg.sha512",
     "/Users/hritadutta/.nuget/packages/system.runtime.interopservices.nfloat.internal/6.0.1/system.runtime.interopservices.nfloat.internal.6.0.1.nupkg.sha512",

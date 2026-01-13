@@ -82,6 +82,10 @@
               "target": "Package",
               "version": "[2.1.11, )"
             },
+            "SQLitePCLRaw.provider.dynamic_cdecl": {
+              "target": "Package",
+              "version": "[3.0.2, )"
+            },
             "sqlite-net-pcl": {
               "target": "Package",
               "version": "[1.10.196-beta, )"
@@ -420,6 +424,10 @@
               "target": "Package",
               "version": "[2.1.11, )"
             },
+            "SQLitePCLRaw.provider.dynamic_cdecl": {
+              "target": "Package",
+              "version": "[3.0.2, )"
+            },
             "sqlite-net-pcl": {
               "target": "Package",
               "version": "[1.10.196-beta, )"
@@ -757,6 +765,10 @@
             "SQLitePCLRaw.bundle_green": {
               "target": "Package",
               "version": "[2.1.11, )"
+            },
+            "SQLitePCLRaw.provider.dynamic_cdecl": {
+              "target": "Package",
+              "version": "[3.0.2, )"
             },
             "sqlite-net-pcl": {
               "target": "Package",

@@ -13,14 +13,16 @@ public static class MauiProgram
             .ConfigureFonts(fonts => { fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"); });
 
         builder.Services.AddMauiBlazorWebView();
+        
+        // Register DatabaseService as Singleton
+        builder.Services.AddSingleton<DatabaseService>();
 
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
-        builder.Services.AddLogging();
+       
 #endif
-        // Register DatabaseService as Singleton
-        builder.Services.AddSingleton<DatabaseService>();
+        
         return builder.Build();
     }
 }

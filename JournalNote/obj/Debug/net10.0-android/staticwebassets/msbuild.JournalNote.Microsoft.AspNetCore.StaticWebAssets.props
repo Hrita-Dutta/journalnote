@@ -52,12 +52,12 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName>ScopedCss</AssetTraitName>
       <AssetTraitValue>ApplicationBundle</AssetTraitValue>
-      <Fingerprint>awe4pswvij</Fingerprint>
-      <Integrity>ao1nmDFPOkx0NvpsHQO/KNUeMuoMmO5AENF6MisgRg4=</Integrity>
+      <Fingerprint>f2zlptufjb</Fingerprint>
+      <Integrity>x5Edm0IGTixnhwPwPmqc5U1VPzy3JWJzZvYStXYYKVk=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>5255</FileLength>
-      <LastWriteTime>Tue, 13 Jan 2026 14:06:22 GMT</LastWriteTime>
+      <FileLength>7467</FileLength>
+      <LastWriteTime>Tue, 13 Jan 2026 18:34:46 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\JournalNote.styles.css'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\lib\bootstrap\dist\css\bootstrap.min.css'))">

@@ -1,21 +1,65 @@
-﻿<div class="nav-menu">
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">JournalNote</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">Home</span>
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="editor">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> New Entry
+            <NavLink class="nav-link" href="entry">
+                <span class="nav-icon">✍️</span>
+                <span class="nav-text">New Entry</span>
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="entries">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> All Entries
+                <span class="nav-icon">📚</span>
+                <span class="nav-text">All Entries</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="calendar">
+                <span class="nav-icon">📅</span>
+                <span class="nav-text">Calendar</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="analytics">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Analytics</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="settings">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-text">Settings</span>
             </NavLink>
         </div>
     </nav>
 </div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string?  NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

@@ -1,0 +1,116 @@
+.home-container[b-l72m7cfgke] {
+    max-width:  1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.welcome-section[b-l72m7cfgke] {
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.welcome-section h1[b-l72m7cfgke] {
+    font-size: 3rem;
+    margin:  0;
+    color: #512bd4;
+}
+
+.subtitle[b-l72m7cfgke] {
+    font-size: 1.25rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+.quick-actions[b-l72m7cfgke] {
+    margin:  3rem 0;
+}
+
+.quick-actions h2[b-l72m7cfgke] {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.action-cards[b-l72m7cfgke] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.action-card[b-l72m7cfgke] {
+    background: white;
+    padding:  2rem;
+    border-radius: 12px;
+    box-shadow:  0 4px 12px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+}
+
+.action-card:hover[b-l72m7cfgke] {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(81, 43, 212, 0.2);
+}
+
+.card-icon[b-l72m7cfgke] {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.action-card h3[b-l72m7cfgke] {
+    margin: 0.5rem 0;
+    color: #333;
+}
+
+.action-card p[b-l72m7cfgke] {
+    color: #666;
+    margin:  0.5rem 0;
+}
+
+.badge[b-l72m7cfgke] {
+    display: inline-block;
+    background:  #512bd4;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius:  12px;
+    font-size:  0.85rem;
+    margin-top: 0.5rem;
+}
+
+.stats-section[b-l72m7cfgke] {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius:  12px;
+    margin-top: 3rem;
+}
+
+.stats-section h3[b-l72m7cfgke] {
+    margin-top: 0;
+    color:  #333;
+}
+
+.stats-grid[b-l72m7cfgke] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.stat-item[b-l72m7cfgke] {
+    text-align:  center;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.stat-value[b-l72m7cfgke] {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #512bd4;
+}
+
+.stat-label[b-l72m7cfgke] {
+    display: block;
+    color: #666;
+    margin-top: 0.5rem;
+}

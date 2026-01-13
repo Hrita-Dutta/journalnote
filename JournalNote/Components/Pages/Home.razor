@@ -1,78 +1,200 @@
 ﻿@page "/"
+@using JournalNote.Models
 @using JournalNote.Services
 @inject DatabaseService DatabaseService
 @inject NavigationManager Navigation
 
-<div class="home-container">
-    <div class="welcome-section">
+<PageTitle>JournalNote - Home</PageTitle>
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
         <h1>📔 JournalNote</h1>
-        <p class="subtitle">Your Personal Digital Journal</p>
+        <p class="lead">Your personal journaling companion</p>
+    </div>
+    
+    <hr />
+
+    <!-- Today's Journal Entry Section -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>Today's Entry</h3>
+            <small class="text-muted">@DateTime.Today.ToString("MMMM dd, yyyy")</small>
+        </div>
+        
+        @if (isLoadingToday)
+        {
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else if (todayJournalEntry != null)
+        {
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@todayJournalEntry.Title</h5>
+                    <p class="card-text">@GetPreview(todayJournalEntry.Content, 150)</p>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" @onclick="() => EditJournalEntry(todayJournalEntry. Date)">
+                            View/Edit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info d-flex justify-content-between align-items-center">
+                <span>No entry for today yet.  Start writing!</span>
+                <button class="btn btn-success" @onclick="CreateTodayJournalEntry">
+                    Create Today's Entry
+                </button>
+            </div>
+        }
     </div>
 
-    <div class="quick-actions">
-        <h2>Quick Actions</h2>
-        <div class="action-cards">
-            <div class="action-card" @onclick="CreateTodayEntry">
-                <div class="card-icon">✍️</div>
-                <h3>Today's Entry</h3>
-                <p>Write or edit today's journal entry</p>
-            </div>
-
-            <div class="action-card" @onclick="ViewAllEntries">
-                <div class="card-icon">📚</div>
-                <h3>View Entries</h3>
-                <p>Browse all your journal entries</p>
-                <span class="badge">@totalEntries entries</span>
-            </div>
+    <!-- All Journal Entries Section -->
+    <div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>All Entries <span class="badge bg-secondary">@allJournalEntries.Count</span></h3>
+            <button class="btn btn-success" @onclick="CreateNewJournalEntry">
+                + New Entry
+            </button>
         </div>
-    </div>
 
-    <div class="stats-section">
-        <h3>Journal Statistics</h3>
-        <div class="stats-grid">
-            <div class="stat-item">
-                <span class="stat-value">@totalEntries</span>
-                <span class="stat-label">Total Entries</span>
+        @if (isLoadingAll)
+        {
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading... </span>
+                </div>
+                <p class="mt-2">Loading entries...</p>
             </div>
-            <div class="stat-item">
-                <span class="stat-value">@currentStreak</span>
-                <span class="stat-label">Day Streak</span>
+        }
+        else if (allJournalEntries. Any())
+        {
+            <div class="row g-3">
+                @foreach (var journalEntry in allJournalEntries)
+                {
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm hover-shadow">
+                            <div class="card-body">
+                                <h5 class="card-title text-truncate">@journalEntry.Title</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    @FormatDate(journalEntry.Date)
+                                </h6>
+                                <p class="card-text">@GetPreview(journalEntry.Content, 100)</p>
+                                <button class="btn btn-sm btn-outline-primary" @onclick="() => EditJournalEntry(journalEntry.Date)">
+                                    View/Edit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="alert alert-secondary text-center py-5">
+                <h4>📝 No entries yet</h4>
+                <p>Start your journaling journey today!</p>
+                <button class="btn btn-primary" @onclick="CreateNewJournalEntry">
+                    Create Your First Entry
+                </button>
+            </div>
+        }
     </div>
 </div>
 
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        transition: box-shadow 0.3s ease-in-out;
+    }
+</style>
+
 @code {
-    private int totalEntries = 0;
-    private int currentStreak = 0;
+    private List<JournalEntry> allJournalEntries = new();
+    private JournalEntry?  todayJournalEntry;
+    private bool isLoadingToday = true;
+    private bool isLoadingAll = true;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadStats();
+        await LoadJournalEntries();
     }
 
-    private async Task LoadStats()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (! firstRender)
+        {
+            // Reload journal entries when navigating back to this page
+            await LoadJournalEntries();
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadJournalEntries()
+    {
+        isLoadingToday = true;
+        isLoadingAll = true;
+
         try
         {
-            totalEntries = await DatabaseService.GetEntriesCountAsync();
-            // We'll implement streak calculation in Feature 8
-            currentStreak = 0;
+            // Load today's journal entry
+            string todayDateString = DateTime.Today.ToString("yyyy-MM-dd");
+            todayJournalEntry = await DatabaseService.GetJournalEntryByDateAsync(todayDateString);
+            isLoadingToday = false;
+
+            // Load all journal entries
+            allJournalEntries = await DatabaseService.GetAllJournalEntriesAsync();
+            isLoadingAll = false;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading stats: {ex.Message}");
+            await Application.Current.MainPage.DisplayAlert(
+                "Error", 
+                $"Failed to load entries: {ex.Message}", 
+                "OK"
+            );
+            isLoadingToday = false;
+            isLoadingAll = false;
         }
     }
 
-    private void CreateTodayEntry()
+    private string GetPreview(string content, int maxLength = 100)
     {
-        Navigation.NavigateTo("/editor");
+        if (string.IsNullOrWhiteSpace(content))
+            return "No content";
+
+        if (content.Length <= maxLength)
+            return content;
+
+        return content.Substring(0, maxLength) + "...";
     }
 
-    private void ViewAllEntries()
+    private string FormatDate(string dateString)
     {
-        // We'll implement this in future features
-        Navigation.NavigateTo("/entries");
+        if (DateTime.TryParse(dateString, out DateTime date))
+        {
+            return date.ToString("MMMM dd, yyyy");
+        }
+        return dateString;
+    }
+
+    private void CreateTodayJournalEntry()
+    {
+        Navigation.NavigateTo("/entry");
+    }
+
+    private void CreateNewJournalEntry()
+    {
+        Navigation.NavigateTo("/entry");
+    }
+
+    private void EditJournalEntry(string date)
+    {
+        Navigation.NavigateTo($"/entry/{date}");
     }
 }
