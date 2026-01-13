@@ -1,5 +1,78 @@
 ﻿@page "/"
+@using JournalNote.Services
+@inject DatabaseService DatabaseService
+@inject NavigationManager Navigation
 
-<h1>Hello, world!</h1>
+<div class="home-container">
+    <div class="welcome-section">
+        <h1>📔 JournalNote</h1>
+        <p class="subtitle">Your Personal Digital Journal</p>
+    </div>
 
-Welcome to your new app.
+    <div class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-cards">
+            <div class="action-card" @onclick="CreateTodayEntry">
+                <div class="card-icon">✍️</div>
+                <h3>Today's Entry</h3>
+                <p>Write or edit today's journal entry</p>
+            </div>
+
+            <div class="action-card" @onclick="ViewAllEntries">
+                <div class="card-icon">📚</div>
+                <h3>View Entries</h3>
+                <p>Browse all your journal entries</p>
+                <span class="badge">@totalEntries entries</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-section">
+        <h3>Journal Statistics</h3>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-value">@totalEntries</span>
+                <span class="stat-label">Total Entries</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">@currentStreak</span>
+                <span class="stat-label">Day Streak</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private int totalEntries = 0;
+    private int currentStreak = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStats();
+    }
+
+    private async Task LoadStats()
+    {
+        try
+        {
+            totalEntries = await DatabaseService.GetEntriesCountAsync();
+            // We'll implement streak calculation in Feature 8
+            currentStreak = 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading stats: {ex.Message}");
+        }
+    }
+
+    private void CreateTodayEntry()
+    {
+        Navigation.NavigateTo("/editor");
+    }
+
+    private void ViewAllEntries()
+    {
+        // We'll implement this in future features
+        Navigation.NavigateTo("/entries");
+    }
+}
