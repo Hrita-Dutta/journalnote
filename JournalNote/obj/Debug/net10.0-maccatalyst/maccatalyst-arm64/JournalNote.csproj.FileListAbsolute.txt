@@ -358,4 +358,5 @@
 /Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/ref/JournalNote.dll
 /Applications/C#/Class/Coursework/JournalNote/JournalNote/bin/Debug/net10.0-maccatalyst/maccatalyst-arm64/SQLitePCLRaw.provider.dynamic_cdecl.dll
 /Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/scopedcss/Components/Pages/EntryEditor.razor.rz.scp.css
+/Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/scopedcss/Components/Shared/MoodSelector.razor.rz.scp.css
 /Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/resourcestamps/SQLitePCLRaw.provider.dynamic_cdecl.stamp

@@ -328,3 +328,28 @@ hr[b-faxnbhdb77] {
     font-style: italic;
     content: 'Write your thoughts here...';
 }
+
+/* Mood Section Header */
+.mood-section-header[b-faxnbhdb77] {
+    margin-bottom: 1rem;
+}
+
+.mood-section-header .form-label[b-faxnbhdb77] {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.mood-section-header .text-danger[b-faxnbhdb77] {
+    font-size: 0.9rem;
+    font-weight: normal;
+}
+
+.mood-section-header .text-muted[b-faxnbhdb77] {
+    font-size:  0.9rem;
+    font-weight: normal;
+}
+
+/* Mood Section Spacing */
+.mb-4[b-faxnbhdb77] {
+    margin-bottom:  2rem ! important;
+}

@@ -15,7 +15,7 @@ namespace JournalNote.Services
 
         public DatabaseService()
         {
-            _databasePath = Path.Combine(FileSystem.AppDataDirectory, "journal. db");
+            _databasePath = Path.Combine(FileSystem.AppDataDirectory, "journal.db");
         }
 
         private async Task InitAsync()
@@ -37,42 +37,58 @@ namespace JournalNote.Services
         // ====== SEED MOODS ======
         private async Task SeedMoodsAsync()
         {
-            var count = await _database.Table<Mood>().CountAsync();
-            if (count > 0)
-                return; // Already seeded
-
-            var moods = new List<Mood>
+            try
             {
-                // Positive Moods
-                new Mood("Happy", "Positive", "😊"),
-                new Mood("Excited", "Positive", "🤩"),
-                new Mood("Relaxed", "Positive", "😌"),
-                new Mood("Grateful", "Positive", "🙏"),
-                new Mood("Confident", "Positive", "😎"),
+                var count = await _database.Table<Mood>().CountAsync();
+                
+                if (count > 0)
+                {
+                    Console.WriteLine($"Moods already seeded. Count: {count}");
+                    return; // Already seeded
+                }
 
-                // Neutral Moods
-                new Mood("Calm", "Neutral", "😐"),
-                new Mood("Thoughtful", "Neutral", "🤔"),
-                new Mood("Curious", "Neutral", "🧐"),
-                new Mood("Nostalgic", "Neutral", "😌"),
-                new Mood("Bored", "Neutral", "😑"),
+                var moods = new List<Mood>
+                {
+                    // Positive Moods
+                    new Mood { Name = "Happy", Category = "Positive", Icon = "😊" },
+                    new Mood { Name = "Excited", Category = "Positive", Icon = "🤩" },
+                    new Mood { Name = "Relaxed", Category = "Positive", Icon = "😌" },
+                    new Mood { Name = "Grateful", Category = "Positive", Icon = "🙏" },
+                    new Mood { Name = "Confident", Category = "Positive", Icon = "😎" },
 
-                // Negative Moods
-                new Mood("Sad", "Negative", "😢"),
-                new Mood("Angry", "Negative", "😠"),
-                new Mood("Stressed", "Negative", "😰"),
-                new Mood("Lonely", "Negative", "😔"),
-                new Mood("Anxious", "Negative", "😟")
-            };
+                    // Neutral Moods
+                    new Mood { Name = "Calm", Category = "Neutral", Icon = "😐" },
+                    new Mood { Name = "Thoughtful", Category = "Neutral", Icon = "🤔" },
+                    new Mood { Name = "Curious", Category = "Neutral", Icon = "🧐" },
+                    new Mood { Name = "Nostalgic", Category = "Neutral", Icon = "💭" },
+                    new Mood { Name = "Bored", Category = "Neutral", Icon = "😑" },
 
-            await _database.InsertAllAsync(moods);
+                    // Negative Moods
+                    new Mood { Name = "Sad", Category = "Negative", Icon = "😢" },
+                    new Mood { Name = "Angry", Category = "Negative", Icon = "😠" },
+                    new Mood { Name = "Stressed", Category = "Negative", Icon = "😰" },
+                    new Mood { Name = "Lonely", Category = "Negative", Icon = "😔" },
+                    new Mood { Name = "Anxious", Category = "Negative", Icon = "😟" }
+                };
+
+                await _database.InsertAllAsync(moods);
+                
+                var newCount = await _database.Table<Mood>().CountAsync();
+                Console.WriteLine($"Moods seeded successfully!  Total count: {newCount}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error seeding moods:  {ex.Message}");
+            }
         }
 
         // ====== MOOD METHODS ======
         public async Task<List<Mood>> GetAllMoodsAsync()
         {
             await InitAsync();
-            return await _database.Table<Mood>().ToListAsync();
+            var moods = await _database.Table<Mood>().ToListAsync();
+            Console.WriteLine($"GetAllMoodsAsync returned {moods.Count} moods");
+            return moods;
         }
 
         public async Task<List<Mood>> GetMoodsByCategoryAsync(string category)
@@ -91,12 +107,23 @@ namespace JournalNote.Services
                 .FirstOrDefaultAsync();
         }
 
+        // ====== FORCE RESEED MOODS (for debugging) ======
+        public async Task ForceReseedMoodsAsync()
+        {
+            await InitAsync();
+            
+            // Delete all existing moods
+            await _database.DeleteAllAsync<Mood>();
+            
+            // Reseed
+            await SeedMoodsAsync();
+        }
+
         // ====== JOURNAL ENTRY METHODS ======
         public async Task<int> AddJournalEntryAsync(JournalEntry journalEntry)
         {
             await InitAsync();
 
-            // Check if entry already exists for this date
             var existingEntry = await GetJournalEntryByDateAsync(journalEntry.Date);
             if (existingEntry != null)
             {
@@ -138,7 +165,7 @@ namespace JournalNote.Services
         {
             await InitAsync();
             
-            return await _database. Table<JournalEntry>()
+            return await _database.Table<JournalEntry>()
                 .Where(e => e.Id == id)
                 .FirstOrDefaultAsync();
         }
@@ -196,7 +223,8 @@ namespace JournalNote.Services
 
             var moodIds = entry.SecondaryMoodIds
                 .Split(',')
-                .Select(id => int.Parse(id.Trim()))
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(id => int.Parse(id. Trim()))
                 .ToList();
 
             var moods = new List<Mood>();
