@@ -24,6 +24,12 @@ namespace JournalNote.Models
         // Secondary Moods stored as comma-separated IDs (e.g., "2,5")
         public string SecondaryMoodIds { get; set; } = string.Empty;
 
+        // Tags stored as comma-separated IDs (e.g., "1,3,7")
+        public string TagIds { get; set; } = string.Empty;
+
+        // Category (optional)
+        public string Category { get; set; } = string.Empty;
+
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }

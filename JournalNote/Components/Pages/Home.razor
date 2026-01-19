@@ -11,20 +11,22 @@
         <h1>📔 JournalNote</h1>
         <p class="lead">Your personal journaling companion</p>
     </div>
-
+    
     <hr />
 
-    <!-- Today's Journal Entry -->
+    <!-- Today's Journal Entry Section -->
     <div class="mb-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3>Today's Entry</h3>
             <small class="text-muted">@DateTime.Today.ToString("MMMM dd, yyyy")</small>
         </div>
-
+        
         @if (isLoadingToday)
         {
             <div class="text-center py-4">
-                <div class="spinner-border text-primary"></div>
+                <div class="spinner-border text-primary">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
         }
         else if (todayJournalEntry != null)
@@ -32,29 +34,42 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">@todayJournalEntry.Title</h5>
-
+                    
                     @if (todayJournalEntry.PrimaryMoodId.HasValue)
                     {
-                        <p class="mb-2">
+                        <p class="mood-display mb-2">
                             <strong>Mood:</strong> @GetMoodDisplayForEntry(todayJournalEntry)
                         </p>
                     }
 
-                    <div class="card-text">
-                        @((MarkupString)GetPreview(todayJournalEntry.Content, 150))
+                    @if (!string.IsNullOrEmpty(todayJournalEntry.TagIds))
+                    {
+                        <div class="tags-display mb-3">
+                            <strong>Tags:</strong>
+                            <div class="tags-list mt-2">
+                                @foreach (var tag in GetTagsForEntry(todayJournalEntry))
+                                {
+                                    <span class="tag-badge" style="background-color: @tag.Color">
+                                        @tag.Name
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    }
+                    
+                    <div class="card-text">@((MarkupString)GetPreview(todayJournalEntry.Content, 150))</div>
+                    <div class="d-flex gap-2 mt-3">
+                        <button class="btn btn-primary" @onclick="() => EditJournalEntry(todayJournalEntry.Date)">
+                            View/Edit
+                        </button>
                     </div>
-
-                    <button class="btn btn-primary mt-3"
-                            @onclick="() => EditJournalEntry(todayJournalEntry.Date)">
-                        View / Edit
-                    </button>
                 </div>
             </div>
         }
         else
         {
             <div class="alert alert-info d-flex justify-content-between align-items-center">
-                <span>No entry for today yet.</span>
+                <span>No entry for today yet. Start writing!</span>
                 <button class="btn btn-success" @onclick="CreateTodayJournalEntry">
                     Create Today's Entry
                 </button>
@@ -62,13 +77,10 @@
         }
     </div>
 
-    <!-- All Entries -->
+    <!-- All Journal Entries Section -->
     <div>
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>
-                All Entries
-                <span class="badge bg-secondary">@allJournalEntries.Count</span>
-            </h3>
+            <h3>All Entries <span class="badge bg-secondary">@allJournalEntries.Count</span></h3>
             <button class="btn btn-success" @onclick="CreateNewJournalEntry">
                 + New Entry
             </button>
@@ -77,37 +89,56 @@
         @if (isLoadingAll)
         {
             <div class="text-center py-4">
-                <div class="spinner-border text-primary"></div>
+                <div class="spinner-border text-primary">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
                 <p class="mt-2">Loading entries...</p>
             </div>
         }
         else if (allJournalEntries.Any())
         {
             <div class="row g-3">
-                @foreach (var entry in allJournalEntries)
+                @foreach (var journalEntry in allJournalEntries)
                 {
                     <div class="col-12 col-md-6 col-lg-4">
-                        <div class="card h-100 shadow-sm">
+                        <div class="card h-100 shadow-sm hover-shadow">
                             <div class="card-body">
-                                <h5 class="card-title text-truncate">@entry.Title</h5>
-                                <h6 class="text-muted">
-                                    @FormatDate(entry.Date)
+                                <h5 class="card-title text-truncate">@journalEntry.Title</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    @FormatDate(journalEntry.Date)
                                 </h6>
-
-                                @if (entry.PrimaryMoodId.HasValue)
+                                
+                                @if (journalEntry.PrimaryMoodId.HasValue)
                                 {
-                                    <p class="mb-2">
-                                        <strong>Mood:</strong> @GetMoodDisplayForEntry(entry)
+                                    <p class="mood-display-small mb-2">
+                                        <strong>Mood:</strong> @GetMoodDisplayForEntry(journalEntry)
                                     </p>
                                 }
 
-                                <div class="card-text">
-                                    @((MarkupString)GetPreview(entry.Content, 100))
-                                </div>
-
-                                <button class="btn btn-sm btn-outline-primary mt-2"
-                                        @onclick="() => EditJournalEntry(entry.Date)">
-                                    View / Edit
+                                @if (!string.IsNullOrEmpty(journalEntry.TagIds))
+                                {
+                                    <div class="tags-display-small mb-2">
+                                        <strong>Tags:</strong>
+                                        <div class="tags-list-small mt-1">
+                                            @foreach (var tag in GetTagsForEntry(journalEntry).Take(3))
+                                            {
+                                                <span class="tag-badge-small" style="background-color: @tag.Color">
+                                                    @tag.Name
+                                                </span>
+                                            }
+                                            @if (GetTagsForEntry(journalEntry).Count > 3)
+                                            {
+                                                <span class="tag-badge-small" style="background-color: #95a5a6">
+                                                    +@(GetTagsForEntry(journalEntry).Count - 3)
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                
+                                <div class="card-text">@((MarkupString)GetPreview(journalEntry.Content, 100))</div>
+                                <button class="btn btn-sm btn-outline-primary mt-2" @onclick="() => EditJournalEntry(journalEntry.Date)">
+                                    View/Edit
                                 </button>
                             </div>
                         </div>
@@ -131,34 +162,49 @@
 @code {
     private List<JournalEntry> allJournalEntries = new();
     private JournalEntry? todayJournalEntry;
-    private List<Mood> allMoods = new();
-
     private bool isLoadingToday = true;
     private bool isLoadingAll = true;
+    private List<Mood> allMoods = new();
+    private List<Tag> allTags = new();
 
     protected override async Task OnInitializedAsync()
     {
         await LoadJournalEntries();
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            await LoadJournalEntries();
+            StateHasChanged();
+        }
+    }
+
     private async Task LoadJournalEntries()
     {
+        isLoadingToday = true;
+        isLoadingAll = true;
+
         try
         {
             allMoods = await DatabaseService.GetAllMoodsAsync();
+            allTags = await DatabaseService.GetAllTagsAsync();
 
-            todayJournalEntry = await DatabaseService
-                .GetJournalEntryByDateAsync(DateTime.Today.ToString("yyyy-MM-dd"));
+            string todayDateString = DateTime.Today.ToString("yyyy-MM-dd");
+            todayJournalEntry = await DatabaseService.GetJournalEntryByDateAsync(todayDateString);
+            isLoadingToday = false;
 
             allJournalEntries = await DatabaseService.GetAllJournalEntriesAsync();
+            isLoadingAll = false;
         }
-        catch
+        catch (Exception ex)
         {
-            allJournalEntries.Clear();
-            todayJournalEntry = null;
-        }
-        finally
-        {
+            await Application.Current.MainPage.DisplayAlert(
+                "Error", 
+                $"Failed to load entries: {ex.Message}", 
+                "OK"
+            );
             isLoadingToday = false;
             isLoadingAll = false;
         }
@@ -166,51 +212,87 @@
 
     private string GetMoodDisplayForEntry(JournalEntry entry)
     {
-        var primary = allMoods.FirstOrDefault(m => m.Id == entry.PrimaryMoodId);
-        if (primary == null) return "Unknown mood";
+        if (!entry.PrimaryMoodId.HasValue)
+            return "No mood selected";
 
-        var result = $"{primary.Icon} {primary.Name}";
+        var primaryMood = allMoods.FirstOrDefault(m => m.Id == entry.PrimaryMoodId.Value);
+        if (primaryMood == null)
+            return "Unknown mood";
 
-        if (!string.IsNullOrWhiteSpace(entry.SecondaryMoodIds))
+        var result = $"{primaryMood.Icon} {primaryMood.Name}";
+
+        if (!string.IsNullOrEmpty(entry.SecondaryMoodIds))
         {
-            var ids = entry.SecondaryMoodIds
+            var secondaryMoodIds = entry.SecondaryMoodIds
                 .Split(',')
-                .Select(s => int.TryParse(s.Trim(), out var id) ? id : (int?)null)
-                .Where(id => id.HasValue)
-                .Select(id => id!.Value)
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(s => int.Parse(s.Trim()))
                 .ToList();
 
-            var secondary = allMoods.Where(m => ids.Contains(m.Id)).ToList();
-            if (secondary.Any())
+            if (secondaryMoodIds.Any())
             {
-                result += " + " + string.Join(", ", secondary.Select(m => $"{m.Icon} {m.Name}"));
+                var secondaryMoods = allMoods.Where(m => secondaryMoodIds.Contains(m.Id)).ToList();
+                if (secondaryMoods.Any())
+                {
+                    var secondaryDisplay = string.Join(", ", secondaryMoods.Select(m => $"{m.Icon} {m.Name}"));
+                    result += $" + {secondaryDisplay}";
+                }
             }
         }
 
         return result;
     }
 
-    private string GetPreview(string html, int maxLength)
+    private List<Tag> GetTagsForEntry(JournalEntry entry)
     {
-        if (string.IsNullOrWhiteSpace(html))
-            return "<p>No content</p>";
+        if (string.IsNullOrEmpty(entry.TagIds))
+            return new List<Tag>();
 
-        var text = System.Text.RegularExpressions.Regex
-            .Replace(html, "<.*?>", " ")
-            .Trim();
+        var tagIds = entry.TagIds
+            .Split(',')
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(s => int.Parse(s.Trim()))
+            .ToList();
 
-        if (text.Length <= maxLength)
-            return $"<p>{text}</p>";
-
-        return $"<p>{text.Substring(0, maxLength)}...</p>";
+        return allTags.Where(t => tagIds.Contains(t.Id)).ToList();
     }
 
-    private string FormatDate(string date)
-        => DateTime.TryParse(date, out var d)
-            ? d.ToString("MMMM dd, yyyy")
-            : date;
+    private string GetPreview(string htmlContent, int maxLength = 100)
+    {
+        if (string.IsNullOrWhiteSpace(htmlContent))
+            return "<p>No content</p>";
 
-    private void CreateTodayJournalEntry() => Navigation.NavigateTo("/entry");
-    private void CreateNewJournalEntry() => Navigation.NavigateTo("/entry");
-    private void EditJournalEntry(string date) => Navigation.NavigateTo($"/entry/{date}");
+        var textContent = System.Text.RegularExpressions.Regex.Replace(htmlContent, "<.*?>", " ").Trim();
+
+        if (string.IsNullOrWhiteSpace(textContent))
+            return "<p>No content</p>";
+
+        if (textContent.Length <= maxLength)
+            return $"<p>{textContent}</p>";
+
+        return $"<p>{textContent.Substring(0, maxLength)}...</p>";
+    }
+
+    private string FormatDate(string dateString)
+    {
+        if (DateTime.TryParse(dateString, out DateTime date))
+            return date.ToString("MMMM dd, yyyy");
+
+        return dateString;
+    }
+
+    private void CreateTodayJournalEntry()
+    {
+        Navigation.NavigateTo("/entry");
+    }
+
+    private void CreateNewJournalEntry()
+    {
+        Navigation.NavigateTo("/entry");
+    }
+
+    private void EditJournalEntry(string date)
+    {
+        Navigation.NavigateTo($"/entry/{date}");
+    }
 }

@@ -61,9 +61,10 @@
                 <div class="mb-4">
                     <label class="form-label">
                         <strong>Primary Mood:</strong>
-                        <span class="text-danger">*</span>
+                        <span class="text-danger">*Required</span>
                     </label>
                     <MoodSelector
+                        Title="How are you feeling today?"
                         MoodsByCategory="@moodsByCategory"
                         SelectedMoodId="@selectedPrimaryMoodId"
                         OnMoodSelected="@OnPrimaryMoodSelected"
@@ -75,9 +76,10 @@
                 <div class="mb-4">
                     <label class="form-label">
                         <strong>Secondary Moods:</strong>
-                        <span class="text-muted">(Optional)</span>
+                        <span class="text-muted">(Optional - Up to 2)</span>
                     </label>
                     <MoodSelector
+                        Title="Any other feelings?"
                         MoodsByCategory="@moodsByCategory"
                         SelectedMoodIds="@selectedSecondaryMoodIds"
                         OnMoodSelected="@OnSecondaryMoodSelected"
@@ -85,11 +87,27 @@
                         AllowDeselect="true" />
                 </div>
 
+                <!-- Tags Section -->
+                <div class="mb-4">
+                    <label class="form-label">
+                        <strong>Tags:</strong>
+                        <span class="text-muted">(Optional)</span>
+                    </label>
+                    <TagSelector
+                        Title="Classify your entry"
+                        AllTags="@allTags"
+                        PredefinedTags="@predefinedTags"
+                        CustomTags="@customTags"
+                        SelectedTagIds="@selectedTagIds"
+                        OnTagToggled="@OnTagToggled"
+                        OnCustomTagAdded="@OnCustomTagAdded" />
+                </div>
+
                 <!-- Quill Editor -->
                 <div class="mb-3">
                     <label class="form-label"><strong>Content:</strong></label>
                     <div id="editor"
-                         style="height:300px;background:white;border:2px solid #e0e6ed;border-radius:10px;">
+                         style="height: 300px;background: white;border:2px solid #e0e6ed;border-radius:10px;">
                     </div>
                 </div>
 
@@ -131,8 +149,8 @@
     {
         <div class="mt-3">
             <small class="text-muted">
-                <strong>Created:</strong> @currentJournalEntry.CreatedAt:MMMM dd, yyyy h:mm tt<br />
-                <strong>Updated:</strong> @currentJournalEntry.UpdatedAt:MMMM dd, yyyy h:mm tt
+                <strong>Created:</strong> @currentJournalEntry.CreatedAt.ToString("MMMM dd, yyyy h:mm tt")<br />
+                <strong>Last Updated:</strong> @currentJournalEntry.UpdatedAt.ToString("MMMM dd, yyyy h:mm tt")
             </small>
         </div>
     }
@@ -152,13 +170,21 @@
     private string successMessage = string.Empty;
     private string pageTitle = "Create Journal Entry";
 
+    // Moods
     private Dictionary<string, List<Mood>> moodsByCategory = new();
     private int? selectedPrimaryMoodId;
     private List<int> selectedSecondaryMoodIds = new();
 
+    // Tags
+    private List<Tag> allTags = new();
+    private List<Tag> predefinedTags = new();
+    private List<Tag> customTags = new();
+    private List<int> selectedTagIds = new();
+
     protected override async Task OnInitializedAsync()
     {
         await LoadMoodsAsync();
+        await LoadTagsAsync();
 
         if (DateTime.TryParse(DateParam, out var parsed))
             selectedDate = parsed;
@@ -178,9 +204,30 @@
 
     private async Task LoadMoodsAsync()
     {
-        var moods = await DatabaseService.GetAllMoodsAsync();
-        moodsByCategory = moods.GroupBy(m => m.Category)
-                               .ToDictionary(g => g.Key, g => g.ToList());
+        try
+        {
+            var moods = await DatabaseService.GetAllMoodsAsync();
+            moodsByCategory = moods.GroupBy(m => m.Category)
+                                   .ToDictionary(g => g.Key, g => g.ToList());
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading moods: {ex.Message}";
+        }
+    }
+
+    private async Task LoadTagsAsync()
+    {
+        try
+        {
+            allTags = await DatabaseService.GetAllTagsAsync();
+            predefinedTags = await DatabaseService.GetPredefinedTagsAsync();
+            customTags = await DatabaseService.GetCustomTagsAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading tags: {ex.Message}";
+        }
     }
 
     private async Task OnDateChanged(ChangeEventArgs e)
@@ -196,34 +243,58 @@
     private async Task LoadJournalEntryForDate()
     {
         isLoadingJournalEntry = true;
+        errorMessage = string.Empty;
+        successMessage = string.Empty;
 
-        var dateKey = selectedDate.ToString("yyyy-MM-dd");
-        var entry = await DatabaseService.GetJournalEntryByDateAsync(dateKey);
-
-        if (entry != null)
+        try
         {
-            currentJournalEntry = entry;
-            isEditMode = true;
-            pageTitle = $"Edit Entry - {selectedDate:MMMM dd, yyyy}";
-            selectedPrimaryMoodId = entry.PrimaryMoodId;
+            var dateKey = selectedDate.ToString("yyyy-MM-dd");
+            var entry = await DatabaseService.GetJournalEntryByDateAsync(dateKey);
 
-            selectedSecondaryMoodIds = entry.SecondaryMoodIds?
-                .Split(',')
-                .Select(s => int.TryParse(s.Trim(), out var id) ? id : (int?)null)
-                .Where(id => id.HasValue)
-                .Select(id => id!.Value)
-                .ToList() ?? new();
+            if (entry != null)
+            {
+                // Edit mode
+                currentJournalEntry = entry;
+                isEditMode = true;
+                pageTitle = $"Edit Entry - {selectedDate:MMMM dd, yyyy}";
+
+                // Load moods
+                selectedPrimaryMoodId = entry.PrimaryMoodId;
+
+                selectedSecondaryMoodIds = entry.SecondaryMoodIds?
+                    .Split(',')
+                    .Select(s => int.TryParse(s.Trim(), out var id) ? id : (int?)null)
+                    .Where(id => id.HasValue)
+                    .Select(id => id!.Value)
+                    .ToList() ?? new();
+
+                // Load tags
+                selectedTagIds = entry.TagIds?
+                    .Split(',')
+                    .Select(s => int.TryParse(s.Trim(), out var id) ? id : (int?)null)
+                    .Where(id => id.HasValue)
+                    .Select(id => id!.Value)
+                    .ToList() ?? new();
+            }
+            else
+            {
+                // Create mode
+                currentJournalEntry = new JournalEntry { Date = dateKey };
+                isEditMode = false;
+                pageTitle = $"Create Entry - {selectedDate:MMMM dd, yyyy}";
+                selectedPrimaryMoodId = null;
+                selectedSecondaryMoodIds.Clear();
+                selectedTagIds.Clear();
+            }
         }
-        else
+        catch (Exception ex)
         {
-            currentJournalEntry = new JournalEntry { Date = dateKey };
-            isEditMode = false;
-            pageTitle = $"Create Entry - {selectedDate:MMMM dd, yyyy}";
-            selectedPrimaryMoodId = null;
-            selectedSecondaryMoodIds.Clear();
+            errorMessage = $"Error loading entry: {ex.Message}";
         }
-
-        isLoadingJournalEntry = false;
+        finally
+        {
+            isLoadingJournalEntry = false;
+        }
     }
 
     private Task OnPrimaryMoodSelected(int id)
@@ -234,6 +305,34 @@
 
     private Task OnSecondaryMoodSelected(int _) => Task.CompletedTask;
 
+    private Task OnTagToggled(int _)
+    {
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private async Task OnCustomTagAdded(Tag newTag)
+    {
+        try
+        {
+            await DatabaseService.AddTagAsync(newTag);
+            await LoadTagsAsync();
+
+            var addedTag = allTags.FirstOrDefault(t => t.Name == newTag.Name);
+            if (addedTag != null && !selectedTagIds.Contains(addedTag.Id))
+            {
+                selectedTagIds.Add(addedTag.Id);
+            }
+
+            successMessage = $"Custom tag '{newTag.Name}' added successfully!";
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error adding custom tag: {ex.Message}";
+        }
+    }
+
     private async Task SyncQuillContent()
     {
         if (quillReady)
@@ -243,35 +342,61 @@
     private async Task CreateJournalEntry()
     {
         if (!await ValidateAndFillEntry()) return;
-        await DatabaseService.AddJournalEntryAsync(currentJournalEntry);
-        successMessage = "Entry created successfully!";
-        await LoadJournalEntryForDate();
+
+        isSaving = true;
+
+        try
+        {
+            await DatabaseService.AddJournalEntryAsync(currentJournalEntry);
+            successMessage = "Entry created successfully!";
+            await LoadJournalEntryForDate();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error creating entry: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
     }
 
     private async Task UpdateJournalEntry()
     {
         if (!await ValidateAndFillEntry()) return;
-        await DatabaseService.UpdateJournalEntryAsync(currentJournalEntry);
-        successMessage = "Entry updated successfully!";
-        await LoadJournalEntryForDate();
+
+        isSaving = true;
+
+        try
+        {
+            await DatabaseService.UpdateJournalEntryAsync(currentJournalEntry);
+            successMessage = "Entry updated successfully!";
+            await LoadJournalEntryForDate();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating entry: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
     }
 
     private async Task<bool> ValidateAndFillEntry()
     {
         errorMessage = string.Empty;
-        isSaving = true;
+        successMessage = string.Empty;
 
         if (string.IsNullOrWhiteSpace(currentJournalEntry.Title))
         {
             errorMessage = "Title is required.";
-            isSaving = false;
             return false;
         }
 
         if (!selectedPrimaryMoodId.HasValue)
         {
             errorMessage = "Primary mood is required.";
-            isSaving = false;
             return false;
         }
 
@@ -279,27 +404,46 @@
         if (string.IsNullOrWhiteSpace(html) || html == "<p><br></p>")
         {
             errorMessage = "Content is required.";
-            isSaving = false;
             return false;
         }
 
         currentJournalEntry.Content = html;
         currentJournalEntry.PrimaryMoodId = selectedPrimaryMoodId;
         currentJournalEntry.SecondaryMoodIds = string.Join(",", selectedSecondaryMoodIds);
+        currentJournalEntry.TagIds = string.Join(",", selectedTagIds);
 
-        isSaving = false;
         return true;
     }
 
     private async Task DeleteJournalEntry()
     {
-        var confirmed = await JS.InvokeAsync<bool>("confirm",
-            "Are you sure you want to delete this entry?");
+        var confirmed = await Application.Current.MainPage.DisplayAlert(
+            "Confirm Delete",
+            "Are you sure you want to delete this entry? This action cannot be undone.",
+            "Yes, Delete",
+            "Cancel"
+        );
 
         if (!confirmed) return;
 
-        await DatabaseService.DeleteJournalEntryAsync(currentJournalEntry);
-        Navigation.NavigateTo("/");
+        isSaving = true;
+
+        try
+        {
+            await DatabaseService.DeleteJournalEntryAsync(currentJournalEntry);
+            successMessage = "Entry deleted successfully! Redirecting...";
+
+            await Task.Delay(1000);
+            Navigation.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error deleting entry: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
     }
 
     private void NavigateToHome() => Navigation.NavigateTo("/");

@@ -1,0 +1,171 @@
+/* Tag Selector Container */
+.tag-selector {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.tag-selector h5 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin:  0;
+}
+
+/* Custom Tag Input */
+.custom-tag-input {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform:  translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.custom-tag-input .input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.custom-tag-input .form-control {
+    flex: 1;
+    border-radius: 8px;
+}
+
+.custom-tag-input .btn {
+    border-radius: 8px;
+}
+
+/* Selected Tags Display */
+.selected-tags {
+    padding: 1rem;
+    background: white;
+    border-radius: 10px;
+    border: 2px dashed #dee2e6;
+}
+
+.selected-tags strong {
+    color: #34495e;
+    font-size: 0.95rem;
+}
+
+.selected-tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.selected-tag-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight:  500;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity:  1;
+        transform: scale(1);
+    }
+}
+
+.tag-remove-btn {
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.tag-remove-btn:hover {
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+}
+
+/* Tag Section */
+.tag-section {
+    margin-bottom: 1.5rem;
+}
+
+.tag-section-title {
+    font-size:  1rem;
+    font-weight: 600;
+    color: #5a6c7d;
+    margin-bottom: 0.75rem;
+}
+
+/* Tag Grid */
+.tag-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* Tag Button */
+.tag-button {
+    padding: 0.5rem 1rem;
+    border:  2px solid;
+    border-radius: 20px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.tag-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tag-button.selected {
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.custom-tag-indicator {
+    font-size: 0.75rem;
+}
+
+/* Responsive */
+@media (max-width:  576px) {
+    .tag-grid {
+        gap: 0.4rem;
+    }
+
+    .tag-button {
+        padding: 0.4rem 0.8rem;
+        font-size:  0.85rem;
+    }
+
+    .selected-tag-badge {
+        font-size: 0.85rem;
+        padding: 0.3rem 0.6rem;
+    }
+}

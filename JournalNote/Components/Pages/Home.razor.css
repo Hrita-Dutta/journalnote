@@ -14,7 +14,7 @@
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.text-center . lead {
+.text-center .lead {
     font-size:  1.2rem;
     color: #7f8c8d;
     font-weight: 300;
@@ -65,7 +65,7 @@
 }
 
 .card-subtitle {
-    font-size:  0.9rem;
+    font-size: 0.9rem;
     color: #95a5a6;
     font-weight: 400;
 }
@@ -83,7 +83,7 @@
     color: #34495e;
     padding: 0.5rem 0;
     border-bottom: 1px solid #e0e6ed;
-    margin-bottom: 1rem ! important;
+    margin-bottom: 1rem !important;
 }
 
 .mood-display strong {
@@ -92,10 +92,10 @@
 }
 
 .mood-display-small {
-    font-size: 0.95rem;
+    font-size:  0.95rem;
     color: #5a6c7d;
     padding: 0.25rem 0;
-    margin-bottom: 0.75rem ! important;
+    margin-bottom: 0.75rem !important;
 }
 
 .mood-display-small strong {
@@ -103,12 +103,67 @@
     font-weight: 600;
 }
 
+/* Tags Display Styling */
+.tags-display {
+    padding: 0.5rem 0;
+    border-bottom:  1px solid #e0e6ed;
+}
+
+.tags-display strong {
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag-badge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.85rem;
+    font-weight:  500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Tags Display Small (for grid cards) */
+.tags-display-small {
+    padding: 0.25rem 0;
+}
+
+.tags-display-small strong {
+    color: #34495e;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.tags-list-small {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.tag-badge-small {
+    display:  inline-block;
+    padding:  0.25rem 0.6rem;
+    border-radius:  15px;
+    color: white;
+    font-size: 0.75rem;
+    font-weight:  500;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 /* Badge Styling */
 .badge {
     font-size: 0.9rem;
     padding: 0.4rem 0.8rem;
     border-radius: 20px;
-    font-weight:  500;
+    font-weight: 500;
 }
 
 .bg-secondary {
@@ -143,7 +198,7 @@
 .btn {
     border-radius: 8px;
     padding: 0.5rem 1.2rem;
-    font-weight:  500;
+    font-weight: 500;
     transition: all 0.3s ease;
     border: none;
 }
@@ -171,7 +226,7 @@
 }
 
 .btn-outline-primary {
-    border: 2px solid #667eea;
+    border:  2px solid #667eea;
     color: #667eea;
     background: transparent;
 }
@@ -240,6 +295,20 @@
     .mood-display-small {
         font-size: 0.85rem;
     }
+
+    .tags-list {
+        gap: 0.35rem;
+    }
+
+    .tag-badge {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .tag-badge-small {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
 }
 
 /* Text Truncate */
@@ -253,6 +322,6 @@
 hr {
     border:  0;
     height: 1px;
-    background: linear-gradient(to right, transparent, #dee2e6, transparent);
+    background:  linear-gradient(to right, transparent, #dee2e6, transparent);
     margin: 2rem 0;
 }
