@@ -13,6 +13,10 @@
       "PackagePath": "staticwebassets/index.html"
     },
     {
+      "Id": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/wwwroot/js/quill-editor.js",
+      "PackagePath": "staticwebassets/js/quill-editor.js"
+    },
+    {
       "Id": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.min.css"
     },

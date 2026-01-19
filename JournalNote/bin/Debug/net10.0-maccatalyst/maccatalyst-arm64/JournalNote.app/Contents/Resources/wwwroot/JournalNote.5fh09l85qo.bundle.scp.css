@@ -430,7 +430,7 @@ nav[b-l96dkbs2km] {
 /* Page Title */
 .container h2[b-faxnbhdb77] {
     font-size: 2.2rem;
-    font-weight: 700;
+    font-weight:  700;
     color: #2c3e50;
     margin-bottom: 0.5rem;
 }
@@ -465,7 +465,7 @@ nav[b-l96dkbs2km] {
 .alert-success[b-faxnbhdb77] {
     background-color: #d4edda;
     color: #155724;
-    border-left: 4px solid #28a745;
+    border-left:  4px solid #28a745;
 }
 
 .alert .btn-close[b-faxnbhdb77] {
@@ -499,12 +499,12 @@ nav[b-l96dkbs2km] {
     font-size: 1rem;
     font-weight: 600;
     color: #34495e;
-    margin-bottom: 0.5rem;
+    margin-bottom:  0.5rem;
     display: block;
 }
 
 .form-control[b-faxnbhdb77] {
-    border: 2px solid #e0e6ed;
+    border:  2px solid #e0e6ed;
     border-radius: 10px;
     padding: 0.75rem 1rem;
     font-size: 1rem;
@@ -518,18 +518,19 @@ nav[b-l96dkbs2km] {
     outline: none;
 }
 
-/* Date & Text Inputs */
+/* Date Input */
 input[type="date"][b-faxnbhdb77] {
     cursor: pointer;
 }
 
+/* Text Input */
 input[type="text"][b-faxnbhdb77] {
     font-weight: 500;
 }
 
 /* Textarea */
 textarea.form-control[b-faxnbhdb77] {
-    resize: vertical;
+    resize:  vertical;
     min-height: 250px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
@@ -547,7 +548,7 @@ textarea.form-control[b-faxnbhdb77] {
 }
 
 .gap-2[b-faxnbhdb77] {
-    gap: 0.75rem;
+    gap:  0.75rem;
 }
 
 .flex-wrap[b-faxnbhdb77] {
@@ -623,7 +624,7 @@ textarea.form-control[b-faxnbhdb77] {
     border-width: 0.15em;
 }
 
-/* Loading Spinner */
+/* Loading State */
 .text-center[b-faxnbhdb77] {
     text-align: center;
 }
@@ -631,10 +632,10 @@ textarea.form-control[b-faxnbhdb77] {
 .spinner-border[b-faxnbhdb77] {
     width: 3rem;
     height: 3rem;
-    border-width: 0.3em;
+    border-width:  0.3em;
     border-color: #667eea;
     border-right-color: transparent;
-    animation: spinner-border-b-faxnbhdb77 0.75s linear infinite;
+    animation:  spinner-border-b-faxnbhdb77 0.75s linear infinite;
 }
 
 @keyframes spinner-border-b-faxnbhdb77 {
@@ -649,7 +650,7 @@ textarea.form-control[b-faxnbhdb77] {
 }
 
 .text-muted[b-faxnbhdb77] {
-    color: #7f8c8d !important;
+    color:  #7f8c8d ! important;
     font-size: 0.9rem;
     line-height: 1.6;
 }
@@ -661,8 +662,8 @@ textarea.form-control[b-faxnbhdb77] {
 /* Horizontal Rule */
 hr[b-faxnbhdb77] {
     border: 0;
-    height: 1px;
-    background: linear-gradient(to right, transparent, #dee2e6, transparent);
+    height:  1px;
+    background:  linear-gradient(to right, transparent, #dee2e6, transparent);
     margin: 1.5rem 0;
 }
 
@@ -683,7 +684,7 @@ hr[b-faxnbhdb77] {
 
     .btn[b-faxnbhdb77] {
         width: 100%;
-        margin-bottom: 0.5rem;
+        margin-bottom:  0.5rem;
     }
 
     .d-flex[b-faxnbhdb77] {
@@ -709,25 +710,29 @@ hr[b-faxnbhdb77] {
 
 /* Quill Toolbar */
 .ql-toolbar[b-faxnbhdb77] {
-    background: #f8f9fa;
-    border-top-left-radius: 10px !important;
-    border-top-right-radius: 10px !important;
-    border: 2px solid #e0e6ed !important;
-    border-bottom: 1px solid #e0e6ed !important;
+    background:  #f8f9fa;
+    border-top-left-radius: 10px ! important;
+    border-top-right-radius: 10px ! important;
+    border:  2px solid #e0e6ed ! important;
+    border-bottom:  1px solid #e0e6ed !important;
 }
 
 /* Quill Container */
 .ql-container[b-faxnbhdb77] {
-    border-bottom-left-radius: 10px !important;
-    border-bottom-right-radius: 10px !important;
-    border: 2px solid #e0e6ed !important;
+    border-bottom-left-radius: 10px ! important;
+    border-bottom-right-radius: 10px ! important;
+    border:  2px solid #e0e6ed !important;
     border-top: none !important;
     font-size: 1rem;
 }
 
 /* Quill Editor Focus */
-#editor:focus-within .ql-toolbar[b-faxnbhdb77],
-#editor:focus-within .ql-container[b-faxnbhdb77] {
+.ql-container.ql-snow[b-faxnbhdb77] {
+    border-color: #e0e6ed;
+}
+
+#editor:focus-within.ql-toolbar[b-faxnbhdb77],
+#editor:focus-within.ql-container[b-faxnbhdb77] {
     border-color: #667eea;
 }
 
@@ -745,7 +750,7 @@ hr[b-faxnbhdb77] {
 }
 
 /* Quill Content Placeholder */
-.ql-editor .ql-blank[b-faxnbhdb77]::before {
+.ql-editor.ql-blank[b-faxnbhdb77]::before {
     color: #95a5a6;
     font-style: italic;
     content: 'Write your thoughts here...';

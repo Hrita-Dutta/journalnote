@@ -3,6 +3,7 @@ using JournalNote.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace JournalNote.Services
@@ -14,7 +15,7 @@ namespace JournalNote.Services
 
         public DatabaseService()
         {
-            _databasePath = Path.Combine(FileSystem.AppDataDirectory, "journal.db");
+            _databasePath = Path.Combine(FileSystem.AppDataDirectory, "journal. db");
         }
 
         private async Task InitAsync()
@@ -23,10 +24,74 @@ namespace JournalNote.Services
                 return;
 
             _database = new SQLiteAsyncConnection(_databasePath);
-            await _database. CreateTableAsync<JournalEntry>();
+            
+            // Create tables
+            await _database.CreateTableAsync<JournalEntry>();
+            await _database.CreateTableAsync<Mood>();
+            await _database. CreateTableAsync<EntryMood>();
+
+            // Seed moods if table is empty
+            await SeedMoodsAsync();
         }
 
-        // ====== CREATE ======
+        // ====== SEED MOODS ======
+        private async Task SeedMoodsAsync()
+        {
+            var count = await _database.Table<Mood>().CountAsync();
+            if (count > 0)
+                return; // Already seeded
+
+            var moods = new List<Mood>
+            {
+                // Positive Moods
+                new Mood("Happy", "Positive", "😊"),
+                new Mood("Excited", "Positive", "🤩"),
+                new Mood("Relaxed", "Positive", "😌"),
+                new Mood("Grateful", "Positive", "🙏"),
+                new Mood("Confident", "Positive", "😎"),
+
+                // Neutral Moods
+                new Mood("Calm", "Neutral", "😐"),
+                new Mood("Thoughtful", "Neutral", "🤔"),
+                new Mood("Curious", "Neutral", "🧐"),
+                new Mood("Nostalgic", "Neutral", "😌"),
+                new Mood("Bored", "Neutral", "😑"),
+
+                // Negative Moods
+                new Mood("Sad", "Negative", "😢"),
+                new Mood("Angry", "Negative", "😠"),
+                new Mood("Stressed", "Negative", "😰"),
+                new Mood("Lonely", "Negative", "😔"),
+                new Mood("Anxious", "Negative", "😟")
+            };
+
+            await _database.InsertAllAsync(moods);
+        }
+
+        // ====== MOOD METHODS ======
+        public async Task<List<Mood>> GetAllMoodsAsync()
+        {
+            await InitAsync();
+            return await _database.Table<Mood>().ToListAsync();
+        }
+
+        public async Task<List<Mood>> GetMoodsByCategoryAsync(string category)
+        {
+            await InitAsync();
+            return await _database.Table<Mood>()
+                .Where(m => m.Category == category)
+                .ToListAsync();
+        }
+
+        public async Task<Mood> GetMoodByIdAsync(int id)
+        {
+            await InitAsync();
+            return await _database.Table<Mood>()
+                .Where(m => m.Id == id)
+                .FirstOrDefaultAsync();
+        }
+
+        // ====== JOURNAL ENTRY METHODS ======
         public async Task<int> AddJournalEntryAsync(JournalEntry journalEntry)
         {
             await InitAsync();
@@ -44,7 +109,6 @@ namespace JournalNote.Services
             return await _database.InsertAsync(journalEntry);
         }
 
-        // ====== READ - Get journal entry by date ======
         public async Task<JournalEntry> GetJournalEntryByDateAsync(string date)
         {
             await InitAsync();
@@ -61,7 +125,6 @@ namespace JournalNote.Services
             }
         }
 
-        // ====== READ - Get all journal entries ======
         public async Task<List<JournalEntry>> GetAllJournalEntriesAsync()
         {
             await InitAsync();
@@ -71,17 +134,15 @@ namespace JournalNote.Services
                 .ToListAsync();
         }
 
-        // ====== READ - Get journal entry by ID ======
         public async Task<JournalEntry> GetJournalEntryByIdAsync(int id)
         {
             await InitAsync();
             
-            return await _database.Table<JournalEntry>()
+            return await _database. Table<JournalEntry>()
                 .Where(e => e.Id == id)
                 .FirstOrDefaultAsync();
         }
 
-        // ====== UPDATE ======
         public async Task<int> UpdateJournalEntryAsync(JournalEntry journalEntry)
         {
             await InitAsync();
@@ -91,7 +152,6 @@ namespace JournalNote.Services
             return await _database.UpdateAsync(journalEntry);
         }
 
-        // ====== DELETE ======
         public async Task<int> DeleteJournalEntryAsync(JournalEntry journalEntry)
         {
             await InitAsync();
@@ -99,7 +159,6 @@ namespace JournalNote.Services
             return await _database.DeleteAsync(journalEntry);
         }
 
-        // ====== DELETE by ID ======
         public async Task<int> DeleteJournalEntryByIdAsync(int id)
         {
             await InitAsync();
@@ -112,7 +171,6 @@ namespace JournalNote.Services
             return 0;
         }
 
-        // ====== Check if journal entry exists for date ======
         public async Task<bool> HasJournalEntryForDateAsync(string date)
         {
             await InitAsync();
@@ -121,12 +179,35 @@ namespace JournalNote.Services
             return journalEntry != null;
         }
 
-        // ====== Get total journal entry count ======
         public async Task<int> GetJournalEntryCountAsync()
         {
             await InitAsync();
             
             return await _database.Table<JournalEntry>().CountAsync();
+        }
+
+        // ====== HELPER METHODS FOR MOODS ======
+        public async Task<List<Mood>> GetSecondaryMoodsForEntryAsync(JournalEntry entry)
+        {
+            await InitAsync();
+
+            if (string.IsNullOrEmpty(entry.SecondaryMoodIds))
+                return new List<Mood>();
+
+            var moodIds = entry.SecondaryMoodIds
+                .Split(',')
+                .Select(id => int.Parse(id.Trim()))
+                .ToList();
+
+            var moods = new List<Mood>();
+            foreach (var id in moodIds)
+            {
+                var mood = await GetMoodByIdAsync(id);
+                if (mood != null)
+                    moods.Add(mood);
+            }
+
+            return moods;
         }
     }
 }

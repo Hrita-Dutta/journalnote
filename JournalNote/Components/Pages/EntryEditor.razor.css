@@ -8,7 +8,7 @@
 /* Page Title */
 .container h2 {
     font-size: 2.2rem;
-    font-weight:  700;
+    font-weight: 700;
     color: #2c3e50;
     margin-bottom: 0.5rem;
 }
@@ -43,7 +43,7 @@
 .alert-success {
     background-color: #d4edda;
     color: #155724;
-    border-left:  4px solid #28a745;
+    border-left: 4px solid #28a745;
 }
 
 .alert .btn-close {
@@ -77,12 +77,12 @@
     font-size: 1rem;
     font-weight: 600;
     color: #34495e;
-    margin-bottom:  0.5rem;
+    margin-bottom: 0.5rem;
     display: block;
 }
 
 .form-control {
-    border:  2px solid #e0e6ed;
+    border: 2px solid #e0e6ed;
     border-radius: 10px;
     padding: 0.75rem 1rem;
     font-size: 1rem;
@@ -96,19 +96,18 @@
     outline: none;
 }
 
-/* Date Input */
+/* Date & Text Inputs */
 input[type="date"] {
     cursor: pointer;
 }
 
-/* Text Input */
 input[type="text"] {
     font-weight: 500;
 }
 
 /* Textarea */
 textarea.form-control {
-    resize:  vertical;
+    resize: vertical;
     min-height: 250px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
@@ -126,7 +125,7 @@ textarea.form-control {
 }
 
 .gap-2 {
-    gap:  0.75rem;
+    gap: 0.75rem;
 }
 
 .flex-wrap {
@@ -202,7 +201,7 @@ textarea.form-control {
     border-width: 0.15em;
 }
 
-/* Loading State */
+/* Loading Spinner */
 .text-center {
     text-align: center;
 }
@@ -210,10 +209,10 @@ textarea.form-control {
 .spinner-border {
     width: 3rem;
     height: 3rem;
-    border-width:  0.3em;
+    border-width: 0.3em;
     border-color: #667eea;
     border-right-color: transparent;
-    animation:  spinner-border 0.75s linear infinite;
+    animation: spinner-border 0.75s linear infinite;
 }
 
 @keyframes spinner-border {
@@ -228,7 +227,7 @@ textarea.form-control {
 }
 
 .text-muted {
-    color:  #7f8c8d ! important;
+    color: #7f8c8d !important;
     font-size: 0.9rem;
     line-height: 1.6;
 }
@@ -240,8 +239,8 @@ textarea.form-control {
 /* Horizontal Rule */
 hr {
     border: 0;
-    height:  1px;
-    background:  linear-gradient(to right, transparent, #dee2e6, transparent);
+    height: 1px;
+    background: linear-gradient(to right, transparent, #dee2e6, transparent);
     margin: 1.5rem 0;
 }
 
@@ -262,7 +261,7 @@ hr {
 
     .btn {
         width: 100%;
-        margin-bottom:  0.5rem;
+        margin-bottom: 0.5rem;
     }
 
     .d-flex {
@@ -277,4 +276,80 @@ hr {
 /* Smooth Animations */
 * {
     transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Quill Editor Styling */
+#editor {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Quill Toolbar */
+.ql-toolbar {
+    background: #f8f9fa;
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+    border: 2px solid #e0e6ed !important;
+    border-bottom: 1px solid #e0e6ed !important;
+}
+
+/* Quill Container */
+.ql-container {
+    border-bottom-left-radius: 10px !important;
+    border-bottom-right-radius: 10px !important;
+    border: 2px solid #e0e6ed !important;
+    border-top: none !important;
+    font-size: 1rem;
+}
+
+/* Quill Editor Focus */
+#editor:focus-within .ql-toolbar,
+#editor:focus-within .ql-container {
+    border-color: #667eea;
+}
+
+/* Quill Buttons */
+.ql-toolbar button {
+    transition: all 0.3s ease;
+}
+
+.ql-toolbar button:hover {
+    color: #667eea;
+}
+
+.ql-toolbar button.ql-active {
+    color: #667eea;
+}
+
+/* Quill Content Placeholder */
+.ql-editor .ql-blank::before {
+    color: #95a5a6;
+    font-style: italic;
+    content: 'Write your thoughts here...';
+}
+
+/* Mood Section Header */
+.mood-section-header {
+    margin-bottom: 1rem;
+}
+
+.mood-section-header .form-label {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.mood-section-header .text-danger {
+    font-size: 0.9rem;
+    font-weight: normal;
+}
+
+.mood-section-header .text-muted {
+    font-size:  0.9rem;
+    font-weight: normal;
+}
+
+/* Mood Section Spacing */
+.mb-4 {
+    margin-bottom:  2rem ! important;
 }

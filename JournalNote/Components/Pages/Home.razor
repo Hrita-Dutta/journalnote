@@ -34,9 +34,17 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">@todayJournalEntry.Title</h5>
-                    <p class="card-text">@GetPreview(todayJournalEntry.Content, 150)</p>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-primary" @onclick="() => EditJournalEntry(todayJournalEntry. Date)">
+                    
+                    @if (todayJournalEntry.PrimaryMoodId.HasValue)
+                    {
+                        <p class="mood-display mb-2">
+                            <strong>Mood:</strong> @GetMoodDisplayForEntry(todayJournalEntry)
+                        </p>
+                    }
+                    
+                    <div class="card-text">@((MarkupString)GetPreview(todayJournalEntry.Content, 150))</div>
+                    <div class="d-flex gap-2 mt-3">
+                        <button class="btn btn-primary" @onclick="() => EditJournalEntry(todayJournalEntry.Date)">
                             View/Edit
                         </button>
                     </div>
@@ -57,7 +65,7 @@
     <!-- All Journal Entries Section -->
     <div>
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>All Entries <span class="badge bg-secondary">@allJournalEntries.Count</span></h3>
+            <h3>All Entries <span class="badge bg-secondary">@allJournalEntries. Count</span></h3>
             <button class="btn btn-success" @onclick="CreateNewJournalEntry">
                 + New Entry
             </button>
@@ -67,9 +75,9 @@
         {
             <div class="text-center py-4">
                 <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading... </span>
+                    <span class="visually-hidden">Loading...</span>
                 </div>
-                <p class="mt-2">Loading entries...</p>
+                <p class="mt-2">Loading entries... </p>
             </div>
         }
         else if (allJournalEntries. Any())
@@ -82,10 +90,18 @@
                             <div class="card-body">
                                 <h5 class="card-title text-truncate">@journalEntry.Title</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">
-                                    @FormatDate(journalEntry.Date)
+                                    @FormatDate(journalEntry. Date)
                                 </h6>
-                                <p class="card-text">@GetPreview(journalEntry.Content, 100)</p>
-                                <button class="btn btn-sm btn-outline-primary" @onclick="() => EditJournalEntry(journalEntry.Date)">
+                                
+                                @if (journalEntry.PrimaryMoodId.HasValue)
+                                {
+                                    <p class="mood-display-small mb-2">
+                                        <strong>Mood:</strong> @GetMoodDisplayForEntry(journalEntry)
+                                    </p>
+                                }
+                                
+                                <div class="card-text">@((MarkupString)GetPreview(journalEntry.Content, 100))</div>
+                                <button class="btn btn-sm btn-outline-primary mt-2" @onclick="() => EditJournalEntry(journalEntry.Date)">
                                     View/Edit
                                 </button>
                             </div>
@@ -107,18 +123,12 @@
     </div>
 </div>
 
-<style>
-    .hover-shadow:hover {
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-        transition: box-shadow 0.3s ease-in-out;
-    }
-</style>
-
 @code {
     private List<JournalEntry> allJournalEntries = new();
     private JournalEntry?  todayJournalEntry;
     private bool isLoadingToday = true;
     private bool isLoadingAll = true;
+    private List<Mood> allMoods = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -142,9 +152,12 @@
 
         try
         {
+            // Load all moods first
+            allMoods = await DatabaseService. GetAllMoodsAsync();
+
             // Load today's journal entry
             string todayDateString = DateTime.Today.ToString("yyyy-MM-dd");
-            todayJournalEntry = await DatabaseService.GetJournalEntryByDateAsync(todayDateString);
+            todayJournalEntry = await DatabaseService. GetJournalEntryByDateAsync(todayDateString);
             isLoadingToday = false;
 
             // Load all journal entries
@@ -163,15 +176,56 @@
         }
     }
 
-    private string GetPreview(string content, int maxLength = 100)
+    private string GetMoodDisplayForEntry(JournalEntry entry)
     {
-        if (string.IsNullOrWhiteSpace(content))
-            return "No content";
+        if (! entry.PrimaryMoodId. HasValue)
+            return "No mood selected";
 
-        if (content.Length <= maxLength)
-            return content;
+        var primaryMood = allMoods. FirstOrDefault(m => m. Id == entry.PrimaryMoodId.Value);
+        if (primaryMood == null)
+            return "Unknown mood";
 
-        return content.Substring(0, maxLength) + "...";
+        var result = $"{primaryMood.Icon} {primaryMood.Name}";
+
+        // Add secondary moods
+        if (! string.IsNullOrEmpty(entry.SecondaryMoodIds))
+        {
+            var secondaryMoodIds = entry.SecondaryMoodIds
+                .Split(',')
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(s => int.Parse(s. Trim()))
+                .ToList();
+
+            if (secondaryMoodIds.Any())
+            {
+                var secondaryMoods = allMoods.Where(m => secondaryMoodIds.Contains(m.Id)).ToList();
+                if (secondaryMoods.Any())
+                {
+                    var secondaryDisplay = string.Join(", ", secondaryMoods.Select(m => $"{m.Icon} {m. Name}"));
+                    result += $" + {secondaryDisplay}";
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private string GetPreview(string htmlContent, int maxLength = 100)
+    {
+        if (string.IsNullOrWhiteSpace(htmlContent))
+            return "<p>No content</p>";
+
+        // Strip HTML tags for preview
+        var textContent = System.Text.RegularExpressions.Regex.Replace(htmlContent, "<.*?>", " ");
+        textContent = textContent.Trim();
+
+        if (string.IsNullOrWhiteSpace(textContent))
+            return "<p>No content</p>";
+
+        if (textContent.Length <= maxLength)
+            return $"<p>{textContent}</p>";
+
+        return $"<p>{textContent.Substring(0, maxLength)}...</p>";
     }
 
     private string FormatDate(string dateString)
@@ -195,6 +249,6 @@
 
     private void EditJournalEntry(string date)
     {
-        Navigation.NavigateTo($"/entry/{date}");
+        Navigation. NavigateTo($"/entry/{date}");
     }
 }
