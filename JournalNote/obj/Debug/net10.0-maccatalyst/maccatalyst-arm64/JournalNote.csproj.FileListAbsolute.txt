@@ -359,6 +359,9 @@
 /Applications/C#/Class/Coursework/JournalNote/JournalNote/bin/Debug/net10.0-maccatalyst/maccatalyst-arm64/SQLitePCLRaw.provider.dynamic_cdecl.dll
 /Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/scopedcss/Components/Pages/EntryEditor.razor.rz.scp.css
 /Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/scopedcss/Components/Shared/MoodSelector.razor.rz.scp.css
+/Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/scopedcss/Components/Shared/TagSelector.razor.rz.scp.css
+/Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/scopedcss/Components/Pages/Calendar.razor.rz.scp.css
+/Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/scopedcss/Components/Shared/CalendarView.razor.rz.scp.css
 /Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/resourcestamps/Markdig.stamp
 /Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/resourcestamps/Microsoft.AspNetCore.Authorization.stamp
 /Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/resourcestamps/Microsoft.AspNetCore.Components.stamp
@@ -400,4 +403,3 @@
 /Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/resourcestamps/SQLitePCLRaw.core.stamp
 /Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/resourcestamps/SQLitePCLRaw.provider.e_sqlite3.stamp
 /Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/unpack/Microsoft.Maui.Essentials/BundleResource/xml/microsoft_maui_essentials_fileprovider_file_paths.xml
-/Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/scopedcss/Components/Shared/TagSelector.razor.rz.scp.css

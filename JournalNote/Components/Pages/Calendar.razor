@@ -1,0 +1,322 @@
+@page "/calendar"
+@using JournalNote.Models
+@using JournalNote.Services
+@using JournalNote.Components.Shared
+@inject DatabaseService DatabaseService
+@inject NavigationManager Navigation
+
+<PageTitle>Calendar - JournalNote</PageTitle>
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h1>📅 Calendar View</h1>
+        <p class="lead">Navigate your journal entries by date</p>
+    </div>
+
+    <hr />
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
+            <p class="mt-3">Loading calendar...</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <!-- Calendar Section -->
+            <div class="col-lg-7 mb-4">
+                <CalendarView 
+                    CurrentMonth="@currentMonth"
+                    SelectedDate="@selectedDate"
+                    EntryDates="@entryDates"
+                    OnDateSelected="@OnDateSelected"
+                    @ref="calendarView" />
+
+                <!-- Quick Stats -->
+                <div class="card mt-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">📊 Quick Stats</h5>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">@totalEntries</div>
+                                <div class="stat-label">Total Entries</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">@entriesThisMonth</div>
+                                <div class="stat-label">This Month</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">@entriesThisYear</div>
+                                <div class="stat-label">This Year</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entry Preview Section -->
+            <div class="col-lg-5">
+                @if (selectedEntry != null)
+                {
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                @selectedDate.ToString("MMMM dd, yyyy")
+                            </h5>
+                            <hr />
+                            
+                            <h6 class="mb-2">@selectedEntry.Title</h6>
+
+                            @if (selectedEntry.PrimaryMoodId.HasValue)
+                            {
+                                <p class="mood-display-small mb-2">
+                                    <strong>Mood:</strong> @GetMoodDisplay(selectedEntry)
+                                </p>
+                            }
+
+                            @if (! string.IsNullOrEmpty(selectedEntry.TagIds))
+                            {
+                                <div class="tags-display-small mb-3">
+                                    <strong>Tags:</strong>
+                                    <div class="tags-list-small mt-1">
+                                        @foreach (var tag in GetTagsForEntry(selectedEntry))
+                                        {
+                                            <span class="tag-badge-small" style="background-color: @tag.Color">
+                                                @tag.Name
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="entry-preview">
+                                @((MarkupString)GetPreview(selectedEntry.Content, 200))
+                            </div>
+
+                            <div class="d-flex gap-2 mt-3">
+                                <button class="btn btn-primary" @onclick="ViewEntry">
+                                    View Full Entry
+                                </button>
+                                <button class="btn btn-outline-primary" @onclick="EditEntry">
+                                    Edit
+                                </button>
+                            </div>
+
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    Created: @selectedEntry.CreatedAt.ToString("MMM dd, yyyy h:mm tt")
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center py-5">
+                            <h5>@selectedDate.ToString("MMMM dd, yyyy")</h5>
+                            <hr />
+                            <p class="text-muted mb-3">No entry for this date</p>
+                            <button class="btn btn-success" @onclick="CreateEntry">
+                                ✍️ Create Entry
+                            </button>
+                        </div>
+                    </div>
+                }
+
+                <!-- Month Summary -->
+                <div class="card mt-4 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            📝 @currentMonth.ToString("MMMM yyyy") Summary
+                        </h6>
+                        <ul class="list-unstyled mt-3">
+                            <li class="mb-2">
+                                <strong>Entries:</strong> @entriesThisMonth
+                            </li>
+                            <li class="mb-2">
+                                <strong>Days with entries:</strong> @GetDaysWithEntriesInMonth()
+                            </li>
+                            <li class="mb-2">
+                                <strong>Completion: </strong> @GetMonthCompletionPercentage()%
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private CalendarView calendarView;
+    private DateTime currentMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+    private DateTime selectedDate = DateTime.Today;
+    private List<string> entryDates = new();
+    private JournalEntry selectedEntry;
+    private bool isLoading = true;
+
+    // Stats
+    private int totalEntries = 0;
+    private int entriesThisMonth = 0;
+    private int entriesThisYear = 0;
+
+    // Data
+    private List<JournalEntry> allEntries = new();
+    private List<Mood> allMoods = new();
+    private List<Tag> allTags = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+
+        try
+        {
+            // Load all data
+            allEntries = await DatabaseService.GetAllJournalEntriesAsync();
+            allMoods = await DatabaseService.GetAllMoodsAsync();
+            allTags = await DatabaseService.GetAllTagsAsync();
+
+            // Extract entry dates
+            entryDates = allEntries. Select(e => e.Date).ToList();
+
+            // Calculate stats
+            totalEntries = allEntries.Count;
+            entriesThisMonth = allEntries.Count(e => 
+                DateTime.Parse(e.Date).Year == currentMonth.Year && 
+                DateTime.Parse(e.Date).Month == currentMonth.Month);
+            entriesThisYear = allEntries.Count(e => 
+                DateTime.Parse(e.Date).Year == DateTime.Today.Year);
+
+            // Load today's entry
+            await LoadEntryForDate(selectedDate);
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", $"Failed to load data: {ex.Message}", "OK");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task OnDateSelected(DateTime date)
+    {
+        selectedDate = date;
+        currentMonth = new DateTime(date.Year, date.Month, 1);
+        
+        // Update stats
+        entriesThisMonth = allEntries.Count(e => 
+            DateTime.Parse(e.Date).Year == currentMonth.Year && 
+            DateTime.Parse(e.Date).Month == currentMonth.Month);
+
+        await LoadEntryForDate(date);
+    }
+
+    private async Task LoadEntryForDate(DateTime date)
+    {
+        var dateString = date.ToString("yyyy-MM-dd");
+        selectedEntry = await DatabaseService.GetJournalEntryByDateAsync(dateString);
+        StateHasChanged();
+    }
+
+    private string GetMoodDisplay(JournalEntry entry)
+    {
+        if (! entry.PrimaryMoodId.HasValue)
+            return "No mood";
+
+        var primaryMood = allMoods. FirstOrDefault(m => m.Id == entry.PrimaryMoodId.Value);
+        if (primaryMood == null)
+            return "Unknown";
+
+        var result = $"{primaryMood.Icon} {primaryMood.Name}";
+
+        if (! string.IsNullOrEmpty(entry.SecondaryMoodIds))
+        {
+            var secondaryMoodIds = entry.SecondaryMoodIds
+                .Split(',')
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(s => int.Parse(s.Trim()))
+                .ToList();
+
+            var secondaryMoods = allMoods.Where(m => secondaryMoodIds.Contains(m.Id)).ToList();
+            if (secondaryMoods.Any())
+            {
+                var secondary = string.Join(", ", secondaryMoods.Select(m => $"{m.Icon} {m.Name}"));
+                result += $" + {secondary}";
+            }
+        }
+
+        return result;
+    }
+
+    private List<Tag> GetTagsForEntry(JournalEntry entry)
+    {
+        if (string.IsNullOrEmpty(entry.TagIds))
+            return new List<Tag>();
+
+        var tagIds = entry.TagIds
+            .Split(',')
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(s => int.Parse(s.Trim()))
+            .ToList();
+
+        return allTags.Where(t => tagIds.Contains(t.Id)).ToList();
+    }
+
+    private string GetPreview(string htmlContent, int maxLength = 200)
+    {
+        if (string.IsNullOrWhiteSpace(htmlContent))
+            return "<p class='text-muted'>No content</p>";
+
+        var textContent = System.Text.RegularExpressions.Regex.Replace(htmlContent, "<.*?>", " ");
+        textContent = textContent.Trim();
+
+        if (string.IsNullOrWhiteSpace(textContent))
+            return "<p class='text-muted'>No content</p>";
+
+        if (textContent.Length <= maxLength)
+            return $"<p>{textContent}</p>";
+
+        return $"<p>{textContent.Substring(0, maxLength)}...</p>";
+    }
+
+    private int GetDaysWithEntriesInMonth()
+    {
+        return allEntries.Count(e =>
+        {
+            var entryDate = DateTime.Parse(e.Date);
+            return entryDate.Year == currentMonth.Year && entryDate.Month == currentMonth.Month;
+        });
+    }
+
+    private int GetMonthCompletionPercentage()
+    {
+        var daysInMonth = DateTime.DaysInMonth(currentMonth.Year, currentMonth.Month);
+        var daysWithEntries = GetDaysWithEntriesInMonth();
+        return (int)((daysWithEntries / (double)daysInMonth) * 100);
+    }
+
+    private void ViewEntry()
+    {
+        Navigation.NavigateTo($"/entry/{selectedEntry.Date}");
+    }
+
+    private void EditEntry()
+    {
+        Navigation.NavigateTo($"/entry/{selectedEntry.Date}");
+    }
+
+    private void CreateEntry()
+    {
+        Navigation.NavigateTo($"/entry/{selectedDate.ToString("yyyy-MM-dd")}");
+    }
+}

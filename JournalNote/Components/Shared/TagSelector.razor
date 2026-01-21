@@ -38,7 +38,7 @@
                     var tag = AllTags.FirstOrDefault(t => t.Id == tagId);
                     if (tag != null)
                     {
-                        <span class="selected-tag-badge" style="background-color: @tag. Color">
+                        <span class="selected-tag-badge" style="background-color: @tag.Color">
                             @tag.Name
                             <button type="button" class="tag-remove-btn" @onclick="() => RemoveTag(tagId)">
                                 ×
@@ -58,7 +58,7 @@
                 @foreach (var tag in PredefinedTags)
                 {
                     <button type="button" 
-                            class="tag-button @(IsSelected(tag. Id) ? "selected" : "")"
+                            class="tag-button @(IsSelected(tag.Id) ? "selected" : "")"
                             style="@GetTagStyle(tag)"
                             @onclick="() => ToggleTag(tag.Id)">
                         @tag.Name
@@ -80,7 +80,7 @@
                             style="@GetTagStyle(tag)"
                             @onclick="() => ToggleTag(tag.Id)">
                         @tag.Name
-                        <span class="custom-tag-indicator">✨</span>
+                        
                     </button>
                 }
             </div>
@@ -130,7 +130,7 @@
     {
         showCustomTagInput = false;
         customTagName = string.Empty;
-        customTagError = string. Empty;
+        customTagError = string.Empty;
     }
 
     private async Task AddCustomTag()
@@ -143,7 +143,7 @@
             return;
         }
 
-        if (AllTags.Any(t => t.Name.Equals(customTagName. Trim(), StringComparison.OrdinalIgnoreCase)))
+        if (AllTags.Any(t => t.Name.Equals(customTagName.Trim(), StringComparison.OrdinalIgnoreCase)))
         {
             customTagError = "This tag already exists.";
             return;
@@ -151,7 +151,7 @@
 
         var newTag = new Tag
         {
-            Name = customTagName. Trim(),
+            Name = customTagName.Trim(),
             IsPredefined = false,
             Color = GetRandomColor()
         };
