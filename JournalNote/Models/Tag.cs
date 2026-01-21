@@ -12,22 +12,14 @@ namespace JournalNote.Models
         [Unique]
         public string Name { get; set; } = string.Empty;
 
-        public bool IsPredefined { get; set; } // true for pre-built tags, false for custom
+        public bool IsPredefined { get; set; }
 
-        public string Color { get; set; } = "#667eea"; // Tag color for UI
+        public string Color { get; set; } = "#667eea";
 
         public DateTime CreatedAt { get; set; }
 
         public Tag()
         {
-            CreatedAt = DateTime.Now;
-        }
-
-        public Tag(string name, bool isPredefined, string color = "#667eea")
-        {
-            Name = name;
-            IsPredefined = isPredefined;
-            Color = color;
             CreatedAt = DateTime.Now;
         }
     }

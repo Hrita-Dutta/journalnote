@@ -8,7 +8,6 @@
         </button>
     </div>
 
-    <!-- Custom Tag Input -->
     @if (showCustomTagInput)
     {
         <div class="custom-tag-input mb-3">
@@ -17,19 +16,18 @@
                        class="form-control" 
                        placeholder="Enter custom tag name..." 
                        @bind="customTagName"
-                       @onkeypress="OnCustomTagKeyPress"
+                       @bind:event="oninput"
                        maxlength="50" />
                 <button class="btn btn-success" @onclick="AddCustomTag">Add</button>
                 <button class="btn btn-secondary" @onclick="CancelCustomTag">Cancel</button>
             </div>
             @if (! string.IsNullOrEmpty(customTagError))
             {
-                <small class="text-danger">@customTagError</small>
+                <small class="text-danger mt-1 d-block">@customTagError</small>
             }
         </div>
     }
 
-    <!-- Selected Tags Display -->
     @if (SelectedTagIds.Any())
     {
         <div class="selected-tags mb-3">
@@ -40,7 +38,7 @@
                     var tag = AllTags.FirstOrDefault(t => t.Id == tagId);
                     if (tag != null)
                     {
-                        <span class="selected-tag-badge" style="background-color: @tag.Color">
+                        <span class="selected-tag-badge" style="background-color: @tag. Color">
                             @tag.Name
                             <button type="button" class="tag-remove-btn" @onclick="() => RemoveTag(tagId)">
                                 ×
@@ -52,7 +50,6 @@
         </div>
     }
 
-    <!-- Predefined Tags -->
     @if (PredefinedTags.Any())
     {
         <div class="tag-section mb-3">
@@ -61,7 +58,7 @@
                 @foreach (var tag in PredefinedTags)
                 {
                     <button type="button" 
-                            class="tag-button @(IsSelected(tag.Id) ? "selected" : "")"
+                            class="tag-button @(IsSelected(tag. Id) ? "selected" : "")"
                             style="@GetTagStyle(tag)"
                             @onclick="() => ToggleTag(tag.Id)">
                         @tag.Name
@@ -71,8 +68,7 @@
         </div>
     }
 
-    <!-- Custom Tags -->
-    @if (CustomTags.Any())
+    @if (CustomTags. Any())
     {
         <div class="tag-section">
             <h6 class="tag-section-title">Your Custom Tags</h6>
@@ -93,46 +89,26 @@
 </div>
 
 @code {
-    [Parameter]
-    public string Title { get; set; } = "Tags";
-
-    [Parameter]
-    public List<Tag> AllTags { get; set; } = new();
-
-    [Parameter]
-    public List<Tag> PredefinedTags { get; set; } = new();
-
-    [Parameter]
-    public List<Tag> CustomTags { get; set; } = new();
-
-    [Parameter]
-    public List<int> SelectedTagIds { get; set; } = new();
-
-    [Parameter]
-    public EventCallback<int> OnTagToggled { get; set; }
-
-    [Parameter]
-    public EventCallback<Tag> OnCustomTagAdded { get; set; }
+    [Parameter] public string Title { get; set; } = "Tags";
+    [Parameter] public List<Tag> AllTags { get; set; } = new();
+    [Parameter] public List<Tag> PredefinedTags { get; set; } = new();
+    [Parameter] public List<Tag> CustomTags { get; set; } = new();
+    [Parameter] public List<int> SelectedTagIds { get; set; } = new();
+    [Parameter] public EventCallback<int> OnTagToggled { get; set; }
+    [Parameter] public EventCallback<Tag> OnCustomTagAdded { get; set; }
 
     private bool showCustomTagInput = false;
     private string customTagName = string.Empty;
     private string customTagError = string.Empty;
 
-    private bool IsSelected(int tagId)
-    {
-        return SelectedTagIds.Contains(tagId);
-    }
+    private bool IsSelected(int tagId) => SelectedTagIds.Contains(tagId);
 
     private async Task ToggleTag(int tagId)
     {
         if (SelectedTagIds.Contains(tagId))
-        {
             SelectedTagIds.Remove(tagId);
-        }
         else
-        {
             SelectedTagIds.Add(tagId);
-        }
 
         await OnTagToggled.InvokeAsync(tagId);
     }
@@ -154,7 +130,7 @@
     {
         showCustomTagInput = false;
         customTagName = string.Empty;
-        customTagError = string.Empty;
+        customTagError = string. Empty;
     }
 
     private async Task AddCustomTag()
@@ -167,8 +143,7 @@
             return;
         }
 
-        // Check if tag already exists
-        if (AllTags.Any(t => t.Name.Equals(customTagName.Trim(), StringComparison.OrdinalIgnoreCase)))
+        if (AllTags.Any(t => t.Name.Equals(customTagName. Trim(), StringComparison.OrdinalIgnoreCase)))
         {
             customTagError = "This tag already exists.";
             return;
@@ -176,7 +151,7 @@
 
         var newTag = new Tag
         {
-            Name = customTagName.Trim(),
+            Name = customTagName. Trim(),
             IsPredefined = false,
             Color = GetRandomColor()
         };
@@ -187,24 +162,12 @@
         showCustomTagInput = false;
     }
 
-    private async Task OnCustomTagKeyPress(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter")
-        {
-            await AddCustomTag();
-        }
-    }
-
     private string GetTagStyle(Tag tag)
     {
         if (IsSelected(tag.Id))
-        {
             return $"background-color: {tag.Color}; color: white; border-color: {tag.Color};";
-        }
         else
-        {
             return $"border-color: {tag.Color}; color: {tag.Color};";
-        }
     }
 
     private string GetRandomColor()
