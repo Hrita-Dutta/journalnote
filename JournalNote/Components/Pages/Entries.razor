@@ -105,7 +105,32 @@
                     </div>
                 }
             </div>
+        }else
+        {
+            <div class="row g-3">
+                @foreach (var entry in filteredEntries)
+                {
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="entry-card grid-view shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-truncate">@entry.Title</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">@FormatDate(entry.Date)</h6>
+
+                                <div class="entry-preview-grid">
+                                    @((MarkupString)GetPreview(entry.Content, 100))
+                                </div>
+
+                                <div class="d-flex gap-2 mt-3">
+                                    <button class="btn btn-sm btn-outline-primary flex-fill" @onclick="() => ViewEntry(entry.Date)">View</button>
+                                    <button class="btn btn-sm btn-outline-secondary flex-fill" @onclick="() => EditEntry(entry.Date)">Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
         }
+
     }
 
 </div>
