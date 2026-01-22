@@ -19,7 +19,7 @@
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <div class="row g-3">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label"><strong>Search:</strong></label>
                     <input type="text"
                            class="form-control"
@@ -29,7 +29,7 @@
                            @onkeyup="OnSearchChanged" />
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label"><strong>Sort By:</strong></label>
                     <select class="form-select" @onchange="OnSortChanged">
                         <option value="date-desc">Date (Newest First)</option>
@@ -38,7 +38,24 @@
                         <option value="title-desc">Title (Z-A)</option>
                     </select>
                 </div>
+
+                <div class="col-md-4">
+                    <label class="form-label"><strong>View:</strong></label>
+                    <div class="btn-group w-100" role="group">
+                        <button type="button"
+                                class="btn @(viewMode == "list" ? "btn-primary" : "btn-outline-primary")"
+                                @onclick='() => viewMode = "list"'>
+                            ☰ List
+                        </button>
+                        <button type="button"
+                                class="btn @(viewMode == "grid" ? "btn-primary" : "btn-outline-primary")"
+                                @onclick='() => viewMode = "grid"'>
+                            ⊞ Grid
+                        </button>
+                    </div>
+                </div>
             </div>
+
 
             @if (!string.IsNullOrEmpty(searchTerm))
             {
@@ -63,17 +80,63 @@
             <p class="mt-3">Loading entries...</p>
         </div>
     }
-    else if (!filteredEntries.Any())
+    else
     {
-        <div class="alert alert-secondary text-center py-5">
-            <h4>📝 No entries found</h4>
-            <p>Start your journaling journey today!</p>
-            <button class="btn btn-success" @onclick="CreateNewEntry">Create Your First Entry</button>
-        </div>
+        @if (viewMode == "list")
+        {
+            <div class="entries-list">
+                @foreach (var entry in filteredEntries)
+                {
+                    <div class="entry-card list-view shadow-sm mb-3">
+                        <div class="entry-header">
+                            <div>
+                                <h5 class="entry-title">@entry.Title</h5>
+                                <small class="text-muted">@FormatDate(entry.Date)</small>
+                            </div>
+                            <div class="entry-actions">
+                                <button class="btn btn-sm btn-outline-primary" @onclick="() => ViewEntry(entry.Date)">View</button>
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => EditEntry(entry.Date)">Edit</button>
+                            </div>
+                        </div>
+
+                        <div class="entry-preview">
+                            @((MarkupString)GetPreview(entry.Content, 150))
+                        </div>
+                    </div>
+                }
+            </div>
+        }
     }
+
 </div>
 
 @code {
+    private string viewMode = "list";
+
+    private string GetPreview(string htmlContent, int maxLength)
+    {
+        if (string.IsNullOrWhiteSpace(htmlContent))
+            return "<p class='text-muted'>No content</p>";
+
+        var textContent = System.Text.RegularExpressions.Regex.Replace(htmlContent, "<.*?>", " ").Trim();
+
+        if (textContent.Length <= maxLength)
+            return $"<p>{textContent}</p>";
+
+        return $"<p>{textContent.Substring(0, maxLength)}...</p>";
+    }
+
+    private string FormatDate(string dateString)
+    {
+        if (DateTime.TryParse(dateString, out var date))
+            return date.ToString("MMMM dd, yyyy");
+
+        return dateString;
+    }
+
+    private void ViewEntry(string date) => Navigation.NavigateTo($"/entry/{date}");
+    private void EditEntry(string date) => Navigation.NavigateTo($"/entry/{date}");
+
     private string searchTerm = string.Empty;
     private string sortBy = "date-desc";
 
