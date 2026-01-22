@@ -1,0 +1,64 @@
+@using JournalNote.Models
+
+<div class="pagination-container">
+    <div class="pagination-info">
+        <span>
+            Showing @PaginationInfo.StartItem-@PaginationInfo.EndItem of @PaginationInfo.TotalItems
+        </span>
+    </div>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item @(IsFirstPage ? "disabled" : "")">
+                <button class="page-link"
+                        @onclick="() => OnPageChanged(1)"
+                        disabled="@IsFirstPage">
+                    ««
+                </button>
+            </li>
+
+            <li class="page-item @(!PaginationInfo.HasPreviousPage ? "disabled" : "")">
+                <button class="page-link"
+                        @onclick="() => OnPageChanged(PaginationInfo.CurrentPage - 1)"
+                        disabled="@(!PaginationInfo.HasPreviousPage)">
+                    «
+                </button>
+            </li>
+
+            <li class="page-item @(!PaginationInfo.HasNextPage ? "disabled" : "")">
+                <button class="page-link"
+                        @onclick="() => OnPageChanged(PaginationInfo.CurrentPage + 1)"
+                        disabled="@(!PaginationInfo.HasNextPage)">
+                    »
+                </button>
+            </li>
+
+            <li class="page-item @(IsLastPage ? "disabled" : "")">
+                <button class="page-link"
+                        @onclick="() => OnPageChanged(PaginationInfo.TotalPages)"
+                        disabled="@IsLastPage">
+                    »»
+                </button>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+@code {
+    [Parameter]
+    public PaginationInfo PaginationInfo { get; set; } = new PaginationInfo(1, 10, 0);
+
+    [Parameter]
+    public EventCallback<int> OnPageChange { get; set; }
+
+    private bool IsFirstPage => PaginationInfo.CurrentPage <= 1;
+    private bool IsLastPage => PaginationInfo.CurrentPage >= PaginationInfo.TotalPages;
+
+    private async Task OnPageChanged(int pageNumber)
+    {
+        if (pageNumber < 1 || pageNumber > PaginationInfo.TotalPages)
+            return;
+
+        await OnPageChange.InvokeAsync(pageNumber);
+    }
+}
