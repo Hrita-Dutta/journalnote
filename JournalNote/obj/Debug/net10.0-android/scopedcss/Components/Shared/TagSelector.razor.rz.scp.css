@@ -26,7 +26,7 @@
     }
 }
 
-.custom-tag-input . input-group[b-0ekyjce8o7] {
+.custom-tag-input .input-group[b-0ekyjce8o7] {
     display: flex;
     gap: 0.5rem;
 }
@@ -36,7 +36,7 @@
     border-radius: 8px;
 }
 
-.custom-tag-input . btn[b-0ekyjce8o7] {
+.custom-tag-input .btn[b-0ekyjce8o7] {
     border-radius: 8px;
 }
 
@@ -47,7 +47,7 @@
     border: 2px dashed #dee2e6;
 }
 
-. selected-tags strong[b-0ekyjce8o7] {
+.selected-tags strong[b-0ekyjce8o7] {
     color: #34495e;
     font-size: 0.95rem;
 }
@@ -91,7 +91,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 1. 2rem;
+    font-size: 1.2rem;
     line-height: 1;
     color: white;
     transition: all 0.2s ease;
