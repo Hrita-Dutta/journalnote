@@ -2,54 +2,53 @@
 
 <div class="pagination-container">
     <div class="pagination-info">
-        <span>
-            Showing @PaginationInfo.StartItem-@PaginationInfo.EndItem of @PaginationInfo.TotalItems
-        </span>
+        <span>Showing @PaginationInfo.StartItem-@PaginationInfo.EndItem of @PaginationInfo.TotalItems</span>
     </div>
 
     <nav aria-label="Page navigation">
         <ul class="pagination">
-            <li class="page-item @(IsFirstPage ? "disabled" : "")">
-                <button class="page-link"
-                        @onclick="() => OnPageChanged(1)"
-                        disabled="@IsFirstPage">
+            <!-- First Page -->
+            <li class="page-item @(PaginationInfo.CurrentPage == 1 ? "disabled" : "")">
+                <button class="page-link" @onclick="() => OnPageChanged(1)" disabled="@(PaginationInfo.CurrentPage == 1)">
                     ««
                 </button>
             </li>
 
-            <li class="page-item @(!PaginationInfo.HasPreviousPage ? "disabled" : "")">
-                <button class="page-link"
-                        @onclick="() => OnPageChanged(PaginationInfo.CurrentPage - 1)"
-                        disabled="@(!PaginationInfo.HasPreviousPage)">
+            <!-- Previous Page -->
+            <li class="page-item @(! PaginationInfo.HasPreviousPage ? "disabled" : "")">
+                <button class="page-link" @onclick="() => OnPageChanged(PaginationInfo.CurrentPage - 1)" 
+                        disabled="@(! PaginationInfo.HasPreviousPage)">
                     «
                 </button>
             </li>
 
+            <!-- Page Numbers -->
+            @foreach (var pageNumber in GetPageNumbers())
+            {
+                <li class="page-item @(pageNumber == PaginationInfo.CurrentPage ? "active" : "")">
+                    <button class="page-link" @onclick="() => OnPageChanged(pageNumber)">
+                        @pageNumber
+                    </button>
+                </li>
+            }
+
+            <!-- Next Page -->
             <li class="page-item @(!PaginationInfo.HasNextPage ? "disabled" : "")">
-                <button class="page-link"
-                        @onclick="() => OnPageChanged(PaginationInfo.CurrentPage + 1)"
+                <button class="page-link" @onclick="() => OnPageChanged(PaginationInfo.CurrentPage + 1)" 
                         disabled="@(!PaginationInfo.HasNextPage)">
                     »
                 </button>
             </li>
 
-            <li class="page-item @(IsLastPage ? "disabled" : "")">
-                <button class="page-link"
-                        @onclick="() => OnPageChanged(PaginationInfo.TotalPages)"
-                        disabled="@IsLastPage">
+            <!-- Last Page -->
+            <li class="page-item @(PaginationInfo.CurrentPage == PaginationInfo.TotalPages ? "disabled" : "")">
+                <button class="page-link" @onclick="() => OnPageChanged(PaginationInfo.TotalPages)" 
+                        disabled="@(PaginationInfo.CurrentPage == PaginationInfo.TotalPages)">
                     »»
                 </button>
             </li>
         </ul>
     </nav>
-    @foreach (var page in GetPageNumbers())
-    {
-        <li class="page-item @(page == PaginationInfo.CurrentPage ? "active" : "")">
-            <button class="page-link" @onclick="() => OnPageChanged(page)">
-                @page
-            </button>
-        </li>
-    }
 
     <div class="page-size-selector">
         <label>Items per page:</label>
@@ -61,72 +60,80 @@
             <option value="50" selected="@(PageSize == 50)">50</option>
         </select>
     </div>
-
 </div>
 
 @code {
     [Parameter]
+    public PaginationInfo PaginationInfo { get; set; }
+
+    [Parameter]
     public int PageSize { get; set; } = 10;
-
-    [Parameter]
-    public EventCallback<int> OnPageSizeChange { get; set; }
-
-    private async Task OnPageSizeChanged(ChangeEventArgs e)
-    {
-        if (e?.Value == null)
-            return;
-
-        if (int.TryParse(e.Value.ToString(), out var newSize))
-        {
-            await OnPageSizeChange.InvokeAsync(newSize);
-        }
-    }
-
-    [Parameter]
-    public PaginationInfo PaginationInfo { get; set; } = new PaginationInfo(1, 10, 0);
 
     [Parameter]
     public EventCallback<int> OnPageChange { get; set; }
 
-    private bool IsFirstPage => PaginationInfo.CurrentPage <= 1;
-    private bool IsLastPage => PaginationInfo.CurrentPage >= PaginationInfo.TotalPages;
+    [Parameter]
+    public EventCallback<int> OnPageSizeChange { get; set; }
 
     private async Task OnPageChanged(int pageNumber)
     {
-        if (pageNumber < 1 || pageNumber > PaginationInfo.TotalPages)
-            return;
-
-        await OnPageChange.InvokeAsync(pageNumber);
+        if (pageNumber >= 1 && pageNumber <= PaginationInfo.TotalPages)
+        {
+            await OnPageChange.InvokeAsync(pageNumber);
+        }
     }
+
+    private async Task OnPageSizeChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int newPageSize))
+        {
+            await OnPageSizeChange.InvokeAsync(newPageSize);
+        }
+    }
+
     private List<int> GetPageNumbers()
     {
-        var pages = new List<int>();
-        var total = PaginationInfo.TotalPages;
-        var current = PaginationInfo.CurrentPage;
+        var pageNumbers = new List<int>();
+        var totalPages = PaginationInfo.TotalPages;
+        var currentPage = PaginationInfo.CurrentPage;
 
-        if (total <= 7)
+        if (totalPages <= 7)
         {
-            for (int i = 1; i <= total; i++)
-                pages.Add(i);
+            // Show all pages
+            for (int i = 1; i <= totalPages; i++)
+            {
+                pageNumbers.Add(i);
+            }
+        }
+        else
+        {
+            // Show first, last, current, and nearby pages
+            pageNumbers.Add(1);
 
-            return pages;
+            if (currentPage > 3)
+            {
+                pageNumbers.Add(-1); // Ellipsis placeholder
+            }
+
+            for (int i = Math.Max(2, currentPage - 1); i <= Math.Min(totalPages - 1, currentPage + 1); i++)
+            {
+                if (! pageNumbers.Contains(i))
+                {
+                    pageNumbers.Add(i);
+                }
+            }
+
+            if (currentPage < totalPages - 2)
+            {
+                pageNumbers.Add(-1); // Ellipsis placeholder
+            }
+
+            if (! pageNumbers.Contains(totalPages))
+            {
+                pageNumbers.Add(totalPages);
+            }
         }
 
-        pages.Add(1);
-
-        if (current > 3)
-            pages.Add(-1);
-
-        for (int i = Math.Max(2, current - 1); i <= Math.Min(total - 1, current + 1); i++)
-            pages.Add(i);
-
-        if (current < total - 2)
-            pages.Add(-1);
-
-        pages.Add(total);
-
-        return pages;
+        return pageNumbers;
     }
-
-
 }
