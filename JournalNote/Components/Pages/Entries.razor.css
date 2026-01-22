@@ -1,0 +1,81 @@
+/* Container */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header */
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+. lead {
+    color: #7f8c8d;
+}
+
+/* Entry Card - List View */
+.entry-card. list-view {
+    background:  white;
+    border-radius:  12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    border: 2px solid #e0e6ed;
+}
+
+. entry-card.list-view:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+}
+
+.entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.entry-title {
+    font-size: 1.3rem;
+    font-weight:  600;
+    color: #2c3e50;
+    margin: 0 0 0.25rem 0;
+}
+
+. entry-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.entry-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom:  1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e6ed;
+}
+
+.meta-item {
+    font-size: 0.9rem;
+    color: #5a6c7d;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.meta-item strong {
+    color: #34495e;
+}
+
+.entry-preview {
+    color: #5a6c7d;
+    line-height: 1.6;
+}
+
+.entry-preview p {
+    margin: 0;
+}
+
