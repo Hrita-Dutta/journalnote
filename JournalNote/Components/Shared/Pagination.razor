@@ -42,6 +42,15 @@
             </li>
         </ul>
     </nav>
+    @foreach (var page in GetPageNumbers())
+    {
+        <li class="page-item @(page == PaginationInfo.CurrentPage ? "active" : "")">
+            <button class="page-link" @onclick="() => OnPageChanged(page)">
+                @page
+            </button>
+        </li>
+    }
+
     <div class="page-size-selector">
         <label>Items per page:</label>
         <select class="form-select form-select-sm" @onchange="OnPageSizeChanged">
@@ -89,4 +98,16 @@
 
         await OnPageChange.InvokeAsync(pageNumber);
     }
+    private List<int> GetPageNumbers()
+    {
+        var pages = new List<int>();
+
+        for (int i = 1; i <= PaginationInfo.TotalPages; i++)
+        {
+            pages.Add(i);
+        }
+
+        return pages;
+    }
+
 }
