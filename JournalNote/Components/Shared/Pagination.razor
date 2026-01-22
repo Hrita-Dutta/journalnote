@@ -42,9 +42,37 @@
             </li>
         </ul>
     </nav>
+    <div class="page-size-selector">
+        <label>Items per page:</label>
+        <select class="form-select form-select-sm" @onchange="OnPageSizeChanged">
+            <option value="5" selected="@(PageSize == 5)">5</option>
+            <option value="10" selected="@(PageSize == 10)">10</option>
+            <option value="15" selected="@(PageSize == 15)">15</option>
+            <option value="20" selected="@(PageSize == 20)">20</option>
+            <option value="50" selected="@(PageSize == 50)">50</option>
+        </select>
+    </div>
+
 </div>
 
 @code {
+    [Parameter]
+    public int PageSize { get; set; } = 10;
+
+    [Parameter]
+    public EventCallback<int> OnPageSizeChange { get; set; }
+
+    private async Task OnPageSizeChanged(ChangeEventArgs e)
+    {
+        if (e?.Value == null)
+            return;
+
+        if (int.TryParse(e.Value.ToString(), out var newSize))
+        {
+            await OnPageSizeChange.InvokeAsync(newSize);
+        }
+    }
+
     [Parameter]
     public PaginationInfo PaginationInfo { get; set; } = new PaginationInfo(1, 10, 0);
 
