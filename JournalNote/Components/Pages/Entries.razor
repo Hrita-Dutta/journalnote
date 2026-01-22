@@ -16,6 +16,45 @@
     </div>
 
     <hr />
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label"><strong>Search:</strong></label>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Search by title or content..."
+                           @bind="searchTerm"
+                           @bind:event="oninput"
+                           @onkeyup="OnSearchChanged" />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label"><strong>Sort By:</strong></label>
+                    <select class="form-select" @onchange="OnSortChanged">
+                        <option value="date-desc">Date (Newest First)</option>
+                        <option value="date-asc">Date (Oldest First)</option>
+                        <option value="title-asc">Title (A-Z)</option>
+                        <option value="title-desc">Title (Z-A)</option>
+                    </select>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(searchTerm))
+            {
+                <div class="mt-3">
+                    <span class="badge bg-info">
+                        Searching: "@searchTerm"
+                        <button type="button"
+                                class="btn-close btn-close-white ms-2"
+                                style="font-size: 0.7rem;"
+                                @onclick="ClearSearch"></button>
+                    </span>
+                </div>
+            }
+        </div>
+    </div>
+
 
     @if (isLoading)
     {
@@ -35,6 +74,51 @@
 </div>
 
 @code {
+    private string searchTerm = string.Empty;
+    private string sortBy = "date-desc";
+
+    private void ApplyFiltersAndSort()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredEntries = new List<JournalEntry>(allEntries);
+        }
+        else
+        {
+            var search = searchTerm.ToLowerInvariant();
+            filteredEntries = allEntries.Where(e =>
+                (e.Title ?? "").ToLowerInvariant().Contains(search) ||
+                (e.Content ?? "").ToLowerInvariant().Contains(search)
+            ).ToList();
+        }
+
+        filteredEntries = sortBy switch
+        {
+            "date-desc" => filteredEntries.OrderByDescending(e => e.Date).ToList(),
+            "date-asc" => filteredEntries.OrderBy(e => e.Date).ToList(),
+            "title-asc" => filteredEntries.OrderBy(e => e.Title).ToList(),
+            "title-desc" => filteredEntries.OrderByDescending(e => e.Title).ToList(),
+            _ => filteredEntries.OrderByDescending(e => e.Date).ToList()
+        };
+    }
+
+    private async Task OnSearchChanged()
+    {
+        ApplyFiltersAndSort();
+    }
+
+    private void ClearSearch()
+    {
+        searchTerm = string.Empty;
+        ApplyFiltersAndSort();
+    }
+
+    private void OnSortChanged(ChangeEventArgs e)
+    {
+        sortBy = e.Value?.ToString() ?? "date-desc";
+        ApplyFiltersAndSort();
+    }
+
     private List<JournalEntry> allEntries = new();
     private List<JournalEntry> filteredEntries = new();
 
