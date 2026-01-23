@@ -21,6 +21,47 @@
                @onkeyup="OnFilterChanged" />
     </div>
 </div>
+<!-- Date Range -->
+<div class="filter-section">
+    <label class="filter-label">
+        <span class="label-icon">📅</span>
+        <strong>Date Range</strong>
+    </label>
+
+    <div class="date-range-inputs">
+        <div class="date-input-group">
+            <label class="small-label">From:</label>
+            <input type="date"
+                   class="form-control"
+                   @bind="Filter.StartDate"
+                   @onchange="OnFilterChanged" />
+        </div>
+
+        <div class="date-input-group">
+            <label class="small-label">To:</label>
+            <input type="date"
+                   class="form-control"
+                   @bind="Filter.EndDate"
+                   @onchange="OnFilterChanged" />
+        </div>
+    </div>
+</div>
+
+<!-- Mood Category -->
+<div class="filter-section">
+    <label class="filter-label">
+        <span class="label-icon">😊</span>
+        <strong>Mood Category</strong>
+    </label>
+
+    <select class="form-select" @bind="Filter.MoodCategory" @onchange="OnFilterChanged">
+        <option value="">All Categories</option>
+        <option value="Positive">Positive</option>
+        <option value="Neutral">Neutral</option>
+        <option value="Negative">Negative</option>
+    </select>
+</div>
+
 
 @code {
     [Parameter] public EntryFilter Filter { get; set; } = new();

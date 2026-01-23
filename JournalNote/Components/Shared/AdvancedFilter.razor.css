@@ -56,3 +56,39 @@
     box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
     outline: none;
 }
+.small-label {
+    font-size: 0.85rem;
+    color: #5a6c7d;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.form-select {
+    border: 2px solid #e0e6ed;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    outline: none;
+}
+
+.date-range-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.date-input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 768px) {
+    .date-range-inputs {
+        grid-template-columns: 1fr;
+    }
+}
