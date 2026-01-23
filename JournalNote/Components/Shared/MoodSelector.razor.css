@@ -1,94 +1,133 @@
-/* Mood Selector Container */
-.mood-selector {
-    padding: 1rem;
+/* Compact Mood Selector */
+.mood-selector-compact {
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 2px solid #e0e6ed;
 }
 
-.mood-selector h5 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #2c3e50;
-}
-
-/* Category Styling */
-.mood-category {
-    margin-bottom: 1.5rem;
-}
-
-.category-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
+/* Mood Categories */
+.mood-categories {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Mood Grid */
-.mood-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    flex-direction: column;
     gap: 0.75rem;
 }
 
-/* Mood Button */
-.mood-button {
+.mood-category-compact {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem 0.5rem;
-    background: white;
-    border: 2px solid #e0e6ed;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-height: 60px;
+    align-items: flex-start;
+    gap: 0.75rem;
 }
 
-.mood-button:hover:not(:disabled) {
-    border-color: #667eea;
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
-}
-
-.mood-button.selected {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-color: #667eea;
-    color: white;
-    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
-    transform: translateY(-3px);
-}
-
-.mood-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-/* Mood Name */
-.mood-name {
-    font-size: 0.9rem;
-    font-weight: 500;
+/* Category Label */
+.category-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.4rem 0.75rem;
+    border-radius: 15px;
+    white-space: nowrap;
+    min-width: 80px;
     text-align: center;
 }
 
-.mood-button.selected .mood-name {
+.category-positive {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+}
+
+.category-neutral {
+    background: linear-gradient(135deg, #e2e3e5 0%, #d6d8db 100%);
+    color: #383d41;
+}
+
+.category-negative {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+}
+
+/* Mood Pills */
+.mood-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.mood-pill {
+    padding: 0.4rem 0.9rem;
+    background: white;
+    border: 2px solid #dee2e6;
+    border-radius: 18px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.mood-pill:hover:not(:disabled) {
+    border-color: #667eea;
+    background: #f8f9ff;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+}
+
+.mood-pill.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
     color: white;
     font-weight: 600;
+    box-shadow: 0 3px 12px rgba(102, 126, 234, 0.4);
+}
+
+.mood-pill:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Selected Moods Display */
+.selected-moods-display {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 2px solid #e0e6ed;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.selected-moods-display small {
+    color: #6c757d;
+}
+
+.selected-mood-badge {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
 }
 
 /* Responsive */
-@media (max-width: 576px) {
-    .mood-grid {
-        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-        gap: 0.5rem;
+@media (max-width: 768px) {
+    .mood-category-compact {
+        flex-direction: column;
     }
 
-    .mood-button {
-        padding: 0.75rem 0.5rem;
-        min-height: 50px;
+    .category-label {
+        min-width: 100%;
+        margin-bottom: 0.25rem;
     }
 
-    .mood-name {
+    .mood-pills {
+        gap: 0.4rem;
+    }
+
+    .mood-pill {
+        padding: 0.35rem 0.75rem;
         font-size: 0.8rem;
     }
 }
