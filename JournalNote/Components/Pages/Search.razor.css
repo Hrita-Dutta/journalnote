@@ -22,3 +22,22 @@ h1 {
         font-size: 2rem;
     }
 }
+.card {
+    border: none;
+    border-radius: 12px;
+}
+
+.card-title {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.badge {
+    font-size: 1rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 15px;
+}
+
+.bg-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
