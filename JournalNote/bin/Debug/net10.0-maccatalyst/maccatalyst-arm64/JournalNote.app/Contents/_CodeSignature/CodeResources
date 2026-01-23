@@ -12,6 +12,10 @@
 		<data>
 		8x0ZHZ0zQbpbh0gklwuAwHFL898=
 		</data>
+		<key>Resources/MauiInfo.plist</key>
+		<data>
+		A/74dbGgxu/fUONI00Bycn7+qco=
+		</data>
 		<key>Resources/MonoTouchDebugConfiguration.txt</key>
 		<data>
 		oowkf1sL6T19nanXUObgmuayWqM=
@@ -40,9 +44,29 @@
 		<data>
 		HydTgg5xcSNe255EVRifYa52yWA=
 		</data>
+		<key>Resources/wwwroot/JournalNote.b8q9710z7b.bundle.scp.css</key>
+		<data>
+		9xonEbvmGeqVpz4JFXYZjjbIyv4=
+		</data>
+		<key>Resources/wwwroot/JournalNote.d6t8uq49tk.bundle.scp.css</key>
+		<data>
+		XpCHEvKSQhlI7nO2MBtMoaC1ooY=
+		</data>
+		<key>Resources/wwwroot/JournalNote.i2jl8dx231.bundle.scp.css</key>
+		<data>
+		C2CO2ofmLmtFcU3i8wQI9avIyK4=
+		</data>
+		<key>Resources/wwwroot/JournalNote.s8o2jrnmme.bundle.scp.css</key>
+		<data>
+		aV6moSmSIZYKiI2/KSxH3QCBmi8=
+		</data>
 		<key>Resources/wwwroot/JournalNote.styles.css</key>
 		<data>
-		HydTgg5xcSNe255EVRifYa52yWA=
+		C2CO2ofmLmtFcU3i8wQI9avIyK4=
+		</data>
+		<key>Resources/wwwroot/JournalNote.teoolk5k6s.bundle.scp.css</key>
+		<data>
+		sATfmzrSwKQSRo1g2o0otWWQcz0=
 		</data>
 		<key>Resources/wwwroot/_framework/blazor.modules.json</key>
 		<data>
@@ -83,14 +107,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			uW+AOnlTR9XZ6uiIlMPM7asMvNuiN21uIMbLxnouplE=
+			eBlV3K0WRE/dQIld0BIzHnX+Icahb1jbUjFb06405gk=
 			</data>
 		</dict>
 		<key>MonoBundle/JournalNote.pdb</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			8FL+vXUF30MOOnhXsqJyB0KEYzjkHNBSagCP2ttogS8=
+			Fg/5gevL+KAA4wUc3y4dMCYRnwenT8vxwZgNjIQfdCg=
 			</data>
 		</dict>
 		<key>MonoBundle/Markdig.dll</key>
@@ -1871,6 +1895,13 @@
 			s9O9YNATb7VyzLZHhLgE2zNmzpv/qvDMkuBrxKH4Ftc=
 			</data>
 		</dict>
+		<key>Resources/MauiInfo.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			UEORARmYMQB21vcObyk2tL7rhjGOSCGHQz3UGRUssW0=
+			</data>
+		</dict>
 		<key>Resources/MonoTouchDebugConfiguration.txt</key>
 		<dict>
 			<key>hash2</key>
@@ -1920,11 +1951,46 @@
 			wEdXO5xYYlDtH8Mw2XyWKrCqTLBNy+IcURM7HZKXMiM=
 			</data>
 		</dict>
+		<key>Resources/wwwroot/JournalNote.b8q9710z7b.bundle.scp.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			C7jKl0YKRmkb601PvFr/0sVevQr7HAvlNwDuqY1pCfk=
+			</data>
+		</dict>
+		<key>Resources/wwwroot/JournalNote.d6t8uq49tk.bundle.scp.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			S7SqcXmv67LxJn2p4AdXB8e6f5H0dUU24evSlqxJxoo=
+			</data>
+		</dict>
+		<key>Resources/wwwroot/JournalNote.i2jl8dx231.bundle.scp.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			yj9bnceGk3NiDpBlkfj9pJIGAkKQNNtIV+mtUOa1pmY=
+			</data>
+		</dict>
+		<key>Resources/wwwroot/JournalNote.s8o2jrnmme.bundle.scp.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			PBaagAOdt8YpRAL+Qf1mfGxhYisxJaeJX6PR8GX0CK4=
+			</data>
+		</dict>
 		<key>Resources/wwwroot/JournalNote.styles.css</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			wEdXO5xYYlDtH8Mw2XyWKrCqTLBNy+IcURM7HZKXMiM=
+			yj9bnceGk3NiDpBlkfj9pJIGAkKQNNtIV+mtUOa1pmY=
+			</data>
+		</dict>
+		<key>Resources/wwwroot/JournalNote.teoolk5k6s.bundle.scp.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			axlB+cb3CVvcKa6rYRqhdSQCJkhQ0cBx2znp4maVNSw=
 			</data>
 		</dict>
 		<key>Resources/wwwroot/_framework/blazor.modules.json</key>

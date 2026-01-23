@@ -36,6 +36,7 @@ namespace JournalNote.Services
         }
 
         // ====== SEED MOODS ======
+        // ====== SEED MOODS ======
         private async Task SeedMoodsAsync()
         {
             try
@@ -46,33 +47,33 @@ namespace JournalNote.Services
 
                 var moods = new List<Mood>
                 {
-                    // Positive
-                    new Mood { Name = "Happy", Category = "Positive", Icon = "😊" },
-                    new Mood { Name = "Excited", Category = "Positive", Icon = "🤩" },
-                    new Mood { Name = "Relaxed", Category = "Positive", Icon = "😌" },
-                    new Mood { Name = "Grateful", Category = "Positive", Icon = "🙏" },
-                    new Mood { Name = "Confident", Category = "Positive", Icon = "😎" },
+                    // Positive Moods
+                    new Mood { Name = "Happy", Category = "Positive", Icon = "" },
+                    new Mood { Name = "Excited", Category = "Positive", Icon = "" },
+                    new Mood { Name = "Relaxed", Category = "Positive", Icon = "" },
+                    new Mood { Name = "Grateful", Category = "Positive", Icon = "" },
+                    new Mood { Name = "Confident", Category = "Positive", Icon = "" },
 
-                    // Neutral
-                    new Mood { Name = "Calm", Category = "Neutral", Icon = "😐" },
-                    new Mood { Name = "Thoughtful", Category = "Neutral", Icon = "🤔" },
-                    new Mood { Name = "Curious", Category = "Neutral", Icon = "🧐" },
-                    new Mood { Name = "Nostalgic", Category = "Neutral", Icon = "💭" },
-                    new Mood { Name = "Bored", Category = "Neutral", Icon = "😑" },
+                    // Neutral Moods
+                    new Mood { Name = "Calm", Category = "Neutral", Icon = "" },
+                    new Mood { Name = "Thoughtful", Category = "Neutral", Icon = "" },
+                    new Mood { Name = "Curious", Category = "Neutral", Icon = "" },
+                    new Mood { Name = "Nostalgic", Category = "Neutral", Icon = "" },
+                    new Mood { Name = "Bored", Category = "Neutral", Icon = "" },
 
-                    // Negative
-                    new Mood { Name = "Sad", Category = "Negative", Icon = "😢" },
-                    new Mood { Name = "Angry", Category = "Negative", Icon = "😠" },
-                    new Mood { Name = "Stressed", Category = "Negative", Icon = "😰" },
-                    new Mood { Name = "Lonely", Category = "Negative", Icon = "😔" },
-                    new Mood { Name = "Anxious", Category = "Negative", Icon = "😟" }
+                    // Negative Moods
+                    new Mood { Name = "Sad", Category = "Negative", Icon = "" },
+                    new Mood { Name = "Angry", Category = "Negative", Icon = "" },
+                    new Mood { Name = "Stressed", Category = "Negative", Icon = "" },
+                    new Mood { Name = "Lonely", Category = "Negative", Icon = "" },
+                    new Mood { Name = "Anxious", Category = "Negative", Icon = "" }
                 };
 
                 await _database.InsertAllAsync(moods);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error seeding moods:  {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error seeding moods: {ex.Message}");
             }
         }
 
@@ -295,15 +296,7 @@ namespace JournalNote.Services
                 .OrderBy(t => t.Name)
                 .ToListAsync();
         }
-
-        public async Task<List<Tag>> GetCustomTagsAsync()
-        {
-            await InitAsync();
-            return await _database.Table<Tag>()
-                .Where(t => t.IsPredefined == false)
-                .OrderBy(t => t.Name)
-                .ToListAsync();
-        }
+        
 
         public async Task<Tag> GetTagByIdAsync(int id)
         {
@@ -321,27 +314,8 @@ namespace JournalNote.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<int> AddTagAsync(Tag tag)
-        {
-            await InitAsync();
-            
-            var existing = await GetTagByNameAsync(tag.Name);
-            if (existing != null)
-                throw new Exception("A tag with this name already exists.");
+        
 
-            tag.CreatedAt = DateTime.Now;
-            return await _database.InsertAsync(tag);
-        }
-
-        public async Task<int> DeleteTagAsync(Tag tag)
-        {
-            await InitAsync();
-            
-            if (tag. IsPredefined)
-                throw new Exception("Cannot delete predefined tags.");
-
-            return await _database.DeleteAsync(tag);
-        }
 
         public async Task<List<Tag>> GetTagsForEntryAsync(JournalEntry entry)
         {

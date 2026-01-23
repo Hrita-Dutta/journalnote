@@ -230,16 +230,16 @@
 
     private string GetMoodDisplay(JournalEntry entry)
     {
-        if (! entry.PrimaryMoodId.HasValue)
+        if (!entry.PrimaryMoodId.HasValue)
             return "No mood";
 
-        var primaryMood = allMoods. FirstOrDefault(m => m.Id == entry.PrimaryMoodId.Value);
+        var primaryMood = allMoods.FirstOrDefault(m => m.Id == entry.PrimaryMoodId.Value);
         if (primaryMood == null)
             return "Unknown";
 
-        var result = $"{primaryMood.Icon} {primaryMood.Name}";
+        var result = primaryMood.Name;
 
-        if (! string.IsNullOrEmpty(entry.SecondaryMoodIds))
+        if (!string.IsNullOrEmpty(entry.SecondaryMoodIds))
         {
             var secondaryMoodIds = entry.SecondaryMoodIds
                 .Split(',')
@@ -250,7 +250,7 @@
             var secondaryMoods = allMoods.Where(m => secondaryMoodIds.Contains(m.Id)).ToList();
             if (secondaryMoods.Any())
             {
-                var secondary = string.Join(", ", secondaryMoods.Select(m => $"{m.Icon} {m.Name}"));
+                var secondary = string.Join(", ", secondaryMoods.Select(m => m.Name));
                 result += $" + {secondary}";
             }
         }

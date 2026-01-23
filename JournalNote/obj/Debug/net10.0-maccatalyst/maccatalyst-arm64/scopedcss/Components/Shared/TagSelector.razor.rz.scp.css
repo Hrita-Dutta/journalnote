@@ -1,6 +1,7 @@
+/* Tag Selector Container */
 .tag-selector[b-0ekyjce8o7] {
     padding: 1rem;
-    background:  #f8f9fa;
+    background: #f8f9fa;
     border-radius: 12px;
 }
 
@@ -8,38 +9,10 @@
     font-size: 1.2rem;
     font-weight: 600;
     color: #2c3e50;
-    margin:  0;
+    margin: 0;
 }
 
-.custom-tag-input[b-0ekyjce8o7] {
-    animation: slideDown-b-0ekyjce8o7 0.3s ease-out;
-}
-
-@keyframes slideDown-b-0ekyjce8o7 {
-    from {
-        opacity: 0;
-        transform:  translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform:  translateY(0);
-    }
-}
-
-.custom-tag-input .input-group[b-0ekyjce8o7] {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.custom-tag-input .form-control[b-0ekyjce8o7] {
-    flex: 1;
-    border-radius: 8px;
-}
-
-.custom-tag-input .btn[b-0ekyjce8o7] {
-    border-radius: 8px;
-}
-
+/* Selected Tags Display */
 .selected-tags[b-0ekyjce8o7] {
     padding: 1rem;
     background: white;
@@ -102,6 +75,7 @@
     transform: scale(1.1);
 }
 
+/* Tag Section */
 .tag-section[b-0ekyjce8o7] {
     margin-bottom: 1.5rem;
 }
@@ -113,15 +87,17 @@
     margin-bottom: 0.75rem;
 }
 
+/* Tag Grid */
 .tag-grid[b-0ekyjce8o7] {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
 }
 
+/* Tag Button */
 .tag-button[b-0ekyjce8o7] {
     padding: 0.5rem 1rem;
-    border:  2px solid;
+    border: 2px solid;
     border-radius: 20px;
     background: white;
     cursor: pointer;
@@ -143,10 +119,7 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.custom-tag-indicator[b-0ekyjce8o7] {
-    font-size: 0.75rem;
-}
-
+/* Responsive */
 @media (max-width: 576px) {
     .tag-grid[b-0ekyjce8o7] {
         gap: 0.4rem;

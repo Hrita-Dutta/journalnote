@@ -26,7 +26,7 @@
 /* Mood Grid */
 .mood-grid[b-y7usawk88t] {
     display: grid;
-    grid-template-columns:  repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 0.75rem;
 }
 
@@ -42,7 +42,7 @@
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-height: 90px;
+    min-height: 60px;
 }
 
 .mood-button:hover:not(:disabled)[b-y7usawk88t] {
@@ -64,16 +64,9 @@
     cursor: not-allowed;
 }
 
-/* Mood Icon */
-.mood-icon[b-y7usawk88t] {
-    font-size: 2rem;
-    margin-bottom:  0.5rem;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-}
-
 /* Mood Name */
 .mood-name[b-y7usawk88t] {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 500;
     text-align: center;
 }
@@ -84,7 +77,7 @@
 }
 
 /* Responsive */
-@media (max-width:  576px) {
+@media (max-width: 576px) {
     .mood-grid[b-y7usawk88t] {
         grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
         gap: 0.5rem;
@@ -92,14 +85,10 @@
 
     .mood-button[b-y7usawk88t] {
         padding: 0.75rem 0.5rem;
-        min-height: 80px;
-    }
-
-    .mood-icon[b-y7usawk88t] {
-        font-size: 1.75rem;
+        min-height: 50px;
     }
 
     .mood-name[b-y7usawk88t] {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
     }
 }

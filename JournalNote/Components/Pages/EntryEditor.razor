@@ -209,7 +209,7 @@
         {
             allTags = await DatabaseService.GetAllTagsAsync();
             predefinedTags = await DatabaseService.GetPredefinedTagsAsync();
-            customTags = await DatabaseService.GetCustomTagsAsync();
+            customTags = new List<Tag>(); // No custom tags
         }
         catch (Exception ex)
         {
@@ -293,26 +293,10 @@
         return Task.CompletedTask;
     }
 
-    private async Task OnCustomTagAdded(Tag newTag)
+    private Task OnCustomTagAdded(Tag newTag)
     {
-        try
-        {
-            await DatabaseService.AddTagAsync(newTag);
-            await LoadTagsAsync();
-
-            var addedTag = allTags.FirstOrDefault(t => t.Name == newTag.Name);
-            if (addedTag != null && !selectedTagIds.Contains(addedTag.Id))
-            {
-                selectedTagIds.Add(addedTag.Id);
-            }
-
-            successMessage = $"Custom tag '{newTag.Name}' added successfully!";
-            StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Error adding custom tag: {ex.Message}";
-        }
+        
+        return Task.CompletedTask;
     }
 
     private async Task SyncQuillContent()

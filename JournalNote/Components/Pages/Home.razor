@@ -219,8 +219,9 @@
         if (primaryMood == null)
             return "Unknown mood";
 
-        var result = $"{primaryMood.Icon} {primaryMood.Name}";
+        var result = primaryMood.Name;
 
+        // Add secondary moods
         if (!string.IsNullOrEmpty(entry.SecondaryMoodIds))
         {
             var secondaryMoodIds = entry.SecondaryMoodIds
@@ -234,7 +235,7 @@
                 var secondaryMoods = allMoods.Where(m => secondaryMoodIds.Contains(m.Id)).ToList();
                 if (secondaryMoods.Any())
                 {
-                    var secondaryDisplay = string.Join(", ", secondaryMoods.Select(m => $"{m.Icon} {m.Name}"));
+                    var secondaryDisplay = string.Join(", ", secondaryMoods.Select(m => m.Name));
                     result += $" + {secondaryDisplay}";
                 }
             }

@@ -7,36 +7,27 @@
     {
         @foreach (var category in new[] { "Positive", "Neutral", "Negative" })
         {
-            if (!MoodsByCategory.TryGetValue(category, out var categoryMoods) || !categoryMoods.Any())
-                continue;
-
-            <div class="mood-category mb-4">
-                <h6 class="category-title @GetCategoryClass(category)">
-                    @GetCategoryIcon(category) @category
-                </h6>
-
-                <div class="mood-grid">
-                    @foreach (var mood in categoryMoods)
-                    {
-                        var isSelected = IsSelected(mood.Id);
-                        var canClick = isSelected || CanSelect;
-
-                        <button type="button"
-                                class="mood-button @(isSelected ? "selected" : "")"
-                                disabled="@(!canClick)"
-                                @onclick="() => OnMoodClick(mood.Id)">
-
-                            <span class="mood-icon">
-                                @((MarkupString)mood.Icon)
-                            </span>
-
-                            <span class="mood-name">
-                                @mood.Name
-                            </span>
-                        </button>
-                    }
+            var categoryMoods = MoodsByCategory.ContainsKey(category) ? MoodsByCategory[category] : new List<Mood>();
+            
+            if (categoryMoods.Any())
+            {
+                <div class="mood-category mb-4">
+                    <h6 class="category-title @GetCategoryClass(category)">
+                        @GetCategoryIcon(category) @category
+                    </h6>
+                    <div class="mood-grid">
+                        @foreach (var mood in categoryMoods)
+                        {
+                            <button type="button" 
+                                    class="mood-button @(IsSelected(mood.Id) ? "selected" : "")"
+                                    @onclick="() => OnMoodClick(mood.Id)"
+                                    disabled="@(!CanSelect && !IsSelected(mood.Id))">
+                                <span class="mood-name">@mood.Name</span>
+                            </button>
+                        }
+                    </div>
                 </div>
-            </div>
+            }
         }
     }
     else
@@ -46,30 +37,35 @@
 </div>
 
 @code {
-    [Parameter] public string Title { get; set; } = "Select Mood";
+    [Parameter]
+    public string Title { get; set; } = "Select Mood";
 
-    [Parameter] public Dictionary<string, List<Mood>> MoodsByCategory { get; set; } = new();
+    [Parameter]
+    public Dictionary<string, List<Mood>> MoodsByCategory { get; set; } = new();
 
-    [Parameter] public int? SelectedMoodId { get; set; }
+    [Parameter]
+    public int? SelectedMoodId { get; set; }
 
-    [Parameter] public List<int> SelectedMoodIds { get; set; } = new();
+    [Parameter]
+    public List<int> SelectedMoodIds { get; set; } = new();
 
-    [Parameter] public EventCallback<int> OnMoodSelected { get; set; }
+    [Parameter]
+    public EventCallback<int> OnMoodSelected { get; set; }
 
-    [Parameter] public int MaxSelection { get; set; } = 1;
+    [Parameter]
+    public int MaxSelection { get; set; } = 1;
 
-    [Parameter] public bool AllowDeselect { get; set; }
+    [Parameter]
+    public bool AllowDeselect { get; set; } = false;
 
-    private bool CanSelect =>
-        MaxSelection == 1
-            ? SelectedMoodId == null
-            : SelectedMoodIds.Count < MaxSelection;
+    private bool CanSelect => MaxSelection == 1 ? SelectedMoodId == null : SelectedMoodIds.Count < MaxSelection;
 
     private bool IsSelected(int moodId)
     {
-        return MaxSelection == 1
-            ? SelectedMoodId == moodId
-            : SelectedMoodIds.Contains(moodId);
+        if (MaxSelection == 1)
+            return SelectedMoodId == moodId;
+        else
+            return SelectedMoodIds.Contains(moodId);
     }
 
     private async Task OnMoodClick(int moodId)
@@ -77,36 +73,48 @@
         if (MaxSelection == 1)
         {
             if (SelectedMoodId == moodId && AllowDeselect)
+            {
                 SelectedMoodId = null;
+            }
             else
+            {
                 SelectedMoodId = moodId;
+            }
         }
         else
         {
             if (SelectedMoodIds.Contains(moodId))
+            {
                 SelectedMoodIds.Remove(moodId);
+            }
             else if (SelectedMoodIds.Count < MaxSelection)
+            {
                 SelectedMoodIds.Add(moodId);
+            }
         }
 
         await OnMoodSelected.InvokeAsync(moodId);
     }
 
-    private string GetCategoryClass(string category) =>
-        category.ToLower() switch
+    private string GetCategoryClass(string category)
+    {
+        return category.ToLower() switch
         {
             "positive" => "text-success",
             "neutral" => "text-secondary",
             "negative" => "text-danger",
             _ => ""
         };
+    }
 
-    private string GetCategoryIcon(string category) =>
-        category.ToLower() switch
+    private string GetCategoryIcon(string category)
+    {
+        return category.ToLower() switch
         {
             "positive" => "✨",
             "neutral" => "➖",
             "negative" => "⚠️",
             _ => ""
         };
+    }
 }

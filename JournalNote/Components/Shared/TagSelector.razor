@@ -3,30 +3,7 @@
 <div class="tag-selector">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5>@Title</h5>
-        <button type="button" class="btn btn-sm btn-outline-primary" @onclick="ToggleCustomTagInput">
-            + Custom Tag
-        </button>
     </div>
-
-    @if (showCustomTagInput)
-    {
-        <div class="custom-tag-input mb-3">
-            <div class="input-group">
-                <input type="text" 
-                       class="form-control" 
-                       placeholder="Enter custom tag name..." 
-                       @bind="customTagName"
-                       @bind:event="oninput"
-                       maxlength="50" />
-                <button class="btn btn-success" @onclick="AddCustomTag">Add</button>
-                <button class="btn btn-secondary" @onclick="CancelCustomTag">Cancel</button>
-            </div>
-            @if (! string.IsNullOrEmpty(customTagError))
-            {
-                <small class="text-danger mt-1 d-block">@customTagError</small>
-            }
-        </div>
-    }
 
     @if (SelectedTagIds.Any())
     {
@@ -53,7 +30,7 @@
     @if (PredefinedTags.Any())
     {
         <div class="tag-section mb-3">
-            <h6 class="tag-section-title">Pre-built Tags</h6>
+            <h6 class="tag-section-title">Available Tags</h6>
             <div class="tag-grid">
                 @foreach (var tag in PredefinedTags)
                 {
@@ -62,25 +39,6 @@
                             style="@GetTagStyle(tag)"
                             @onclick="() => ToggleTag(tag.Id)">
                         @tag.Name
-                    </button>
-                }
-            </div>
-        </div>
-    }
-
-    @if (CustomTags. Any())
-    {
-        <div class="tag-section">
-            <h6 class="tag-section-title">Your Custom Tags</h6>
-            <div class="tag-grid">
-                @foreach (var tag in CustomTags)
-                {
-                    <button type="button" 
-                            class="tag-button @(IsSelected(tag.Id) ? "selected" : "")"
-                            style="@GetTagStyle(tag)"
-                            @onclick="() => ToggleTag(tag.Id)">
-                        @tag.Name
-                        
                     </button>
                 }
             </div>
@@ -96,10 +54,6 @@
     [Parameter] public List<int> SelectedTagIds { get; set; } = new();
     [Parameter] public EventCallback<int> OnTagToggled { get; set; }
     [Parameter] public EventCallback<Tag> OnCustomTagAdded { get; set; }
-
-    private bool showCustomTagInput = false;
-    private string customTagName = string.Empty;
-    private string customTagError = string.Empty;
 
     private bool IsSelected(int tagId) => SelectedTagIds.Contains(tagId);
 
@@ -119,66 +73,11 @@
         await OnTagToggled.InvokeAsync(tagId);
     }
 
-    private void ToggleCustomTagInput()
-    {
-        showCustomTagInput = !showCustomTagInput;
-        customTagName = string.Empty;
-        customTagError = string.Empty;
-    }
-
-    private void CancelCustomTag()
-    {
-        showCustomTagInput = false;
-        customTagName = string.Empty;
-        customTagError = string.Empty;
-    }
-
-    private async Task AddCustomTag()
-    {
-        customTagError = string.Empty;
-
-        if (string.IsNullOrWhiteSpace(customTagName))
-        {
-            customTagError = "Tag name cannot be empty.";
-            return;
-        }
-
-        if (AllTags.Any(t => t.Name.Equals(customTagName.Trim(), StringComparison.OrdinalIgnoreCase)))
-        {
-            customTagError = "This tag already exists.";
-            return;
-        }
-
-        var newTag = new Tag
-        {
-            Name = customTagName.Trim(),
-            IsPredefined = false,
-            Color = GetRandomColor()
-        };
-
-        await OnCustomTagAdded.InvokeAsync(newTag);
-
-        customTagName = string.Empty;
-        showCustomTagInput = false;
-    }
-
     private string GetTagStyle(Tag tag)
     {
         if (IsSelected(tag.Id))
             return $"background-color: {tag.Color}; color: white; border-color: {tag.Color};";
         else
             return $"border-color: {tag.Color}; color: {tag.Color};";
-    }
-
-    private string GetRandomColor()
-    {
-        var colors = new[]
-        {
-            "#3498db", "#e74c3c", "#2ecc71", "#f39c12", "#9b59b6",
-            "#1abc9c", "#e67e22", "#34495e", "#16a085", "#27ae60"
-        };
-
-        var random = new Random();
-        return colors[random.Next(colors.Length)];
     }
 }

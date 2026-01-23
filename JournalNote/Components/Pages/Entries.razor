@@ -88,7 +88,7 @@
                         <button type="button" 
                                 class="filter-chip @(selectedMoodIds.Contains(mood.Id) ? "selected" : "")"
                                 @onclick="() => ToggleMood(mood.Id)">
-                            @mood.Icon @mood.Name
+                            @mood.Name
                         </button>
                     }
                 </div>
@@ -148,7 +148,7 @@
                             if (mood != null)
                             {
                                 <span class="filter-tag">
-                                    @mood.Icon @mood.Name
+                                    @mood.Name
                                     <button @onclick="() => RemoveMoodFilter(moodId)">×</button>
                                 </span>
                             }
@@ -580,7 +580,7 @@
             return "";
 
         var mood = allMoods.FirstOrDefault(m => m.Id == entry.PrimaryMoodId.Value);
-        return mood != null ? $"{mood.Icon} {mood.Name}" : "";
+        return mood != null ? mood.Name : "";
     }
 
     private List<Tag> GetTagsForEntry(JournalEntry entry)
