@@ -48,13 +48,66 @@
             </div>
 
             <div class="col-lg-8">
-                <!-- results will come next -->
+                @if (!filteredEntries.Any())
+                {
+                    <div class="alert alert-info text-center py-5">
+                        <h4>🔎 No Results Found</h4>
+                        <p>Try adjusting your filters or search criteria.</p>
+                        @if (filter.HasActiveFilters)
+                        {
+                            <button class="btn btn-primary" @onclick="ClearFilters">
+                                Clear All Filters
+                            </button>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Found @filteredEntries.Count entries</h5>
+                        <select class="form-select w-auto" @onchange="OnSortChanged">
+                            <option value="date-desc">Date (Newest First)</option>
+                            <option value="date-asc">Date (Oldest First)</option>
+                            <option value="title-asc">Title (A-Z)</option>
+                            <option value="title-desc">Title (Z-A)</option>
+                        </select>
+                    </div>
+                }
             </div>
+
         </div>
     }
 </div>
 
 @code {
+    private string sortBy = "date-desc";
+
+    private void OnSortChanged(ChangeEventArgs e)
+    {
+        sortBy = e.Value?.ToString() ?? "date-desc";
+        SortEntries();
+    }
+
+    private void SortEntries()
+    {
+        filteredEntries = sortBy switch
+        {
+            "date-desc" => filteredEntries.OrderByDescending(e => e.Date).ToList(),
+            "date-asc" => filteredEntries.OrderBy(e => e.Date).ToList(),
+            "title-asc" => filteredEntries.OrderBy(e => e.Title).ToList(),
+            "title-desc" => filteredEntries.OrderByDescending(e => e.Title).ToList(),
+            _ => filteredEntries.OrderByDescending(e => e.Date).ToList()
+        };
+
+        paginatedEntries = filteredEntries.Take(10).ToList();
+    }
+
+    private void ClearFilters()
+    {
+        filter.Clear();
+        ApplyFilters();
+    }
+
     private List<JournalEntry> allEntries = new();
     private List<JournalEntry> filteredEntries = new();
     private List<JournalEntry> paginatedEntries = new();
