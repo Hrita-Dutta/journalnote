@@ -20,25 +20,41 @@
 
     <hr />
 
-    <!-- Filter and Sort Options -->
+    <!-- Filter Section -->
+        <!-- Filter Section -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <div class="row g-3">
-                <!-- Search -->
-                <div class="col-md-4">
-                    <label class="form-label"><strong>Search: </strong></label>
+            <!-- Search Row -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-12">
+                    <label class="form-label"><strong>🔎 Search:</strong></label>
                     <input type="text" 
-                           class="form-control" 
+                           class="form-control form-control-lg" 
                            placeholder="Search by title or content..." 
                            @bind="searchTerm"
-                           @bind:event="oninput"
-                           @onkeyup="OnSearchChanged" />
+                           @bind:event="oninput" />
+                </div>
+            </div>
+
+            <!-- Date and Sort Row -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <label class="form-label"><strong>📅 From Date:</strong></label>
+                    <input type="date" 
+                           class="form-control" 
+                           @bind="fromDate" />
                 </div>
 
-                <!-- Sort By -->
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <label class="form-label"><strong>📅 To Date:</strong></label>
+                    <input type="date" 
+                           class="form-control" 
+                           @bind="toDate" />
+                </div>
+
+                <div class="col-md-3">
                     <label class="form-label"><strong>Sort By:</strong></label>
-                    <select class="form-select" @onchange="OnSortChanged">
+                    <select class="form-select" @bind="sortBy">
                         <option value="date-desc">Date (Newest First)</option>
                         <option value="date-asc">Date (Oldest First)</option>
                         <option value="title-asc">Title (A-Z)</option>
@@ -46,17 +62,16 @@
                     </select>
                 </div>
 
-                <!-- View Mode -->
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label"><strong>View:</strong></label>
                     <div class="btn-group w-100" role="group">
                         <button type="button" 
-                                class="btn @(viewMode == "list" ? "btn-primary" :  "btn-outline-primary")"
+                                class="btn @(viewMode == "list" ? "btn-primary" : "btn-outline-primary")"
                                 @onclick='() => viewMode = "list"'>
                             ☰ List
                         </button>
                         <button type="button" 
-                                class="btn @(viewMode == "grid" ? "btn-primary" :  "btn-outline-primary")"
+                                class="btn @(viewMode == "grid" ? "btn-primary" : "btn-outline-primary")"
                                 @onclick='() => viewMode = "grid"'>
                             ⊞ Grid
                         </button>
@@ -64,13 +79,97 @@
                 </div>
             </div>
 
-            @if (! string.IsNullOrEmpty(searchTerm))
+            <!-- Mood Filter -->
+            <div class="mb-3">
+                <label class="form-label"><strong>😊 Filter by Mood:</strong></label>
+                <div class="filter-chips">
+                    @foreach (var mood in allMoods)
+                    {
+                        <button type="button" 
+                                class="filter-chip @(selectedMoodIds.Contains(mood.Id) ? "selected" : "")"
+                                @onclick="() => ToggleMood(mood.Id)">
+                            @mood.Icon @mood.Name
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Tag Filter -->
+            <div class="mb-3">
+                <label class="form-label"><strong>🏷️ Filter by Tags:</strong></label>
+                <div class="filter-chips">
+                    @foreach (var tag in allTags)
+                    {
+                        <button type="button" 
+                                class="filter-chip @(selectedTagIds.Contains(tag.Id) ? "selected" : "")"
+                                style="@(selectedTagIds.Contains(tag.Id) ? $"background-color: {tag.Color}; color: white; border-color: {tag.Color};" : $"border-color: {tag.Color}; color: {tag.Color};")"
+                                @onclick="() => ToggleTag(tag.Id)">
+                            @tag.Name
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Active Filters -->
+            @if (HasActiveFilters())
             {
-                <div class="mt-3">
-                    <span class="badge bg-info">
-                        Searching:  "@searchTerm"
-                        <button type="button" class="btn-close btn-close-white ms-2" @onclick="ClearSearch" style="font-size: 0.7rem;"></button>
-                    </span>
+                <div class="active-filters-section">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><strong>Active Filters:</strong></span>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="ClearAllFilters">
+                            Clear All
+                        </button>
+                    </div>
+                    <div class="active-filters mt-2">
+                        @if (!string.IsNullOrEmpty(searchTerm))
+                        {
+                            <span class="filter-tag">
+                                Search: "@searchTerm"
+                                <button @onclick="ClearSearch">×</button>
+                            </span>
+                        }
+                        @if (fromDate.HasValue)
+                        {
+                            <span class="filter-tag">
+                                From: @fromDate.Value.ToString("MMM dd, yyyy")
+                                <button @onclick="ClearFromDate">×</button>
+                            </span>
+                        }
+                        @if (toDate.HasValue)
+                        {
+                            <span class="filter-tag">
+                                To: @toDate.Value.ToString("MMM dd, yyyy")
+                                <button @onclick="ClearToDate">×</button>
+                            </span>
+                        }
+                        @foreach (var moodId in selectedMoodIds)
+                        {
+                            var mood = allMoods.FirstOrDefault(m => m.Id == moodId);
+                            if (mood != null)
+                            {
+                                <span class="filter-tag">
+                                    @mood.Icon @mood.Name
+                                    <button @onclick="() => RemoveMoodFilter(moodId)">×</button>
+                                </span>
+                            }
+                        }
+                        @foreach (var tagId in selectedTagIds)
+                        {
+                            var tag = allTags.FirstOrDefault(t => t.Id == tagId);
+                            if (tag != null)
+                            {
+                                <span class="filter-tag" style="background-color: @tag.Color">
+                                    @tag.Name
+                                    <button @onclick="() => RemoveTagFilter(tagId)">×</button>
+                                </span>
+                            }
+                        }
+                    </div>
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            Showing @filteredEntries.Count of @allEntries.Count entries
+                        </small>
+                    </div>
                 </div>
             }
         </div>
@@ -83,14 +182,14 @@
             <p class="mt-3">Loading entries...</p>
         </div>
     }
-    else if (! filteredEntries.Any())
+    else if (!filteredEntries.Any())
     {
         <div class="alert alert-secondary text-center py-5">
             <h4>📝 No entries found</h4>
-            @if (! string.IsNullOrEmpty(searchTerm))
+            @if (HasActiveFilters())
             {
-                <p>No entries match your search criteria.</p>
-                <button class="btn btn-primary" @onclick="ClearSearch">Clear Search</button>
+                <p>No entries match your filter criteria.</p>
+                <button class="btn btn-primary" @onclick="ClearAllFilters">Clear All Filters</button>
             }
             else
             {
@@ -131,7 +230,7 @@
                                 </span>
                             }
 
-                            @if (! string.IsNullOrEmpty(entry.TagIds))
+                            @if (!string.IsNullOrEmpty(entry.TagIds))
                             {
                                 <span class="meta-item">
                                     <strong>Tags:</strong>
@@ -173,7 +272,7 @@
                                     </p>
                                 }
 
-                                @if (! string.IsNullOrEmpty(entry.TagIds))
+                                @if (!string.IsNullOrEmpty(entry.TagIds))
                                 {
                                     <div class="tags-display-small mb-2">
                                         <strong>Tags:</strong>
@@ -222,8 +321,53 @@
     private List<Tag> allTags = new();
 
     private bool isLoading = true;
-    private string searchTerm = string.Empty;
-    private string sortBy = "date-desc";
+    
+    private string _searchTerm = string.Empty;
+    private string searchTerm
+    {
+        get => _searchTerm;
+        set
+        {
+            _searchTerm = value;
+            ApplyFilters();
+        }
+    }
+
+    private DateTime? _fromDate;
+    private DateTime? fromDate
+    {
+        get => _fromDate;
+        set
+        {
+            _fromDate = value;
+            ApplyFilters();
+        }
+    }
+
+    private DateTime? _toDate;
+    private DateTime? toDate
+    {
+        get => _toDate;
+        set
+        {
+            _toDate = value;
+            ApplyFilters();
+        }
+    }
+
+    private string _sortBy = "date-desc";
+    private string sortBy
+    {
+        get => _sortBy;
+        set
+        {
+            _sortBy = value;
+            ApplyFilters();
+        }
+    }
+
+    private List<int> selectedMoodIds = new();
+    private List<int> selectedTagIds = new();
     private string viewMode = "list";
 
     private int currentPage = 1;
@@ -245,8 +389,7 @@
             allMoods = await DatabaseService.GetAllMoodsAsync();
             allTags = await DatabaseService.GetAllTagsAsync();
 
-            ApplyFiltersAndSort();
-            UpdatePagination();
+            ApplyFilters();
         }
         catch (Exception ex)
         {
@@ -258,23 +401,79 @@
         }
     }
 
-    private void ApplyFiltersAndSort()
+    private void ApplyFilters()
     {
-        // Filter by search term
-        if (string.IsNullOrWhiteSpace(searchTerm))
+        filteredEntries = allEntries.Where(entry =>
         {
-            filteredEntries = new List<JournalEntry>(allEntries);
-        }
-        else
-        {
-            var search = searchTerm.ToLower();
-            filteredEntries = allEntries.Where(e =>
-                e.Title.ToLower().Contains(search) ||
-                e.Content.ToLower().Contains(search)
-            ).ToList();
-        }
+            // Search filter
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var search = searchTerm.ToLower();
+                if (!entry.Title.ToLower().Contains(search) && 
+                    !entry.Content.ToLower().Contains(search))
+                    return false;
+            }
 
-        // Sort
+            // Date from filter
+            if (fromDate.HasValue)
+            {
+                if (DateTime.Parse(entry.Date) < fromDate.Value.Date)
+                    return false;
+            }
+
+            // Date to filter
+            if (toDate.HasValue)
+            {
+                if (DateTime.Parse(entry.Date) > toDate.Value.Date)
+                    return false;
+            }
+
+            // Mood filter
+            if (selectedMoodIds.Any())
+            {
+                var entryMoodIds = new List<int>();
+                
+                if (entry.PrimaryMoodId.HasValue)
+                    entryMoodIds.Add(entry.PrimaryMoodId.Value);
+
+                if (!string.IsNullOrEmpty(entry.SecondaryMoodIds))
+                {
+                    entryMoodIds.AddRange(entry.SecondaryMoodIds
+                        .Split(',')
+                        .Where(s => !string.IsNullOrWhiteSpace(s))
+                        .Select(s => int.Parse(s.Trim())));
+                }
+
+                if (!selectedMoodIds.Any(moodId => entryMoodIds.Contains(moodId)))
+                    return false;
+            }
+
+            // Tag filter
+            if (selectedTagIds.Any())
+            {
+                if (string.IsNullOrEmpty(entry.TagIds))
+                    return false;
+
+                var entryTagIds = entry.TagIds
+                    .Split(',')
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Select(s => int.Parse(s.Trim()))
+                    .ToList();
+
+                if (!selectedTagIds.Any(tagId => entryTagIds.Contains(tagId)))
+                    return false;
+            }
+
+            return true;
+        }).ToList();
+
+        SortEntries();
+        currentPage = 1;
+        UpdatePagination();
+    }
+
+    private void SortEntries()
+    {
         filteredEntries = sortBy switch
         {
             "date-desc" => filteredEntries.OrderByDescending(e => e.Date).ToList(),
@@ -308,30 +507,76 @@
         UpdatePagination();
     }
 
-    private async Task OnSearchChanged()
+    private void ToggleMood(int moodId)
     {
-        currentPage = 1;
-        ApplyFiltersAndSort();
-        UpdatePagination();
+        if (selectedMoodIds.Contains(moodId))
+            selectedMoodIds.Remove(moodId);
+        else
+            selectedMoodIds.Add(moodId);
+
+        ApplyFilters();
+    }
+
+    private void ToggleTag(int tagId)
+    {
+        if (selectedTagIds.Contains(tagId))
+            selectedTagIds.Remove(tagId);
+        else
+            selectedTagIds.Add(tagId);
+
+        ApplyFilters();
     }
 
     private void ClearSearch()
     {
         searchTerm = string.Empty;
-        OnSearchChanged();
     }
 
-    private void OnSortChanged(ChangeEventArgs e)
+    private void ClearFromDate()
     {
-        sortBy = e.Value?. ToString() ?? "date-desc";
-        currentPage = 1;
-        ApplyFiltersAndSort();
-        UpdatePagination();
+        fromDate = null;
+    }
+
+    private void ClearToDate()
+    {
+        toDate = null;
+    }
+
+    private void RemoveMoodFilter(int moodId)
+    {
+        selectedMoodIds.Remove(moodId);
+        ApplyFilters();
+    }
+
+    private void RemoveTagFilter(int tagId)
+    {
+        selectedTagIds.Remove(tagId);
+        ApplyFilters();
+    }
+
+    private bool HasActiveFilters()
+    {
+        return !string.IsNullOrWhiteSpace(searchTerm) ||
+               fromDate.HasValue ||
+               toDate.HasValue ||
+               selectedMoodIds.Any() ||
+               selectedTagIds.Any();
+    }
+
+    private void ClearAllFilters()
+    {
+        _searchTerm = string.Empty;
+        _fromDate = null;
+        _toDate = null;
+        _sortBy = "date-desc";
+        selectedMoodIds.Clear();
+        selectedTagIds.Clear();
+        ApplyFilters();
     }
 
     private string GetMoodDisplay(JournalEntry entry)
     {
-        if (! entry.PrimaryMoodId.HasValue)
+        if (!entry.PrimaryMoodId.HasValue)
             return "";
 
         var mood = allMoods.FirstOrDefault(m => m.Id == entry.PrimaryMoodId.Value);
@@ -343,19 +588,20 @@
         if (string.IsNullOrEmpty(entry.TagIds))
             return new List<Tag>();
 
-        var tagIds = entry.TagIds.Split(',').Where(s => ! string.IsNullOrWhiteSpace(s)).Select(s => int.Parse(s.Trim())).ToList();
+        var tagIds = entry.TagIds.Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => int.Parse(s.Trim())).ToList();
         return allTags.Where(t => tagIds.Contains(t.Id)).ToList();
     }
 
     private string GetPreview(string htmlContent, int maxLength)
     {
         if (string.IsNullOrWhiteSpace(htmlContent))
-            return "<p class='text-muted'>No content</p>";
+            return "<p>No content</p>";
 
-        var textContent = System.Text.RegularExpressions.Regex.Replace(htmlContent, "<.*?>", " ").Trim();
+        var textContent = System.Text.RegularExpressions.Regex.Replace(htmlContent, "<.*?>", " ");
+        textContent = textContent.Trim();
 
         if (string.IsNullOrWhiteSpace(textContent))
-            return "<p class='text-muted'>No content</p>";
+            return "<p>No content</p>";
 
         if (textContent.Length <= maxLength)
             return $"<p>{textContent}</p>";

@@ -364,4 +364,3 @@
 /Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/JournalNote.pdb
 /Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/JournalNote.genruntimeconfig.cache
 /Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/ref/JournalNote.dll
-/Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/scopedcss/Components/Shared/AdvancedFilter.razor.rz.scp.css
