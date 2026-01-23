@@ -1,0 +1,39 @@
+@using JournalNote.Models
+
+<div class="advanced-filter">
+    <div class="filter-header">
+        <h5>🔍 Advanced Filters</h5>
+        <button class="btn btn-sm btn-link text-danger" @onclick="ClearAllFilters">
+            Clear All
+        </button>
+    </div>
+
+    <div class="filter-section">
+        <label class="filter-label">
+            <span class="label-icon">🔎</span>
+            <strong>Search</strong>
+        </label>
+        <input type="text"
+               class="form-control"
+               placeholder="Search by title or content..."
+               @bind="Filter.SearchTerm"
+               @bind:event="oninput"
+               @onkeyup="OnFilterChanged" />
+    </div>
+</div>
+
+@code {
+    [Parameter] public EntryFilter Filter { get; set; } = new();
+    [Parameter] public EventCallback OnFilterChange { get; set; }
+
+    private async Task OnFilterChanged()
+    {
+        await OnFilterChange.InvokeAsync();
+    }
+
+    private async Task ClearAllFilters()
+    {
+        Filter.Clear();
+        await OnFilterChanged();
+    }
+}

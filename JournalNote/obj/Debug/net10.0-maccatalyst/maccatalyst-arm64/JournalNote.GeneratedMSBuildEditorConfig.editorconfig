@@ -21,18 +21,18 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = JournalNote
 build_property.RootNamespace = JournalNote
-build_property.ProjectDir = /Applications/C#/Class/Coursework/JournalNote/JournalNote/
+build_property.ProjectDir = /Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = /Applications/C#/Class/Coursework/JournalNote/JournalNote
+build_property.MSBuildProjectDirectory = /Applications/C#/Class/Coursework/Solved/journalnote/JournalNote
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/App.xaml]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/App.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = JournalNote.App.xaml
 build_metadata.AdditionalFiles.TargetPath = App.xaml
@@ -43,7 +43,7 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/MainPage.xaml]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/MainPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = JournalNote.MainPage.xaml
 build_metadata.AdditionalFiles.TargetPath = MainPage.xaml
@@ -54,7 +54,7 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/Components/Pages/NotFound.razor]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/Pages/NotFound.razor]
 build_metadata.AdditionalFiles.GenKind = 
 build_metadata.AdditionalFiles.ManifestResourceName = 
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Ob3RGb3VuZC5yYXpvcg==
@@ -65,7 +65,7 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/Components/Routes.razor]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/Routes.razor]
 build_metadata.AdditionalFiles.GenKind = 
 build_metadata.AdditionalFiles.ManifestResourceName = 
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Sb3V0ZXMucmF6b3I=
@@ -76,7 +76,18 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/Components/_Imports.razor]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/Shared/AdvancedFilter.razor]
+build_metadata.AdditionalFiles.GenKind = 
+build_metadata.AdditionalFiles.ManifestResourceName = 
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9TaGFyZWQvQWR2YW5jZWRGaWx0ZXIucmF6b3I=
+build_metadata.AdditionalFiles.RelativePath = 
+build_metadata.AdditionalFiles.Inflator = 
+build_metadata.AdditionalFiles.NoWarn = 
+build_metadata.AdditionalFiles.EnableDiagnostics = 
+build_metadata.AdditionalFiles.LineInfo = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/_Imports.razor]
 build_metadata.AdditionalFiles.GenKind = 
 build_metadata.AdditionalFiles.ManifestResourceName = 
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9fSW1wb3J0cy5yYXpvcg==
@@ -87,7 +98,7 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/Components/Layout/MainLayout.razor]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/Layout/MainLayout.razor]
 build_metadata.AdditionalFiles.GenKind = 
 build_metadata.AdditionalFiles.ManifestResourceName = 
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYXlvdXQvTWFpbkxheW91dC5yYXpvcg==
@@ -98,7 +109,7 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = b-3ifijpq2tn
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/Components/Layout/NavMenu.razor]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/Layout/NavMenu.razor]
 build_metadata.AdditionalFiles.GenKind = 
 build_metadata.AdditionalFiles.ManifestResourceName = 
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYXlvdXQvTmF2TWVudS5yYXpvcg==
@@ -109,7 +120,7 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = b-l96dkbs2km
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/Components/Pages/Calendar.razor]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/Pages/Calendar.razor]
 build_metadata.AdditionalFiles.GenKind = 
 build_metadata.AdditionalFiles.ManifestResourceName = 
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DYWxlbmRhci5yYXpvcg==
@@ -120,7 +131,7 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = b-2ubn3vrjr1
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/Components/Pages/Entries.razor]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/Pages/Entries.razor]
 build_metadata.AdditionalFiles.GenKind = 
 build_metadata.AdditionalFiles.ManifestResourceName = 
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9FbnRyaWVzLnJhem9y
@@ -131,7 +142,7 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = b-7mto9iyyuq
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/Components/Pages/EntryEditor.razor]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/Pages/EntryEditor.razor]
 build_metadata.AdditionalFiles.GenKind = 
 build_metadata.AdditionalFiles.ManifestResourceName = 
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9FbnRyeUVkaXRvci5yYXpvcg==
@@ -142,7 +153,7 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = b-faxnbhdb77
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/Components/Pages/Home.razor]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/Pages/Home.razor]
 build_metadata.AdditionalFiles.GenKind = 
 build_metadata.AdditionalFiles.ManifestResourceName = 
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Ib21lLnJhem9y
@@ -153,7 +164,7 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = b-l72m7cfgke
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/Components/Shared/CalendarView.razor]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/Shared/CalendarView.razor]
 build_metadata.AdditionalFiles.GenKind = 
 build_metadata.AdditionalFiles.ManifestResourceName = 
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9TaGFyZWQvQ2FsZW5kYXJWaWV3LnJhem9y
@@ -164,7 +175,7 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = b-cv7njud37d
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/Components/Shared/MoodSelector.razor]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/Shared/MoodSelector.razor]
 build_metadata.AdditionalFiles.GenKind = 
 build_metadata.AdditionalFiles.ManifestResourceName = 
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9TaGFyZWQvTW9vZFNlbGVjdG9yLnJhem9y
@@ -175,7 +186,7 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = b-y7usawk88t
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/Components/Shared/Pagination.razor]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/Shared/Pagination.razor]
 build_metadata.AdditionalFiles.GenKind = 
 build_metadata.AdditionalFiles.ManifestResourceName = 
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9TaGFyZWQvUGFnaW5hdGlvbi5yYXpvcg==
@@ -186,7 +197,7 @@ build_metadata.AdditionalFiles.EnableDiagnostics =
 build_metadata.AdditionalFiles.LineInfo = 
 build_metadata.AdditionalFiles.CssScope = b-j45439j936
 
-[/Applications/C\#/Class/Coursework/JournalNote/JournalNote/Components/Shared/TagSelector.razor]
+[/Applications/C\#/Class/Coursework/Solved/journalnote/JournalNote/Components/Shared/TagSelector.razor]
 build_metadata.AdditionalFiles.GenKind = 
 build_metadata.AdditionalFiles.ManifestResourceName = 
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9TaGFyZWQvVGFnU2VsZWN0b3IucmF6b3I=

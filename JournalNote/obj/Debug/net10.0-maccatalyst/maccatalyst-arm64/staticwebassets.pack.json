@@ -1,27 +1,27 @@
 {
   "Files": [
     {
-      "Id": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/scopedcss/bundle/JournalNote.styles.css",
+      "Id": "/Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/scopedcss/bundle/JournalNote.styles.css",
       "PackagePath": "staticwebassets/JournalNote.styles.css"
     },
     {
-      "Id": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/wwwroot/app.css",
+      "Id": "/Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/wwwroot/app.css",
       "PackagePath": "staticwebassets/app.css"
     },
     {
-      "Id": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/wwwroot/index.html",
+      "Id": "/Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/wwwroot/index.html",
       "PackagePath": "staticwebassets/index.html"
     },
     {
-      "Id": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/wwwroot/js/quill-editor.js",
+      "Id": "/Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/wwwroot/js/quill-editor.js",
       "PackagePath": "staticwebassets/js/quill-editor.js"
     },
     {
-      "Id": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css",
+      "Id": "/Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.min.css"
     },
     {
-      "Id": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css.map",
+      "Id": "/Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.min.css.map"
     },
     {

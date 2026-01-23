@@ -28106,11 +28106,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/JournalNote.csproj",
+      "projectUniqueName": "/Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/JournalNote.csproj",
       "projectName": "JournalNote",
-      "projectPath": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/JournalNote.csproj",
+      "projectPath": "/Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/JournalNote.csproj",
       "packagesPath": "/Users/hritadutta/.nuget/packages/",
-      "outputPath": "/Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/",
+      "outputPath": "/Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/",
       "projectStyle": "PackageReference",
       "crossTargeting": true,
       "configFilePaths": [
@@ -28204,7 +28204,7 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[10.0.1, 10.0.1]"
+            "version": "[10.0.2, 10.0.2]"
           }
         ],
         "frameworkReferences": {
@@ -28546,7 +28546,7 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[10.0.1, 10.0.1]"
+            "version": "[10.0.2, 10.0.2]"
           }
         ],
         "frameworkReferences": {
@@ -28889,7 +28889,7 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[10.0.1, 10.0.1]"
+            "version": "[10.0.2, 10.0.2]"
           }
         ],
         "frameworkReferences": {

@@ -4,7 +4,7 @@
     <_CodesignBundle Include="JournalNote.app">
       <EnableCodeSigning>False</EnableCodeSigning>
       <CodesignSigningKey></CodesignSigningKey>
-      <CodesignEntitlements>/Applications/C#/Class/Coursework/JournalNote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/Entitlements.xcent</CodesignEntitlements>
+      <CodesignEntitlements>/Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/Entitlements.xcent</CodesignEntitlements>
       <CodesignUseSecureTimestamp></CodesignUseSecureTimestamp>
       <CodesignAllocate></CodesignAllocate>
       <CodesignExtraArgs></CodesignExtraArgs>
@@ -12,7 +12,7 @@
       <CodesignDisableTimestamp>true</CodesignDisableTimestamp>
       <CodesignKeychain></CodesignKeychain>
       <CodesignUseHardenedRuntime></CodesignUseHardenedRuntime>
-      <SourceProjectPath>/Applications/C#/Class/Coursework/JournalNote/JournalNote</SourceProjectPath>
+      <SourceProjectPath>/Applications/C#/Class/Coursework/Solved/journalnote/JournalNote</SourceProjectPath>
     </_CodesignBundle>
   </ItemGroup>
 </Project>
