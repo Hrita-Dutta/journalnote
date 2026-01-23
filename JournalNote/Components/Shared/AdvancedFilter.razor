@@ -8,124 +8,173 @@
         </button>
     </div>
 
+    <!-- Search -->
     <div class="filter-section">
         <label class="filter-label">
             <span class="label-icon">🔎</span>
             <strong>Search</strong>
         </label>
-        <input type="text"
-               class="form-control"
-               placeholder="Search by title or content..."
+        <input type="text" 
+               class="form-control" 
+               placeholder="Search by title or content..." 
                @bind="Filter.SearchTerm"
                @bind:event="oninput"
                @onkeyup="OnFilterChanged" />
     </div>
-</div>
-<!-- Date Range -->
-<div class="filter-section">
-    <label class="filter-label">
-        <span class="label-icon">📅</span>
-        <strong>Date Range</strong>
-    </label>
 
-    <div class="date-range-inputs">
-        <div class="date-input-group">
-            <label class="small-label">From:</label>
-            <input type="date"
-                   class="form-control"
-                   @bind="Filter.StartDate"
-                   @onchange="OnFilterChanged" />
+    <!-- Date Range -->
+    <div class="filter-section">
+        <label class="filter-label">
+            <span class="label-icon">📅</span>
+            <strong>Date Range</strong>
+        </label>
+        <div class="date-range-inputs">
+            <div class="date-input-group">
+                <label class="small-label">From: </label>
+                <input type="date" 
+                       class="form-control" 
+                       @bind="Filter.StartDate"
+                       @onchange="OnFilterChanged" />
+            </div>
+            <div class="date-input-group">
+                <label class="small-label">To: </label>
+                <input type="date" 
+                       class="form-control" 
+                       @bind="Filter.EndDate"
+                       @onchange="OnFilterChanged" />
+            </div>
         </div>
+    </div>
 
-        <div class="date-input-group">
-            <label class="small-label">To:</label>
-            <input type="date"
-                   class="form-control"
-                   @bind="Filter.EndDate"
-                   @onchange="OnFilterChanged" />
+    <!-- Mood Category -->
+    <div class="filter-section">
+        <label class="filter-label">
+            <span class="label-icon">😊</span>
+            <strong>Mood Category</strong>
+        </label>
+        <select class="form-select" @bind="Filter.MoodCategory" @onchange="OnFilterChanged">
+            <option value="">All Categories</option>
+            <option value="Positive">Positive</option>
+            <option value="Neutral">Neutral</option>
+            <option value="Negative">Negative</option>
+        </select>
+    </div>
+
+    <!-- Specific Moods -->
+    <div class="filter-section">
+        <label class="filter-label">
+            <span class="label-icon">🎭</span>
+            <strong>Specific Moods</strong>
+        </label>
+        <div class="filter-chips">
+            @foreach (var mood in AvailableMoods)
+            {
+                <button type="button" 
+                        class="filter-chip @(IsMoodSelected(mood.Id) ? "selected" : "")"
+                        @onclick="() => ToggleMood(mood.Id)">
+                    @mood.Icon @mood.Name
+                </button>
+            }
         </div>
     </div>
-</div>
 
-<!-- Mood Category -->
-<div class="filter-section">
-    <label class="filter-label">
-        <span class="label-icon">😊</span>
-        <strong>Mood Category</strong>
-    </label>
-
-    <select class="form-select" @bind="Filter.MoodCategory" @onchange="OnFilterChanged">
-        <option value="">All Categories</option>
-        <option value="Positive">Positive</option>
-        <option value="Neutral">Neutral</option>
-        <option value="Negative">Negative</option>
-    </select>
-</div>
-
-<!-- Specific Moods -->
-<div class="filter-section">
-    <label class="filter-label">
-        <span class="label-icon">🎭</span>
-        <strong>Specific Moods</strong>
-    </label>
-
-    <div class="filter-chips">
-        @foreach (var mood in AvailableMoods)
-        {
-            <button type="button"
-                    class="filter-chip @(IsMoodSelected(mood.Id) ? "selected" : "")"
-                    @onclick="() => ToggleMood(mood.Id)">
-                @mood.Icon @mood.Name
-            </button>
-        }
+    <!-- Tags -->
+    <div class="filter-section">
+        <label class="filter-label">
+            <span class="label-icon">🏷️</span>
+            <strong>Tags</strong>
+        </label>
+        <div class="filter-chips">
+            @foreach (var tag in AvailableTags)
+            {
+                <button type="button" 
+                        class="filter-chip @(IsTagSelected(tag.Id) ? "selected" : "")"
+                        style="@(IsTagSelected(tag.Id) ? $"background-color: {tag.Color}; color: white; border-color: {tag.Color};" : $"border-color: {tag.Color}; color: {tag.Color};")"
+                        @onclick="() => ToggleTag(tag.Id)">
+                    @tag.Name
+                </button>
+            }
+        </div>
     </div>
+
+    <!-- Active Filters Summary -->
+    @if (Filter.HasActiveFilters)
+    {
+        <div class="active-filters">
+            <label class="filter-label">
+                <strong>Active Filters:</strong>
+            </label>
+            <div class="active-filter-tags">
+                @if (! string.IsNullOrWhiteSpace(Filter.SearchTerm))
+                {
+                    <span class="active-filter-tag">
+                        Search: "@Filter.SearchTerm"
+                        <button type="button" @onclick="() => { Filter.SearchTerm = string.Empty; OnFilterChanged(); }">×</button>
+                    </span>
+                }
+                @if (Filter.StartDate.HasValue)
+                {
+                    <span class="active-filter-tag">
+                        From: @Filter.StartDate.Value.ToString("MMM dd, yyyy")
+                        <button type="button" @onclick="() => { Filter.StartDate = null; OnFilterChanged(); }">×</button>
+                    </span>
+                }
+                @if (Filter.EndDate. HasValue)
+                {
+                    <span class="active-filter-tag">
+                        To:  @Filter.EndDate.Value. ToString("MMM dd, yyyy")
+                        <button type="button" @onclick="() => { Filter.EndDate = null; OnFilterChanged(); }">×</button>
+                    </span>
+                }
+                @if (! string.IsNullOrEmpty(Filter.MoodCategory) && Filter.MoodCategory != "All")
+                {
+                    <span class="active-filter-tag">
+                        Mood:  @Filter.MoodCategory
+                        <button type="button" @onclick="() => { Filter.MoodCategory = string.Empty; OnFilterChanged(); }">×</button>
+                    </span>
+                }
+                @foreach (var moodId in Filter.SelectedMoodIds)
+                {
+                    var mood = AvailableMoods.FirstOrDefault(m => m.Id == moodId);
+                    if (mood != null)
+                    {
+                        <span class="active-filter-tag">
+                            @mood.Icon @mood.Name
+                            <button type="button" @onclick="() => { Filter.SelectedMoodIds.Remove(moodId); OnFilterChanged(); }">×</button>
+                        </span>
+                    }
+                }
+                @foreach (var tagId in Filter.SelectedTagIds)
+                {
+                    var tag = AvailableTags.FirstOrDefault(t => t.Id == tagId);
+                    if (tag != null)
+                    {
+                        <span class="active-filter-tag" style="background-color: @tag.Color">
+                            @tag.Name
+                            <button type="button" @onclick="() => { Filter.SelectedTagIds.Remove(tagId); OnFilterChanged(); }">×</button>
+                        </span>
+                    }
+                }
+            </div>
+        </div>
+    }
 </div>
-
-<!-- Tags -->
-<div class="filter-section">
-    <label class="filter-label">
-        <span class="label-icon">🏷️</span>
-        <strong>Tags</strong>
-    </label>
-
-    <div class="filter-chips">
-        @foreach (var tag in AvailableTags)
-        {
-            var selected = IsTagSelected(tag.Id);
-
-            <button type="button"
-                    class="filter-chip @(selected ? "selected" : "")"
-                    style="@(selected
-                               ? $"background-color: {tag.Color}; color: white; border-color: {tag.Color};"
-                               : $"border-color: {tag.Color}; color: {tag.Color};")"
-                    @onclick="() => ToggleTag(tag.Id)">
-                @tag.Name
-            </button>
-        }
-    </div>
-</div>
-
-
 
 @code {
-    [Parameter] public EntryFilter Filter { get; set; } = new();
-    [Parameter] public EventCallback OnFilterChange { get; set; }
+    [Parameter]
+    public EntryFilter Filter { get; set; } = new();
 
-    private async Task OnFilterChanged()
-    {
-        await OnFilterChange.InvokeAsync();
-    }
+    [Parameter]
+    public List<Mood> AvailableMoods { get; set; } = new();
 
-    private async Task ClearAllFilters()
-    {
-        Filter.Clear();
-        await OnFilterChanged();
-    }
-    
-    [Parameter] public List<Mood> AvailableMoods { get; set; } = new();
-    [Parameter] public List<Tag> AvailableTags { get; set; } = new();
+    [Parameter]
+    public List<Tag> AvailableTags { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnFilterChange { get; set; }
 
     private bool IsMoodSelected(int moodId) => Filter.SelectedMoodIds.Contains(moodId);
+
     private bool IsTagSelected(int tagId) => Filter.SelectedTagIds.Contains(tagId);
 
     private async Task ToggleMood(int moodId)
@@ -148,4 +197,14 @@
         await OnFilterChanged();
     }
 
+    private async Task OnFilterChanged()
+    {
+        await OnFilterChange.InvokeAsync();
+    }
+
+    private async Task ClearAllFilters()
+    {
+        Filter.Clear();
+        await OnFilterChanged();
+    }
 }
