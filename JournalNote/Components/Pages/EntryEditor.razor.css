@@ -146,3 +146,22 @@ h2 {
         order: 1;
     }
 }
+
+/* Date Display (Read-only) */
+.date-display {
+    padding: 0.6rem 1rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid #e0e6ed;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.date-display::before {
+    content: "📅";
+    font-size: 1.2rem;
+}

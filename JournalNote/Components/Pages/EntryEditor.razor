@@ -56,7 +56,7 @@
                                 <div class="date-display">
                                     @selectedDate.ToString("MMMM dd, yyyy")
                                 </div>
-                                <small class="text-muted">One entry per day. Create entries from Calendar or Home page.</small>
+                                <small class="text-muted">One entry per day</small>
                             </div>
 
                             <div class="col-md-8">
@@ -175,6 +175,9 @@
 </div>
 
 @code {
+    // Date parameter from URL - users navigate to specific dates
+    // via Calendar (/entry/2025-01-15) or Home page links
+    // Direct access to /entry creates entry for today
     [Parameter] public string? DateParam { get; set; }
 
     private JournalEntry currentJournalEntry = new();
@@ -245,15 +248,9 @@
         }
     }
 
-    private async Task OnDateChanged(ChangeEventArgs e)
-    {
-        if (DateTime.TryParse(e.Value?.ToString(), out var date))
-        {
-            selectedDate = date;
-            await LoadJournalEntryForDate();
-            await SyncQuillContent();
-        }
-    }
+    // Date changes not allowed - one entry per day rule
+    // Users must navigate from Calendar or Home to change date
+    // Removed OnDateChanged method
 
     private async Task LoadJournalEntryForDate()
     {
