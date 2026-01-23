@@ -62,6 +62,50 @@
     </select>
 </div>
 
+<!-- Specific Moods -->
+<div class="filter-section">
+    <label class="filter-label">
+        <span class="label-icon">🎭</span>
+        <strong>Specific Moods</strong>
+    </label>
+
+    <div class="filter-chips">
+        @foreach (var mood in AvailableMoods)
+        {
+            <button type="button"
+                    class="filter-chip @(IsMoodSelected(mood.Id) ? "selected" : "")"
+                    @onclick="() => ToggleMood(mood.Id)">
+                @mood.Icon @mood.Name
+            </button>
+        }
+    </div>
+</div>
+
+<!-- Tags -->
+<div class="filter-section">
+    <label class="filter-label">
+        <span class="label-icon">🏷️</span>
+        <strong>Tags</strong>
+    </label>
+
+    <div class="filter-chips">
+        @foreach (var tag in AvailableTags)
+        {
+            var selected = IsTagSelected(tag.Id);
+
+            <button type="button"
+                    class="filter-chip @(selected ? "selected" : "")"
+                    style="@(selected
+                               ? $"background-color: {tag.Color}; color: white; border-color: {tag.Color};"
+                               : $"border-color: {tag.Color}; color: {tag.Color};")"
+                    @onclick="() => ToggleTag(tag.Id)">
+                @tag.Name
+            </button>
+        }
+    </div>
+</div>
+
+
 
 @code {
     [Parameter] public EntryFilter Filter { get; set; } = new();
@@ -77,4 +121,31 @@
         Filter.Clear();
         await OnFilterChanged();
     }
+    
+    [Parameter] public List<Mood> AvailableMoods { get; set; } = new();
+    [Parameter] public List<Tag> AvailableTags { get; set; } = new();
+
+    private bool IsMoodSelected(int moodId) => Filter.SelectedMoodIds.Contains(moodId);
+    private bool IsTagSelected(int tagId) => Filter.SelectedTagIds.Contains(tagId);
+
+    private async Task ToggleMood(int moodId)
+    {
+        if (Filter.SelectedMoodIds.Contains(moodId))
+            Filter.SelectedMoodIds.Remove(moodId);
+        else
+            Filter.SelectedMoodIds.Add(moodId);
+
+        await OnFilterChanged();
+    }
+
+    private async Task ToggleTag(int tagId)
+    {
+        if (Filter.SelectedTagIds.Contains(tagId))
+            Filter.SelectedTagIds.Remove(tagId);
+        else
+            Filter.SelectedTagIds.Add(tagId);
+
+        await OnFilterChanged();
+    }
+
 }

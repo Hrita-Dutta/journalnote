@@ -92,3 +92,46 @@
         grid-template-columns: 1fr;
     }
 }
+.filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-chip {
+    padding: 0.5rem 1rem;
+    border: 2px solid #e0e6ed;
+    border-radius: 20px;
+    background: white;
+    color: #5a6c7d;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-chip:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.filter-chip.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+@media (max-width: 768px) {
+    .filter-chips {
+        gap: 0.35rem;
+    }
+
+    .filter-chip {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}
+
