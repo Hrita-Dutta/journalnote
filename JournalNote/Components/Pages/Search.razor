@@ -1,0 +1,52 @@
+@page "/search"
+@using JournalNote.Models
+@using JournalNote.Services
+@inject DatabaseService DatabaseService
+@inject NavigationManager Navigation
+
+<PageTitle>Search & Filter - JournalNote</PageTitle>
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h1>🔍 Search & Filter Entries</h1>
+        <p class="lead">Find exactly what you're looking for</p>
+    </div>
+
+    <hr />
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
+            <p class="mt-3">Loading data...</p>
+        </div>
+    }
+</div>
+
+@code {
+    private bool isLoading = true;
+    private List<JournalEntry> allEntries = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+
+        try
+        {
+            allEntries = await DatabaseService.GetAllJournalEntriesAsync();
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", $"Failed to load data: {ex.Message}", "OK");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

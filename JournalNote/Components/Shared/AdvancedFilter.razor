@@ -14,9 +14,9 @@
             <span class="label-icon">🔎</span>
             <strong>Search</strong>
         </label>
-        <input type="text" 
-               class="form-control" 
-               placeholder="Search by title or content..." 
+        <input type="text"
+               class="form-control"
+               placeholder="Search by title or content..."
                @bind="Filter.SearchTerm"
                @bind:event="oninput"
                @onkeyup="OnFilterChanged" />
@@ -28,20 +28,22 @@
             <span class="label-icon">📅</span>
             <strong>Date Range</strong>
         </label>
+
         <div class="date-range-inputs">
             <div class="date-input-group">
-                <label class="small-label">From: </label>
-                <input type="date" 
-                       class="form-control" 
+                <label class="small-label">From:</label>
+                <input type="date"
+                       class="form-control"
                        @bind="Filter.StartDate"
-                       @onchange="OnFilterChanged" />
+                       @bind:after="OnFilterChanged" />
             </div>
+
             <div class="date-input-group">
-                <label class="small-label">To: </label>
-                <input type="date" 
-                       class="form-control" 
+                <label class="small-label">To:</label>
+                <input type="date"
+                       class="form-control"
                        @bind="Filter.EndDate"
-                       @onchange="OnFilterChanged" />
+                       @bind:after="OnFilterChanged" />
             </div>
         </div>
     </div>
@@ -52,7 +54,10 @@
             <span class="label-icon">😊</span>
             <strong>Mood Category</strong>
         </label>
-        <select class="form-select" @bind="Filter.MoodCategory" @onchange="OnFilterChanged">
+
+        <select class="form-select"
+                @bind="Filter.MoodCategory"
+                @bind:after="OnFilterChanged">
             <option value="">All Categories</option>
             <option value="Positive">Positive</option>
             <option value="Neutral">Neutral</option>
@@ -66,10 +71,11 @@
             <span class="label-icon">🎭</span>
             <strong>Specific Moods</strong>
         </label>
+
         <div class="filter-chips">
             @foreach (var mood in AvailableMoods)
             {
-                <button type="button" 
+                <button type="button"
                         class="filter-chip @(IsMoodSelected(mood.Id) ? "selected" : "")"
                         @onclick="() => ToggleMood(mood.Id)">
                     @mood.Icon @mood.Name
@@ -84,12 +90,17 @@
             <span class="label-icon">🏷️</span>
             <strong>Tags</strong>
         </label>
+
         <div class="filter-chips">
             @foreach (var tag in AvailableTags)
             {
-                <button type="button" 
-                        class="filter-chip @(IsTagSelected(tag.Id) ? "selected" : "")"
-                        style="@(IsTagSelected(tag.Id) ? $"background-color: {tag.Color}; color: white; border-color: {tag.Color};" : $"border-color: {tag.Color}; color: {tag.Color};")"
+                var selected = IsTagSelected(tag.Id);
+
+                <button type="button"
+                        class="filter-chip @(selected ? "selected" : "")"
+                        style="@(selected
+                            ? $"background-color: {tag.Color}; color: white; border-color: {tag.Color};"
+                            : $"border-color: {tag.Color}; color: {tag.Color};")"
                         @onclick="() => ToggleTag(tag.Id)">
                     @tag.Name
                 </button>
@@ -104,14 +115,16 @@
             <label class="filter-label">
                 <strong>Active Filters:</strong>
             </label>
+
             <div class="active-filter-tags">
-                @if (! string.IsNullOrWhiteSpace(Filter.SearchTerm))
+                @if (!string.IsNullOrWhiteSpace(Filter.SearchTerm))
                 {
                     <span class="active-filter-tag">
                         Search: "@Filter.SearchTerm"
                         <button type="button" @onclick="() => { Filter.SearchTerm = string.Empty; OnFilterChanged(); }">×</button>
                     </span>
                 }
+
                 @if (Filter.StartDate.HasValue)
                 {
                     <span class="active-filter-tag">
@@ -119,21 +132,24 @@
                         <button type="button" @onclick="() => { Filter.StartDate = null; OnFilterChanged(); }">×</button>
                     </span>
                 }
-                @if (Filter.EndDate. HasValue)
+
+                @if (Filter.EndDate.HasValue)
                 {
                     <span class="active-filter-tag">
-                        To:  @Filter.EndDate.Value. ToString("MMM dd, yyyy")
+                        To: @Filter.EndDate.Value.ToString("MMM dd, yyyy")
                         <button type="button" @onclick="() => { Filter.EndDate = null; OnFilterChanged(); }">×</button>
                     </span>
                 }
-                @if (! string.IsNullOrEmpty(Filter.MoodCategory) && Filter.MoodCategory != "All")
+
+                @if (!string.IsNullOrEmpty(Filter.MoodCategory) && Filter.MoodCategory != "All")
                 {
                     <span class="active-filter-tag">
-                        Mood:  @Filter.MoodCategory
+                        Mood: @Filter.MoodCategory
                         <button type="button" @onclick="() => { Filter.MoodCategory = string.Empty; OnFilterChanged(); }">×</button>
                     </span>
                 }
-                @foreach (var moodId in Filter.SelectedMoodIds)
+
+                @foreach (var moodId in Filter.SelectedMoodIds.ToList())
                 {
                     var mood = AvailableMoods.FirstOrDefault(m => m.Id == moodId);
                     if (mood != null)
@@ -144,7 +160,8 @@
                         </span>
                     }
                 }
-                @foreach (var tagId in Filter.SelectedTagIds)
+
+                @foreach (var tagId in Filter.SelectedTagIds.ToList())
                 {
                     var tag = AvailableTags.FirstOrDefault(t => t.Id == tagId);
                     if (tag != null)
@@ -161,20 +178,12 @@
 </div>
 
 @code {
-    [Parameter]
-    public EntryFilter Filter { get; set; } = new();
-
-    [Parameter]
-    public List<Mood> AvailableMoods { get; set; } = new();
-
-    [Parameter]
-    public List<Tag> AvailableTags { get; set; } = new();
-
-    [Parameter]
-    public EventCallback OnFilterChange { get; set; }
+    [Parameter] public EntryFilter Filter { get; set; } = new();
+    [Parameter] public List<Mood> AvailableMoods { get; set; } = new();
+    [Parameter] public List<Tag> AvailableTags { get; set; } = new();
+    [Parameter] public EventCallback OnFilterChange { get; set; }
 
     private bool IsMoodSelected(int moodId) => Filter.SelectedMoodIds.Contains(moodId);
-
     private bool IsTagSelected(int tagId) => Filter.SelectedTagIds.Contains(tagId);
 
     private async Task ToggleMood(int moodId)
