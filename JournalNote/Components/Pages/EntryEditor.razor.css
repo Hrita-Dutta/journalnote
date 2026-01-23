@@ -1,93 +1,76 @@
-/* Container */
 .container {
     max-width: 1400px;
 }
 
-/* Header */
 h2 {
-    font-size: 1.8rem;
+    font-size: 1.75rem;
     font-weight: 600;
-    color: #2c3e50;
+    color: #343a40;
 }
 
-/* Card */
 .card {
     border: none;
-    border-radius: 12px;
-}
-
-.card-body {
-    padding: 1.5rem;
-}
-
-/* Form Controls */
-.form-control {
-    border: 2px solid #e0e6ed;
     border-radius: 8px;
-    transition: all 0.3s ease;
+}
+
+.form-control {
+    border: 2px solid #dee2e6;
+    border-radius: 5px;
 }
 
 .form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
 }
 
 .form-label {
     font-weight: 600;
-    color: #34495e;
-    margin-bottom: 0.5rem;
+    color: #495057;
 }
 
-.form-label .text-danger {
-    font-size: 0.85rem;
-    font-weight: 500;
+.date-display {
+    padding: 0.6rem 1rem;
+    background-color: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 5px;
+    font-weight: 600;
+    color: #343a40;
 }
 
-.form-label .text-muted {
-    font-size: 0.85rem;
-    font-weight: 400;
-}
-
-/* Buttons */
 .btn {
-    border-radius: 8px;
+    border-radius: 5px;
     font-weight: 500;
-    transition: all 0.3s ease;
-    padding: 0.6rem 1.25rem;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: #4a90e2;
     border: none;
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    background-color: #357abd;
 }
 
 .btn-success {
-    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    background-color: #5cb85c;
     border: none;
 }
 
 .btn-success:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(86, 171, 47, 0.4);
+    background-color: #4cae4c;
 }
 
 .btn-danger {
-    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    background-color: #d9534f;
     border: none;
 }
 
 .btn-danger:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(235, 51, 73, 0.4);
+    background-color: #c9302c;
 }
 
 .btn-secondary {
-    background: #6c757d;
+    background-color: #6c757d;
     border: none;
 }
 
@@ -97,71 +80,21 @@ h2 {
 }
 
 .btn-outline-secondary:hover {
-    background: #6c757d;
+    background-color: #6c757d;
     color: white;
 }
 
-/* Alert */
 .alert {
-    border-radius: 10px;
+    border-radius: 5px;
     border: none;
 }
 
-/* Spinner */
-.spinner-border-sm {
-    width: 1rem;
-    height: 1rem;
-}
-
-/* Quill Editor */
-#editor {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 1rem;
-    line-height: 1.6;
-}
-
 .ql-toolbar {
-    background: #f8f9fa;
-    border-top-left-radius: 10px !important;
-    border-top-right-radius: 10px !important;
-    border: 2px solid #e0e6ed !important;
-    border-bottom: 1px solid #e0e6ed !important;
+    background-color: #f8f9fa;
+    border: 2px solid #dee2e6 !important;
 }
 
 .ql-container {
-    border-bottom-left-radius: 10px !important;
-    border-bottom-right-radius: 10px !important;
-    border: 2px solid #e0e6ed !important;
+    border: 2px solid #dee2e6 !important;
     border-top: none !important;
-    font-size: 1rem;
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-    .col-lg-4 {
-        order: 2;
-    }
-
-    .col-lg-8 {
-        order: 1;
-    }
-}
-
-/* Date Display (Read-only) */
-.date-display {
-    padding: 0.6rem 1rem;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border: 2px solid #e0e6ed;
-    border-radius: 8px;
-    font-weight: 600;
-    color: #2c3e50;
-    font-size: 1.05rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.date-display::before {
-    content: "📅";
-    font-size: 1.2rem;
 }

@@ -9,7 +9,7 @@
 
 <div class="container mt-4">
     <div class="text-center mb-4">
-        <h1>📅 Calendar View</h1>
+        <h1>Calendar View</h1>
         <p class="lead">Navigate your journal entries by date</p>
     </div>
 
@@ -33,27 +33,6 @@
                     EntryDates="@entryDates"
                     OnDateSelected="@OnDateSelected"
                     @ref="calendarView" />
-
-                <!-- Quick Stats -->
-                <div class="card mt-4 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">📊 Quick Stats</h5>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <div class="stat-value">@totalEntries</div>
-                                <div class="stat-label">Total Entries</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">@entriesThisMonth</div>
-                                <div class="stat-label">This Month</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">@entriesThisYear</div>
-                                <div class="stat-label">This Year</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Entry Preview Section -->
@@ -76,7 +55,7 @@
                                 </p>
                             }
 
-                            @if (! string.IsNullOrEmpty(selectedEntry.TagIds))
+                            @if (!string.IsNullOrEmpty(selectedEntry.TagIds))
                             {
                                 <div class="tags-display-small mb-3">
                                     <strong>Tags:</strong>
@@ -118,33 +97,27 @@
                         <div class="card-body text-center py-5">
                             <h5>@selectedDate.ToString("MMMM dd, yyyy")</h5>
                             <hr />
-                            <p class="text-muted mb-3">No entry for this date</p>
-                            <button class="btn btn-success" @onclick="CreateEntry">
-                                ✍️ Create Entry
-                            </button>
+                            
+                            @if (selectedDate.Date == DateTime.Today.Date)
+                            {
+                                <p class="text-muted mb-3">No entry for today yet</p>
+                                <button class="btn btn-success" @onclick="CreateTodayEntry">
+                                    Create Today's Entry
+                                </button>
+                            }
+                            else if (selectedDate.Date < DateTime.Today.Date)
+                            {
+                                <p class="text-muted mb-3">No entry for this past date</p>
+                                <p class="text-muted"><small>You can only create entries for today</small></p>
+                            }
+                            else
+                            {
+                                <p class="text-muted mb-3">Future date</p>
+                                <p class="text-muted"><small>You cannot create entries for future dates</small></p>
+                            }
                         </div>
                     </div>
                 }
-
-                <!-- Month Summary -->
-                <div class="card mt-4 shadow-sm">
-                    <div class="card-body">
-                        <h6 class="card-title">
-                            📝 @currentMonth.ToString("MMMM yyyy") Summary
-                        </h6>
-                        <ul class="list-unstyled mt-3">
-                            <li class="mb-2">
-                                <strong>Entries:</strong> @entriesThisMonth
-                            </li>
-                            <li class="mb-2">
-                                <strong>Days with entries:</strong> @GetDaysWithEntriesInMonth()
-                            </li>
-                            <li class="mb-2">
-                                <strong>Completion: </strong> @GetMonthCompletionPercentage()%
-                            </li>
-                        </ul>
-                    </div>
-                </div>
             </div>
         </div>
     }
@@ -158,12 +131,6 @@
     private JournalEntry selectedEntry;
     private bool isLoading = true;
 
-    // Stats
-    private int totalEntries = 0;
-    private int entriesThisMonth = 0;
-    private int entriesThisYear = 0;
-
-    // Data
     private List<JournalEntry> allEntries = new();
     private List<Mood> allMoods = new();
     private List<Tag> allTags = new();
@@ -179,23 +146,12 @@
 
         try
         {
-            // Load all data
             allEntries = await DatabaseService.GetAllJournalEntriesAsync();
             allMoods = await DatabaseService.GetAllMoodsAsync();
             allTags = await DatabaseService.GetAllTagsAsync();
 
-            // Extract entry dates
-            entryDates = allEntries. Select(e => e.Date).ToList();
+            entryDates = allEntries.Select(e => e.Date).ToList();
 
-            // Calculate stats
-            totalEntries = allEntries.Count;
-            entriesThisMonth = allEntries.Count(e => 
-                DateTime.Parse(e.Date).Year == currentMonth.Year && 
-                DateTime.Parse(e.Date).Month == currentMonth.Month);
-            entriesThisYear = allEntries.Count(e => 
-                DateTime.Parse(e.Date).Year == DateTime.Today.Year);
-
-            // Load today's entry
             await LoadEntryForDate(selectedDate);
         }
         catch (Exception ex)
@@ -212,12 +168,6 @@
     {
         selectedDate = date;
         currentMonth = new DateTime(date.Year, date.Month, 1);
-        
-        // Update stats
-        entriesThisMonth = allEntries.Count(e => 
-            DateTime.Parse(e.Date).Year == currentMonth.Year && 
-            DateTime.Parse(e.Date).Month == currentMonth.Month);
-
         await LoadEntryForDate(date);
     }
 
@@ -289,22 +239,6 @@
         return $"<p>{textContent.Substring(0, maxLength)}...</p>";
     }
 
-    private int GetDaysWithEntriesInMonth()
-    {
-        return allEntries.Count(e =>
-        {
-            var entryDate = DateTime.Parse(e.Date);
-            return entryDate.Year == currentMonth.Year && entryDate.Month == currentMonth.Month;
-        });
-    }
-
-    private int GetMonthCompletionPercentage()
-    {
-        var daysInMonth = DateTime.DaysInMonth(currentMonth.Year, currentMonth.Month);
-        var daysWithEntries = GetDaysWithEntriesInMonth();
-        return (int)((daysWithEntries / (double)daysInMonth) * 100);
-    }
-
     private void ViewEntry()
     {
         Navigation.NavigateTo($"/entry/{selectedEntry.Date}");
@@ -315,8 +249,12 @@
         Navigation.NavigateTo($"/entry/{selectedEntry.Date}");
     }
 
-    private void CreateEntry()
+    private void CreateTodayEntry()
     {
-        Navigation.NavigateTo($"/entry/{selectedDate.ToString("yyyy-MM-dd")}");
+        // Only allow creating entry for today
+        if (selectedDate.Date == DateTime.Today.Date)
+        {
+            Navigation.NavigateTo("/entry");
+        }
     }
 }
