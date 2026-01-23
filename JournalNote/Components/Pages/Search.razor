@@ -64,6 +64,65 @@
                 else
                 {
                     <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="results-list">
+    @foreach (var entry in paginatedEntries)
+    {
+        <div class="result-card shadow-sm mb-3" @onclick="() => ViewEntry(entry.Date)">
+            <div class="result-header">
+                <div>
+                    <h5 class="result-title">@HighlightSearchTerm(entry.Title)</h5>
+                    <small class="text-muted">@FormatDate(entry.Date)</small>
+                </div>
+                <div class="result-actions">
+                    <button class="btn btn-sm btn-outline-primary"
+                            @onclick:stopPropagation="true"
+                            @onclick="() => ViewEntry(entry.Date)">
+                        View
+                    </button>
+                </div>
+            </div>
+
+            <div class="result-meta">
+                @if (entry.PrimaryMoodId.HasValue)
+                {
+                    <span class="meta-badge mood-badge">
+                        @GetMoodDisplay(entry)
+                    </span>
+                }
+
+                @foreach (var tag in GetTagsForEntry(entry).Take(5))
+                {
+                    <span class="meta-badge tag-badge" style="background-color: @tag.Color">
+                        @tag.Name
+                    </span>
+                }
+
+                @if (GetTagsForEntry(entry).Count > 5)
+                {
+                    <span class="meta-badge">+@(GetTagsForEntry(entry).Count - 5)</span>
+                }
+            </div>
+
+            <div class="result-preview">
+                @((MarkupString)HighlightSearchTermInContent(entry.Content))
+            </div>
+
+            <div class="match-indicators">
+                @if (!string.IsNullOrEmpty(filter.SearchTerm) &&
+                     entry.Title.Contains(filter.SearchTerm, StringComparison.OrdinalIgnoreCase))
+                {
+                    <span class="match-indicator">📌 Title Match</span>
+                }
+                @if (!string.IsNullOrEmpty(filter.SearchTerm) &&
+                     entry.Content.Contains(filter.SearchTerm, StringComparison.OrdinalIgnoreCase))
+                {
+                    <span class="match-indicator">📄 Content Match</span>
+                }
+            </div>
+        </div>
+    }
+</div>
+
                         <h5 class="mb-0">Found @filteredEntries.Count entries</h5>
                         <select class="form-select w-auto" @onchange="OnSortChanged">
                             <option value="date-desc">Date (Newest First)</option>
@@ -80,6 +139,82 @@
 </div>
 
 @code {
+    
+    private string GetMoodDisplay(JournalEntry entry)
+{
+    if (!entry.PrimaryMoodId.HasValue)
+        return "";
+
+    var mood = allMoods.FirstOrDefault(m => m.Id == entry.PrimaryMoodId.Value);
+    return mood != null ? $"{mood.Icon} {mood.Name}" : "";
+}
+
+private List<Tag> GetTagsForEntry(JournalEntry entry)
+{
+    if (string.IsNullOrEmpty(entry.TagIds))
+        return new List<Tag>();
+
+    var tagIds = entry.TagIds
+        .Split(',')
+        .Where(s => !string.IsNullOrWhiteSpace(s))
+        .Select(s => int.Parse(s.Trim()))
+        .ToList();
+
+    return allTags.Where(t => tagIds.Contains(t.Id)).ToList();
+}
+
+private MarkupString HighlightSearchTerm(string text)
+{
+    if (string.IsNullOrEmpty(filter.SearchTerm) || string.IsNullOrEmpty(text))
+        return new MarkupString(text ?? "");
+
+    var highlighted = System.Text.RegularExpressions.Regex.Replace(
+        text,
+        System.Text.RegularExpressions.Regex.Escape(filter.SearchTerm),
+        match => $"<mark>{match.Value}</mark>",
+        System.Text.RegularExpressions.RegexOptions.IgnoreCase
+    );
+
+    return new MarkupString(highlighted);
+}
+
+private MarkupString HighlightSearchTermInContent(string htmlContent)
+{
+    if (string.IsNullOrEmpty(htmlContent))
+        return new MarkupString("<p class='text-muted'>No content</p>");
+
+    var textContent = System.Text.RegularExpressions.Regex.Replace(htmlContent, "<.*?>", " ").Trim();
+    if (string.IsNullOrEmpty(textContent))
+        return new MarkupString("<p class='text-muted'>No content</p>");
+
+    if (!string.IsNullOrEmpty(filter.SearchTerm))
+    {
+        textContent = System.Text.RegularExpressions.Regex.Replace(
+            textContent,
+            System.Text.RegularExpressions.Regex.Escape(filter.SearchTerm),
+            match => $"<mark>{match.Value}</mark>",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase
+        );
+    }
+
+    if (textContent.Length > 200)
+        textContent = textContent.Substring(0, 200) + "...";
+
+    return new MarkupString($"<p>{textContent}</p>");
+}
+
+private string FormatDate(string dateString)
+{
+    if (DateTime.TryParse(dateString, out var date))
+        return date.ToString("MMMM dd, yyyy");
+    return dateString;
+}
+
+private void ViewEntry(string date)
+{
+    Navigation.NavigateTo($"/entry/{date}");
+}
+
     private string sortBy = "date-desc";
 
     private void OnSortChanged(ChangeEventArgs e)
