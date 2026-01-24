@@ -73,8 +73,9 @@ nav {
 /* Navigation Links */
 .nav-link {
     display: flex;
-    align-items: center;
-    padding: 1rem 1.25rem;
+    justify-content: center;
+    /*align-items: center;*/
+    padding: 2rem 1.25rem;
     color: #ecf0f1 !important;
     background: transparent;
     text-decoration: none;
