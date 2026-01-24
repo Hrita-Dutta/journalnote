@@ -364,6 +364,7 @@
 /Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/JournalNote.pdb
 /Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/JournalNote.genruntimeconfig.cache
 /Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/ref/JournalNote.dll
+/Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/scopedcss/Components/Pages/Streaks.razor.rz.scp.css
 /Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/resourcestamps/Markdig.stamp
 /Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/resourcestamps/Microsoft.AspNetCore.Authorization.stamp
 /Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/resourcestamps/Microsoft.AspNetCore.Components.stamp

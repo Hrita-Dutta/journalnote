@@ -52,12 +52,12 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName>ScopedCss</AssetTraitName>
       <AssetTraitValue>ApplicationBundle</AssetTraitValue>
-      <Fingerprint>xt9eekyo8s</Fingerprint>
-      <Integrity>Reez3Jr6VLxxayh04PRLK/Co/0HEcGCgC5UKrNuhz4U=</Integrity>
+      <Fingerprint>tau53e1jpw</Fingerprint>
+      <Integrity>Wyxzyp8ZDsjQ/6zuPd6Q03TsXh+EIn8AmghbqxwrCiU=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>26256</FileLength>
-      <LastWriteTime>Fri, 23 Jan 2026 19:41:14 GMT</LastWriteTime>
+      <FileLength>29751</FileLength>
+      <LastWriteTime>Sat, 24 Jan 2026 07:27:01 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\JournalNote.styles.css'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\quill-editor.js'))">

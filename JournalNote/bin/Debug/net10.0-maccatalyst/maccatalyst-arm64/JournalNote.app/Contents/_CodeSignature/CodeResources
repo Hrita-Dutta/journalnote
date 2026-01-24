@@ -74,7 +74,11 @@
 		</data>
 		<key>Resources/wwwroot/JournalNote.styles.css</key>
 		<data>
-		u1tX0aSmhlY5RjD1aVpVXskz0w4=
+		NXYruKuCQ8AmKwn4JPX7Kn1mrjw=
+		</data>
+		<key>Resources/wwwroot/JournalNote.tau53e1jpw.bundle.scp.css</key>
+		<data>
+		NXYruKuCQ8AmKwn4JPX7Kn1mrjw=
 		</data>
 		<key>Resources/wwwroot/JournalNote.teoolk5k6s.bundle.scp.css</key>
 		<data>
@@ -127,14 +131,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			IfYML2ELpKkQ0oQQHiF9+hFhwpqQbic2uaDjRiM7pxo=
+			YvUg29CfPMF9kRoTYTMYIMj0NOR5wuTzk1wY2Cxr1iA=
 			</data>
 		</dict>
 		<key>MonoBundle/JournalNote.pdb</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			iDKtOWrdYahlOx4BgWAynRNwYWThJyjWoO/VkwmfDjI=
+			lxbFWW9hXNXy0RirQkdmQSl7+77ZKLvewJai9+o4z6A=
 			</data>
 		</dict>
 		<key>MonoBundle/Markdig.dll</key>
@@ -2024,7 +2028,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Reez3Jr6VLxxayh04PRLK/Co/0HEcGCgC5UKrNuhz4U=
+			Wyxzyp8ZDsjQ/6zuPd6Q03TsXh+EIn8AmghbqxwrCiU=
+			</data>
+		</dict>
+		<key>Resources/wwwroot/JournalNote.tau53e1jpw.bundle.scp.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Wyxzyp8ZDsjQ/6zuPd6Q03TsXh+EIn8AmghbqxwrCiU=
 			</data>
 		</dict>
 		<key>Resources/wwwroot/JournalNote.teoolk5k6s.bundle.scp.css</key>
