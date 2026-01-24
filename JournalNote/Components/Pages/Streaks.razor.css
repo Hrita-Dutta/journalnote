@@ -22,3 +22,22 @@
         font-size: 2rem;
     }
 }
+.alert-info {
+    background-color: #d1ecf1;
+    border: none;
+    border-radius: 10px;
+}
+
+.btn {
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+.btn-success {
+    background-color: #5cb85c;
+    border: none;
+}
+
+.btn-success:hover {
+    background-color: #4cae4c;
+}
