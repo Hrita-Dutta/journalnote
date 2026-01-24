@@ -30,7 +30,51 @@
                 Create Your First Entry
             </button>
         </div>
+    }else
+    {
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="streak-card current-streak">
+                    <div class="streak-icon">🔥</div>
+                    <div class="streak-value">@streakInfo.CurrentStreak</div>
+                    <div class="streak-label">Current Streak</div>
+                    <div class="streak-sublabel">
+                        @if (streakInfo.CurrentStreak == 0)
+                        {
+                            <span>Start writing today!</span>
+                        }
+                        else if (streakInfo.CurrentStreak == 1)
+                        {
+                            <span>Day in a row</span>
+                        }
+                        else
+                        {
+                            <span>Days in a row</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="streak-card longest-streak">
+                    <div class="streak-icon">🏆</div>
+                    <div class="streak-value">@streakInfo.LongestStreak</div>
+                    <div class="streak-label">Longest Streak</div>
+                    <div class="streak-sublabel">Personal best</div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="streak-card total-entries">
+                    <div class="streak-icon">📝</div>
+                    <div class="streak-value">@streakInfo.TotalEntries</div>
+                    <div class="streak-label">Total Entries</div>
+                    <div class="streak-sublabel">Lifetime journal entries</div>
+                </div>
+            </div>
+        </div>
     }
+
 
 </div>
 
