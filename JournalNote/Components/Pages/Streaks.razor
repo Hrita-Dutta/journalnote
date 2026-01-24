@@ -72,6 +72,43 @@
                     <div class="streak-sublabel">Lifetime journal entries</div>
                 </div>
             </div>
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <h5>Missed Days</h5>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-big-number">@streakInfo.MissedDays</div>
+                            <p class="text-muted mb-0">
+                                Since @streakInfo.FirstEntryDate?.ToString("MMM dd, yyyy")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <h5>Completion Rate</h5>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-big-number">@streakInfo.CompletionRate%</div>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar"
+                                     role="progressbar"
+                                     style="width: @streakInfo.CompletionRate%; background-color: #4a90e2;"
+                                     aria-valuenow="@streakInfo.CompletionRate"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
+                                    @streakInfo.CompletionRate%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     }
 
