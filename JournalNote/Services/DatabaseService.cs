@@ -361,5 +361,104 @@ namespace JournalNote.Services
             await InitAsync();
             return _databasePath;
         }
+        
+        // ====== STREAK TRACKING ======
+public async Task<StreakInfo> GetStreakInfoAsync()
+{
+    await InitAsync();
+
+    var allEntries = await GetAllJournalEntriesAsync();
+    
+    if (!allEntries.Any())
+    {
+        return new StreakInfo
+        {
+            CurrentStreak = 0,
+            LongestStreak = 0,
+            TotalEntries = 0,
+            MissedDays = 0,
+            LastEntryDate = null,
+            FirstEntryDate = null,
+            CompletionRate = 0
+        };
+    }
+
+    var entryDates = allEntries
+        .Select(e => DateTime.Parse(e.Date).Date)
+        .OrderBy(d => d)
+        .ToList();
+
+    var totalEntries = entryDates.Count;
+    var firstEntryDate = entryDates.First();
+    var lastEntryDate = entryDates.Last();
+
+    // Calculate current streak
+    var currentStreak = 0;
+    var today = DateTime.Today.Date;
+    var checkDate = today;
+
+    // Check if there's an entry today or yesterday to start counting
+    if (entryDates.Contains(today) || entryDates.Contains(today.AddDays(-1)))
+    {
+        // Start from yesterday if no entry today
+        if (!entryDates.Contains(today))
+        {
+            checkDate = today.AddDays(-1);
+        }
+
+        while (entryDates.Contains(checkDate))
+        {
+            currentStreak++;
+            checkDate = checkDate.AddDays(-1);
+        }
+    }
+
+    // Calculate longest streak
+    var longestStreak = 0;
+    var tempStreak = 1;
+
+    for (int i = 1; i < entryDates.Count; i++)
+    {
+        var daysDifference = (entryDates[i] - entryDates[i - 1]).Days;
+
+        if (daysDifference == 1)
+        {
+            tempStreak++;
+        }
+        else
+        {
+            if (tempStreak > longestStreak)
+            {
+                longestStreak = tempStreak;
+            }
+            tempStreak = 1;
+        }
+    }
+
+    if (tempStreak > longestStreak)
+    {
+        longestStreak = tempStreak;
+    }
+
+    // Calculate missed days
+    var totalDaysSinceStart = (today - firstEntryDate).Days + 1;
+    var missedDays = totalDaysSinceStart - totalEntries;
+
+    // Calculate completion rate
+    var completionRate = totalDaysSinceStart > 0 
+        ? Math.Round((totalEntries / (double)totalDaysSinceStart) * 100, 1) 
+        : 0;
+
+    return new StreakInfo
+    {
+        CurrentStreak = currentStreak,
+        LongestStreak = longestStreak,
+        TotalEntries = totalEntries,
+        MissedDays = missedDays > 0 ? missedDays : 0,
+        LastEntryDate = lastEntryDate,
+        FirstEntryDate = firstEntryDate,
+        CompletionRate = completionRate
+    };
+}
     }
 }
