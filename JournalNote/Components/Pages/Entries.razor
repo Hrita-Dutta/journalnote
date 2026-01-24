@@ -225,24 +225,27 @@
                         <div class="entry-meta">
                             @if (entry.PrimaryMoodId.HasValue)
                             {
-                                <span class="meta-item">
-                                    <strong>Mood:</strong> @GetMoodDisplay(entry)
-                                </span>
+                                <div class="meta-row">
+                                    <strong>Mood:</strong>
+                                    <span class="meta-value">@GetMoodDisplay(entry)</span>
+                                </div>
                             }
 
                             @if (!string.IsNullOrEmpty(entry.TagIds))
                             {
-                                <span class="meta-item">
+                                <div class="meta-row">
                                     <strong>Tags:</strong>
-                                    @foreach (var tag in GetTagsForEntry(entry).Take(3))
-                                    {
-                                        <span class="tag-badge-tiny" style="background-color: @tag.Color">@tag.Name</span>
-                                    }
-                                    @if (GetTagsForEntry(entry).Count > 3)
-                                    {
-                                        <span class="text-muted">+@(GetTagsForEntry(entry).Count - 3) more</span>
-                                    }
-                                </span>
+                                    <div class="meta-tags">
+                                        @foreach (var tag in GetTagsForEntry(entry).Take(3))
+                                        {
+                                            <span class="tag-badge-tiny" style="background-color: @tag.Color">@tag.Name</span>
+                                        }
+                                        @if (GetTagsForEntry(entry).Count > 3)
+                                        {
+                                            <span class="text-muted">+@(GetTagsForEntry(entry).Count - 3) more</span>
+                                        }
+                                    </div>
+                                </div>
                             }
                         </div>
 
