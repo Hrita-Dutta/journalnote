@@ -40,12 +40,15 @@
     <Import Project="$(NuGetPackageRoot)microsoft.aspnetcore.components.webview.maui/10.0.1/build/Microsoft.AspNetCore.Components.WebView.Maui.props" Condition="Exists('$(NuGetPackageRoot)microsoft.aspnetcore.components.webview.maui/10.0.1/build/Microsoft.AspNetCore.Components.WebView.Maui.props')" />
   </ImportGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net10.0-android' AND '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgNewtonsoft_Json Condition=" '$(PkgNewtonsoft_Json)' == '' ">/Users/hritadutta/.nuget/packages/newtonsoft.json/9.0.1</PkgNewtonsoft_Json>
     <PkgMicrosoft_NET_ILLink_Tasks Condition=" '$(PkgMicrosoft_NET_ILLink_Tasks)' == '' ">/Users/hritadutta/.nuget/packages/microsoft.net.illink.tasks/10.0.0</PkgMicrosoft_NET_ILLink_Tasks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net10.0-ios' AND '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgNewtonsoft_Json Condition=" '$(PkgNewtonsoft_Json)' == '' ">/Users/hritadutta/.nuget/packages/newtonsoft.json/9.0.1</PkgNewtonsoft_Json>
     <PkgMicrosoft_NET_ILLink_Tasks Condition=" '$(PkgMicrosoft_NET_ILLink_Tasks)' == '' ">/Users/hritadutta/.nuget/packages/microsoft.net.illink.tasks/10.0.0</PkgMicrosoft_NET_ILLink_Tasks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net10.0-maccatalyst' AND '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgNewtonsoft_Json Condition=" '$(PkgNewtonsoft_Json)' == '' ">/Users/hritadutta/.nuget/packages/newtonsoft.json/9.0.1</PkgNewtonsoft_Json>
     <PkgMicrosoft_NET_ILLink_Tasks Condition=" '$(PkgMicrosoft_NET_ILLink_Tasks)' == '' ">/Users/hritadutta/.nuget/packages/microsoft.net.illink.tasks/10.0.0</PkgMicrosoft_NET_ILLink_Tasks>
   </PropertyGroup>
 </Project>

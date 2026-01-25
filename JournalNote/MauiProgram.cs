@@ -19,6 +19,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<ThemeService>();
         builder.Services.AddSingleton<SecurityService>();
 
+
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();

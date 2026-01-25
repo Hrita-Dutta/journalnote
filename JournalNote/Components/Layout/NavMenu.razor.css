@@ -73,19 +73,13 @@ nav {
 /* Navigation Links */
 .nav-link {
     display: flex;
-    justify-content: center;
-    /*align-items: center;*/
-    padding: 2rem 1.25rem;
-    color: #ecf0f1 !important;
-    background: transparent;
-    text-decoration: none;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    font-size: 1.05rem;
-    position: relative;
-    overflow: hidden;
-}
+    align-items: center;
+    gap: 0.75rem;
+    color: white;
+    border-radius: 4px;
+    height: 3rem;
+    padding: 0 1rem;
+                      }
 
 /* Link Hover Effect */
 .nav-link::before {

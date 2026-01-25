@@ -208,6 +208,15 @@ namespace JournalNote.Services
                 .ToListAsync();
         }
 
+// ADD THIS METHOD HERE
+        public async Task<List<JournalEntry>> GetAllEntriesAsync()
+        {
+            await InitAsync();
+            return await _database.Table<JournalEntry>()
+                .OrderByDescending(e => e.Date)
+                .ToListAsync();
+        }
+
         public async Task<JournalEntry> GetJournalEntryByIdAsync(int id)
         {
             await InitAsync();
