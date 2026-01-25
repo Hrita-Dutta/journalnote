@@ -68,6 +68,12 @@
     private List<AppTheme> customThemes = new();
     private int currentThemeId;
     private bool isLoading = true;
+    private async Task SelectTheme(int themeId)
+    {
+        currentThemeId = themeId;
+        await ThemeService.SetThemeAsync(themeId);
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {
