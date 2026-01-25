@@ -30,10 +30,9 @@
                     <!-- Light Theme Card -->
                     <div class="col-md-6">
                         <div class="theme-card @(!isDarkMode ? "active" : "")" @onclick="() => SelectTheme(false)">
-                            <div class="theme-icon">☀️</div>
+                            
                             <h3 class="theme-title">Light Mode</h3>
                             <p class="theme-description">Bright and clean interface</p>
-                            
                             <div class="theme-preview light-preview">
                                 <div class="preview-header"></div>
                                 <div class="preview-body">
@@ -55,7 +54,6 @@
                     <!-- Dark Theme Card -->
                     <div class="col-md-6">
                         <div class="theme-card @(isDarkMode ? "active" : "")" @onclick="() => SelectTheme(true)">
-                            <div class="theme-icon">🌙</div>
                             <h3 class="theme-title">Dark Mode</h3>
                             <p class="theme-description">Easy on the eyes at night</p>
                             

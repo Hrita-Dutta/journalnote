@@ -12,12 +12,12 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>9strwyaihm</Fingerprint>
-      <Integrity>dyhu6GBP1B61tLCKv8Bh7hpbAaTLzJj7fthczj9bOL8=</Integrity>
+      <Fingerprint>9bfrmujb71</Fingerprint>
+      <Integrity>RYRskr7g7Zhfp4935Tq+IOSjfBm/NWOsxyAWxUEgry0=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>5660</FileLength>
-      <LastWriteTime>Fri, 23 Jan 2026 17:03:48 GMT</LastWriteTime>
+      <FileLength>6442</FileLength>
+      <LastWriteTime>Sun, 25 Jan 2026 12:14:06 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\app.css'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\index.html'))">
@@ -52,12 +52,12 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName>ScopedCss</AssetTraitName>
       <AssetTraitValue>ApplicationBundle</AssetTraitValue>
-      <Fingerprint>z8roxhswwi</Fingerprint>
-      <Integrity>8wS6xh+InasQKrAKo7cgK1wwR+KAF69h+meM7R8OKq8=</Integrity>
+      <Fingerprint>lsjrfvljf3</Fingerprint>
+      <Integrity>9feD+WHRJ7FM6MTUnQnZ/8m3LzjevBIBs0LlbX8kyFI=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>35904</FileLength>
-      <LastWriteTime>Sun, 25 Jan 2026 11:36:04 GMT</LastWriteTime>
+      <FileLength>38168</FileLength>
+      <LastWriteTime>Sun, 25 Jan 2026 12:29:55 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\JournalNote.styles.css'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\quill-editor.js'))">
