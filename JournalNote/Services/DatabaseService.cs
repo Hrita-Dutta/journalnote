@@ -42,6 +42,7 @@ namespace JournalNote.Services
                 await _database.CreateTableAsync<Mood>();
                 await _database.CreateTableAsync<Tag>();
                 await _database.CreateTableAsync<ThemeSettings>();
+                await _database.CreateTableAsync<SecuritySettings>();
 
                 // Seed initial data (these methods MUST NOT call InitAsync)
                 await SeedMoodsAsync();
@@ -776,6 +777,63 @@ private GeneralStats CalculateGeneralStatsAsync(List<JournalEntry> entries)
         FirstEntryDate = firstDate,
         LastEntryDate = lastDate
     };
+}
+
+// ====== SECURITY SETTINGS METHODS ======
+public async Task<SecuritySettings> GetSecuritySettingsAsync()
+{
+    try
+    {
+        await InitAsync();
+        var settings = await _database.Table<SecuritySettings>().FirstOrDefaultAsync();
+        
+        if (settings == null)
+        {
+            settings = new SecuritySettings
+            {
+                IsRegistered = false,
+                PinHash = string.Empty,
+                CreatedAt = DateTime.Now
+            };
+            await _database.InsertAsync(settings);
+        }
+        
+        return settings;
+    }
+    catch (Exception ex)
+    {
+        System.Diagnostics.Debug.WriteLine($"Error in GetSecuritySettingsAsync: {ex.Message}");
+        return new SecuritySettings
+        {
+            IsRegistered = false,
+            PinHash = string.Empty,
+            CreatedAt = DateTime.Now
+        };
+    }
+}
+
+public async Task<int> SaveSecuritySettingsAsync(SecuritySettings settings)
+{
+    try
+    {
+        await InitAsync();
+        
+        var existing = await _database.Table<SecuritySettings>().FirstOrDefaultAsync();
+        if (existing != null)
+        {
+            settings.Id = existing.Id;
+            return await _database.UpdateAsync(settings);
+        }
+        else
+        {
+            return await _database.InsertAsync(settings);
+        }
+    }
+    catch (Exception ex)
+    {
+        System.Diagnostics.Debug.WriteLine($"Error in SaveSecuritySettingsAsync: {ex.Message}");
+        return 0;
+    }
 }
         
     }
