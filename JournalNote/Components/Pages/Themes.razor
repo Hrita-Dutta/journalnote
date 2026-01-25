@@ -27,243 +27,268 @@
             <p>Start creating journal entries to see your analytics and insights!</p>
             <a href="/entry" class="btn btn-success">Create Your First Entry</a>
         </div>
-    }else
+    }
+    else
     {
+        <!-- General Stats Overview -->
         <div class="stats-overview mb-4">
             <div class="row g-3">
                 <div class="col-md-3">
                     <div class="stat-card">
-                        <div class="stat-value">@analyticsData!.GeneralStats.TotalEntries</div>
+                        <div class="stat-value">@analyticsData.GeneralStats.TotalEntries</div>
                         <div class="stat-label">Total Entries</div>
                     </div>
                 </div>
-
                 <div class="col-md-3">
                     <div class="stat-card">
-                        <div class="stat-value">@analyticsData!.GeneralStats.DaysActive</div>
+                        <div class="stat-value">@analyticsData.GeneralStats.DaysActive</div>
                         <div class="stat-label">Days Active</div>
                     </div>
                 </div>
-
                 <div class="col-md-3">
                     <div class="stat-card">
-                        <div class="stat-value">@analyticsData!.GeneralStats.AverageEntriesPerWeek</div>
+                        <div class="stat-value">@analyticsData.GeneralStats.AverageEntriesPerWeek</div>
                         <div class="stat-label">Average Per Week</div>
                     </div>
                 </div>
-
                 <div class="col-md-3">
                     <div class="stat-card">
-                        <div class="stat-value">@analyticsData!.WordTrends.AverageWordCount</div>
+                        <div class="stat-value">@analyticsData.WordTrends.AverageWordCount</div>
                         <div class="stat-label">Average Words</div>
                     </div>
                 </div>
-                <div class="section mb-4">
-    <h3 class="section-title">Mood Distribution</h3>
-
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Top Moods</h5>
-                    <hr />
-
-                    <div class="info-box mb-3">
-                        <div class="info-row">
-                            <span class="info-label">Most Frequent Mood:</span>
-                            <span class="info-value">@analyticsData!.MoodStats.MostFrequentMood</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Total Moods Recorded:</span>
-                            <span class="info-value">@analyticsData!.MoodStats.TotalMoodEntries</span>
-                        </div>
-                    </div>
-
-                    @foreach (var mood in analyticsData!.MoodStats.MoodCounts.Take(5))
-                    {
-                        <div class="data-bar-item mb-3">
-                            <div class="data-bar-header">
-                                <span class="data-name">@mood.MoodName</span>
-                                <span class="data-count">@mood.Count (@mood.Percentage.ToString("0.0")%)</span>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar @GetCategoryColorClass(mood.Category)"
-                                     style="width: @mood.Percentage%"></div>
-                            </div>
-                        </div>
-                    }
-                </div>
             </div>
         </div>
 
-        <div class="col-md-6 mb-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Mood Categories</h5>
-                    <hr />
-
-                    @foreach (var category in analyticsData!.MoodStats.CategoryCounts.OrderByDescending(x => x.Value))
-                    {
-                        var pct = analyticsData!.MoodStats.TotalMoodEntries > 0
-                            ? (category.Value * 100.0 / analyticsData!.MoodStats.TotalMoodEntries)
-                            : 0;
-
-                        <div class="data-bar-item mb-3">
-                            <div class="data-bar-header">
-                                <span class="data-name">@category.Key</span>
-                                <span class="data-count">@category.Value (@pct.ToString("0.0")%)</span>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar @GetCategoryColorClass(category.Key)"
-                                     style="width: @pct%"></div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="section mb-4">
-    <h3 class="section-title">Tag Usage Statistics</h3>
-
-    <div class="card shadow-sm">
-        <div class="card-body">
+        <!-- Mood Distribution -->
+        <div class="section mb-4">
+            <h3 class="section-title">Mood Distribution</h3>
+            
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <h5 class="card-title">Most Used Tags</h5>
-                    <hr />
-
-                    <div class="info-box mb-3">
-                        <div class="info-row">
-                            <span class="info-label">Most Popular Tag:</span>
-                            <span class="info-value">@analyticsData!.TagStats.MostUsedTag</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Total Tag Usage:</span>
-                            <span class="info-value">@analyticsData!.TagStats.TotalTagUsage</span>
-                        </div>
-                    </div>
-
-                    @foreach (var tag in analyticsData!.TagStats.TagCounts.Take(10))
-                    {
-                        <div class="data-bar-item mb-3">
-                            <div class="data-bar-header">
-                                <span class="tag-badge" style="background-color: @tag.Color">@tag.TagName</span>
-                                <span class="data-count">@tag.Count uses</span>
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Top Moods</h5>
+                            <hr />
+                            
+                            <div class="info-box mb-3">
+                                <div class="info-row">
+                                    <span class="info-label">Most Frequent Mood:</span>
+                                    <span class="info-value">@analyticsData.MoodStats.MostFrequentMood</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Total Moods Recorded:</span>
+                                    <span class="info-value">@analyticsData.MoodStats.TotalMoodEntries</span>
+                                </div>
                             </div>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: @tag.Percentage%; background-color: @tag.Color"></div>
-                            </div>
-                        </div>
-                    }
-                </div>
 
-                <div class="col-md-6">
-                    <h5 class="card-title">All Tags</h5>
-                    <hr />
-
-                    <div class="tag-list">
-                        @foreach (var tag in analyticsData!.TagStats.TagCounts.Take(20))
-                        {
-                            <div class="tag-item">
-                                <span class="tag-badge" style="background-color: @tag.Color">@tag.TagName</span>
-                                <span class="tag-count">@tag.Count times (@tag.Percentage.ToString("0.0")%)</span>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="section mb-4">
-    <h3 class="section-title">Writing Statistics</h3>
-
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Word Count Overview</h5>
-                    <hr />
-
-                    <div class="word-stats">
-                        <div class="word-stat-item">
-                            <div class="word-stat-label">Total Words Written</div>
-                            <div class="word-stat-value">@analyticsData!.WordTrends.TotalWords.ToString("N0")</div>
-                        </div>
-
-                        <div class="word-stat-item">
-                            <div class="word-stat-label">Average Words per Entry</div>
-                            <div class="word-stat-value">@analyticsData!.WordTrends.AverageWordCount</div>
-                        </div>
-
-                        <div class="word-stat-item">
-                            <div class="word-stat-label">Shortest Entry</div>
-                            <div class="word-stat-value">@analyticsData!.WordTrends.ShortestEntry words</div>
-                        </div>
-
-                        <div class="word-stat-item">
-                            <div class="word-stat-label">Longest Entry</div>
-                            <div class="word-stat-value">@analyticsData!.WordTrends.LongestEntry words</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Recent Writing Activity (Last 7 Days)</h5>
-                    <hr />
-
-                    <div class="activity-list">
-                        @foreach (var daily in analyticsData!.WordTrends.DailyWordCounts.TakeLast(7).Reverse())
-                        {
-                            <div class="activity-item">
-                                <div class="activity-date">@daily.Date.ToString("MMM dd, yyyy")</div>
-                                <div class="activity-bar">
-                                    <div class="activity-bar-fill"
-                                         style="width: @CalculateActivityBarWidth(daily.WordCount, analyticsData!.WordTrends.LongestEntry)%">
+                            @foreach (var mood in analyticsData.MoodStats.MoodCounts.Take(5))
+                            {
+                                <div class="data-bar-item mb-3">
+                                    <div class="data-bar-header">
+                                        <span class="data-name">@mood.MoodName</span>
+                                        <span class="data-count">@mood.Count (@mood.Percentage.ToString("0.0")%)</span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar @GetCategoryColorClass(mood.Category)" 
+                                             style="width: @mood.Percentage%"></div>
                                     </div>
                                 </div>
-                                <div class="activity-count">@daily.WordCount words</div>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
+                </div>
 
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Mood Categories</h5>
+                            <hr />
+                            
+                            @foreach (var category in analyticsData.MoodStats.CategoryCounts.OrderByDescending(x => x.Value))
+                            {
+                                var percentage = analyticsData.MoodStats.TotalMoodEntries > 0 
+                                    ? (category.Value * 100.0 / analyticsData.MoodStats.TotalMoodEntries) : 0;
+                                
+                                <div class="data-bar-item mb-3">
+                                    <div class="data-bar-header">
+                                        <span class="data-name">@category.Key</span>
+                                        <span class="data-count">@category.Value (@percentage.ToString("0.0")%)</span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar @GetCategoryColorClass(category.Key)" 
+                                             style="width: @percentage%"></div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
+        <!-- Tag Distribution -->
+        <div class="section mb-4">
+            <h3 class="section-title">Tag Usage Statistics</h3>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h5 class="card-title">Most Used Tags</h5>
+                            <hr />
+                            
+                            <div class="info-box mb-3">
+                                <div class="info-row">
+                                    <span class="info-label">Most Popular Tag:</span>
+                                    <span class="info-value">@analyticsData.TagStats.MostUsedTag</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Total Tag Usage:</span>
+                                    <span class="info-value">@analyticsData.TagStats.TotalTagUsage</span>
+                                </div>
+                            </div>
+
+                            @foreach (var tag in analyticsData.TagStats.TagCounts.Take(10))
+                            {
+                                <div class="data-bar-item mb-3">
+                                    <div class="data-bar-header">
+                                        <span class="tag-badge" style="background-color: @tag.Color">
+                                            @tag.TagName
+                                        </span>
+                                        <span class="data-count">@tag.Count uses</span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar" 
+                                             style="width: @tag.Percentage%; background-color: @tag.Color"></div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5 class="card-title">All Tags</h5>
+                            <hr />
+                            
+                            <div class="tag-list">
+                                @foreach (var tag in analyticsData.TagStats.TagCounts.Take(20))
+                                {
+                                    <div class="tag-item">
+                                        <span class="tag-badge" style="background-color: @tag.Color">
+                                            @tag.TagName
+                                        </span>
+                                        <span class="tag-count">@tag.Count times (@tag.Percentage.ToString("0.0")%)</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Word Count Trends -->
+        <div class="section mb-4">
+            <h3 class="section-title">Writing Statistics</h3>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Word Count Overview</h5>
+                            <hr />
+                            
+                            <div class="word-stats">
+                                <div class="word-stat-item">
+                                    <div class="word-stat-label">Total Words Written</div>
+                                    <div class="word-stat-value">@analyticsData.WordTrends.TotalWords.ToString("N0")</div>
+                                </div>
+
+                                <div class="word-stat-item">
+                                    <div class="word-stat-label">Average Words per Entry</div>
+                                    <div class="word-stat-value">@analyticsData.WordTrends.AverageWordCount</div>
+                                </div>
+
+                                <div class="word-stat-item">
+                                    <div class="word-stat-label">Shortest Entry</div>
+                                    <div class="word-stat-value">@analyticsData.WordTrends.ShortestEntry words</div>
+                                </div>
+
+                                <div class="word-stat-item">
+                                    <div class="word-stat-label">Longest Entry</div>
+                                    <div class="word-stat-value">@analyticsData.WordTrends.LongestEntry words</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Recent Writing Activity (Last 7 Days)</h5>
+                            <hr />
+                            
+                            <div class="activity-list">
+                                @foreach (var daily in analyticsData.WordTrends.DailyWordCounts.TakeLast(7).Reverse())
+                                {
+                                    <div class="activity-item">
+                                        <div class="activity-date">@daily.Date.ToString("MMM dd, yyyy")</div>
+                                        <div class="activity-bar">
+                                            <div class="activity-bar-fill" 
+                                                 style="width: @CalculateActivityBarWidth(daily.WordCount, analyticsData.WordTrends.LongestEntry)%">
+                                            </div>
+                                        </div>
+                                        <div class="activity-count">@daily.WordCount words</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Journey Summary -->
+        <div class="section mb-4">
+            <h3 class="section-title">Your Journaling Journey</h3>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="journey-item">
+                                <div class="journey-label">First Entry</div>
+                                <div class="journey-value">@analyticsData.GeneralStats.FirstEntryDate.ToString("MMMM dd, yyyy")</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="journey-item">
+                                <div class="journey-label">Latest Entry</div>
+                                <div class="journey-value">@analyticsData.GeneralStats.LastEntryDate.ToString("MMMM dd, yyyy")</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="journey-item">
+                                <div class="journey-label">Journey Duration</div>
+                                <div class="journey-value">
+                                    @((analyticsData.GeneralStats.LastEntryDate - analyticsData.GeneralStats.FirstEntryDate).Days) days
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     }
-
 </div>
 
 @code {
-    private double CalculateActivityBarWidth(int wordCount, int maxWordCount)
-    {
-        if (maxWordCount == 0) return 0;
-        return (wordCount * 100.0 / maxWordCount);
-    }
-
-    private AnalyticsData? analyticsData;
+    private AnalyticsData analyticsData;
     private bool isLoading = true;
 
-    private string GetCategoryColorClass(string category) => category switch
-    {
-        "Positive" => "bg-success",
-        "Neutral" => "bg-secondary",
-        "Negative" => "bg-danger",
-        _ => "bg-primary"
-    };
-
-    
     protected override async Task OnInitializedAsync()
     {
         await LoadAnalytics();
@@ -285,5 +310,22 @@
         {
             isLoading = false;
         }
+    }
+
+    private string GetCategoryColorClass(string category)
+    {
+        return category switch
+        {
+            "Positive" => "bg-success",
+            "Neutral" => "bg-secondary",
+            "Negative" => "bg-danger",
+            _ => "bg-primary"
+        };
+    }
+
+    private double CalculateActivityBarWidth(int wordCount, int maxWordCount)
+    {
+        if (maxWordCount == 0) return 0;
+        return (wordCount * 100.0 / maxWordCount);
     }
 }
