@@ -27,7 +27,41 @@
             <p>Start creating journal entries to see your analytics and insights!</p>
             <a href="/entry" class="btn btn-success">Create Your First Entry</a>
         </div>
+    }else
+    {
+        <div class="stats-overview mb-4">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-value">@analyticsData!.GeneralStats.TotalEntries</div>
+                        <div class="stat-label">Total Entries</div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-value">@analyticsData!.GeneralStats.DaysActive</div>
+                        <div class="stat-label">Days Active</div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-value">@analyticsData!.GeneralStats.AverageEntriesPerWeek</div>
+                        <div class="stat-label">Average Per Week</div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-value">@analyticsData!.WordTrends.AverageWordCount</div>
+                        <div class="stat-label">Average Words</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
+
 </div>
 
 @code {
