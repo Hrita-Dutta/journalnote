@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using JournalNote.Models;
+using AppTheme = JournalNote.Models.AppTheme;
 
 namespace JournalNote.Services
 {
