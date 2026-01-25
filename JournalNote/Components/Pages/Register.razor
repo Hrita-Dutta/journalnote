@@ -1,0 +1,111 @@
+@page "/register"
+@layout EmptyLayout
+@using JournalNote.Services
+@inject SecurityService SecurityService
+@inject NavigationManager Navigation
+
+<PageTitle>Register - JournalNote</PageTitle>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Welcome to JournalNote</h1>
+            <p>Create your 4-digit PIN to secure your journal</p>
+        </div>
+
+        <div class="auth-body">
+            <div class="mb-3">
+                <label class="form-label">Create PIN (4 digits)</label>
+                <input type="password" 
+                       class="form-control pin-input" 
+                       @bind="pin"
+                       @bind:event="oninput"
+                       maxlength="4"
+                       placeholder="Enter PIN"
+                       autofocus>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Confirm PIN</label>
+                <input type="password" 
+                       class="form-control pin-input" 
+                       @bind="confirmPin"
+                       @bind:event="oninput"
+                       @onkeyup="OnKeyPress"
+                       maxlength="4"
+                       placeholder="Confirm PIN">
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger mb-3">
+                    @errorMessage
+                </div>
+            }
+
+            <button class="btn btn-success w-100 mb-2" @onclick="RegisterUser">
+                Register
+            </button>
+
+            <div class="info-box">
+                <strong>Note:</strong> Your PIN will be required every time you open the app. Remember it!
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string pin = string.Empty;
+    private string confirmPin = string.Empty;
+    private string errorMessage = string.Empty;
+
+    private async Task OnKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await RegisterUser();
+        }
+    }
+
+    private async Task RegisterUser()
+    {
+        errorMessage = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(pin) || pin.Length != 4)
+        {
+            errorMessage = "PIN must be exactly 4 digits";
+            return;
+        }
+
+        if (!pin.All(char.IsDigit))
+        {
+            errorMessage = "PIN must contain only numbers (0-9)";
+            return;
+        }
+
+        if (pin != confirmPin)
+        {
+            errorMessage = "PINs do not match";
+            return;
+        }
+
+        try
+        {
+            var success = await SecurityService.RegisterAsync(pin);
+
+            if (success)
+            {
+                Navigation.NavigateTo("/", true);
+            }
+            else
+            {
+                errorMessage = "Registration failed. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "An error occurred. Please try again.";
+            System.Diagnostics.Debug.WriteLine($"Register error: {ex.Message}");
+        }
+    }
+}
