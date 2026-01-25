@@ -58,6 +58,73 @@
                         <div class="stat-label">Average Words</div>
                     </div>
                 </div>
+                <div class="section mb-4">
+    <h3 class="section-title">Mood Distribution</h3>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Top Moods</h5>
+                    <hr />
+
+                    <div class="info-box mb-3">
+                        <div class="info-row">
+                            <span class="info-label">Most Frequent Mood:</span>
+                            <span class="info-value">@analyticsData!.MoodStats.MostFrequentMood</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Total Moods Recorded:</span>
+                            <span class="info-value">@analyticsData!.MoodStats.TotalMoodEntries</span>
+                        </div>
+                    </div>
+
+                    @foreach (var mood in analyticsData!.MoodStats.MoodCounts.Take(5))
+                    {
+                        <div class="data-bar-item mb-3">
+                            <div class="data-bar-header">
+                                <span class="data-name">@mood.MoodName</span>
+                                <span class="data-count">@mood.Count (@mood.Percentage.ToString("0.0")%)</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar @GetCategoryColorClass(mood.Category)"
+                                     style="width: @mood.Percentage%"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Mood Categories</h5>
+                    <hr />
+
+                    @foreach (var category in analyticsData!.MoodStats.CategoryCounts.OrderByDescending(x => x.Value))
+                    {
+                        var pct = analyticsData!.MoodStats.TotalMoodEntries > 0
+                            ? (category.Value * 100.0 / analyticsData!.MoodStats.TotalMoodEntries)
+                            : 0;
+
+                        <div class="data-bar-item mb-3">
+                            <div class="data-bar-header">
+                                <span class="data-name">@category.Key</span>
+                                <span class="data-count">@category.Value (@pct.ToString("0.0")%)</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar @GetCategoryColorClass(category.Key)"
+                                     style="width: @pct%"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
             </div>
         </div>
     }
@@ -68,6 +135,15 @@
     private AnalyticsData? analyticsData;
     private bool isLoading = true;
 
+    private string GetCategoryColorClass(string category) => category switch
+    {
+        "Positive" => "bg-success",
+        "Neutral" => "bg-secondary",
+        "Negative" => "bg-danger",
+        _ => "bg-primary"
+    };
+
+    
     protected override async Task OnInitializedAsync()
     {
         await LoadAnalytics();

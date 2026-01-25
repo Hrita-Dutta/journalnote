@@ -73,3 +73,84 @@ hr {
     color: #6c757d;
     font-weight: 500;
 }
+.section {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #343a40;
+    margin-bottom: 1.5rem;
+    border-bottom: 3px solid #4a90e2;
+    padding-bottom: 0.5rem;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #343a40;
+}
+
+.info-box {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #4a90e2;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.info-value {
+    color: #4a90e2;
+    font-weight: 600;
+}
+
+.data-bar-item {
+    margin-bottom: 1rem;
+}
+
+.data-bar-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.data-name {
+    font-weight: 600;
+    color: #343a40;
+}
+
+.data-count {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.progress {
+    height: 24px;
+    border-radius: 12px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    border-radius: 12px;
+    transition: width 0.3s ease;
+}
+
+.bg-success { background-color: #51cf66 !important; }
+.bg-secondary { background-color: #868e96 !important; }
+.bg-danger { background-color: #ff6b6b !important; }
