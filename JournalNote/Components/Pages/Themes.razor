@@ -1,15 +1,13 @@
 @page "/themes"
-@using JournalNote.Models
 @using JournalNote.Services
-@inject DatabaseService DatabaseService
 @inject ThemeService ThemeService
 
 <PageTitle>Themes - JournalNote</PageTitle>
 
 <div class="container mt-4">
     <div class="text-center mb-4">
-        <h1>Theme Customization</h1>
-        <p class="lead">Choose your favorite color theme</p>
+        <h1>Theme Settings</h1>
+        <p class="lead">Switch between light and dark mode</p>
     </div>
 
     <hr />
@@ -18,88 +16,164 @@
     {
         <div class="text-center py-5">
             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
-            <p class="mt-3">Loading themes...</p>
+            <p class="mt-3">Loading theme settings...</p>
         </div>
-    }else
+    }
+    else
     {
-        <div class="section mb-5">
-            <h3 class="section-title">Predefined Themes</h3>
-
-            <div class="themes-grid">
-                @foreach (var theme in predefinedThemes)
-                {
-                    <div class="theme-card @(theme.Id == currentThemeId ? "active" : "")"
-                         @onclick="() => SelectTheme(theme.Id)">
-
-                        <div class="theme-preview">
-                            <div class="preview-header" style="background-color: @theme.PrimaryColor"></div>
-                            <div class="preview-body" style="background-color: @theme.SurfaceColor">
-                                <div class="preview-text" style="color: @theme.TextColor"></div>
-                                <div class="preview-text" style="color: @theme.TextColor"></div>
-                                <div class="preview-accent" style="background-color: @theme.SecondaryColor"></div>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                
+                <!-- Theme Selector Cards -->
+                <div class="row g-4 mb-4">
+                    
+                    <!-- Light Theme Card -->
+                    <div class="col-md-6">
+                        <div class="theme-card @(!isDarkMode ? "active" : "")" @onclick="() => SelectTheme(false)">
+                            <div class="theme-icon">☀️</div>
+                            <h3 class="theme-title">Light Mode</h3>
+                            <p class="theme-description">Bright and clean interface</p>
+                            
+                            <div class="theme-preview light-preview">
+                                <div class="preview-header"></div>
+                                <div class="preview-body">
+                                    <div class="preview-line"></div>
+                                    <div class="preview-line"></div>
+                                    <div class="preview-line short"></div>
+                                </div>
                             </div>
+                            
+                            @if (!isDarkMode)
+                            {
+                                <div class="active-badge">
+                                    <span>✓ Active</span>
+                                </div>
+                            }
                         </div>
-
-                        <div class="theme-info">
-                            <h5 class="theme-name">@theme.Name</h5>
-                            <div class="theme-colors">
-                                <span class="color-dot" style="background-color: @theme.PrimaryColor" title="Primary"></span>
-                                <span class="color-dot" style="background-color: @theme.SecondaryColor" title="Secondary"></span>
-                                <span class="color-dot" style="background-color: @theme.BackgroundColor" title="Background"></span>
-                            </div>
-                        </div>
-
-                        @if (theme.Id == currentThemeId)
-                        {
-                            <div class="active-badge">
-                                <span>✓ Active</span>
-                            </div>
-                        }
                     </div>
-                }
+
+                    <!-- Dark Theme Card -->
+                    <div class="col-md-6">
+                        <div class="theme-card @(isDarkMode ? "active" : "")" @onclick="() => SelectTheme(true)">
+                            <div class="theme-icon">🌙</div>
+                            <h3 class="theme-title">Dark Mode</h3>
+                            <p class="theme-description">Easy on the eyes at night</p>
+                            
+                            <div class="theme-preview dark-preview">
+                                <div class="preview-header"></div>
+                                <div class="preview-body">
+                                    <div class="preview-line"></div>
+                                    <div class="preview-line"></div>
+                                    <div class="preview-line short"></div>
+                                </div>
+                            </div>
+                            
+                            @if (isDarkMode)
+                            {
+                                <div class="active-badge">
+                                    <span>✓ Active</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Theme Info -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Current Theme</h5>
+                        <hr />
+                        
+                        <div class="current-theme-info">
+                            <div class="info-row">
+                                <span class="info-label">Selected Mode:</span>
+                                <span class="info-value">
+                                    @(isDarkMode ? "🌙 Dark Mode" : "☀️ Light Mode")
+                                </span>
+                            </div>
+                            
+                            <div class="info-row">
+                                <span class="info-label">Status:</span>
+                                <span class="info-value">Applied to all pages</span>
+                            </div>
+                            
+                            <div class="info-row">
+                                <span class="info-label">Persistence:</span>
+                                <span class="info-value">Saved across app restarts</span>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info mt-3 mb-0">
+                            <strong>💡 Tip:</strong> Your theme preference is saved automatically and will be applied every time you open the app.
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     }
-
 </div>
 
 @code {
-    private List<AppTheme> predefinedThemes = new();
-    private List<AppTheme> customThemes = new();
-    private int currentThemeId;
+    private bool isDarkMode = false;
     private bool isLoading = true;
-    private async Task SelectTheme(int themeId)
-    {
-        currentThemeId = themeId;
-        await ThemeService.SetThemeAsync(themeId);
-        StateHasChanged();
-    }
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadThemes();
+        await LoadTheme();
+        ThemeService.ThemeChanged += OnThemeChanged;
     }
 
-    private async Task LoadThemes()
+    private async Task LoadTheme()
     {
         isLoading = true;
 
         try
         {
-            var allThemes = await DatabaseService.GetAllThemesAsync();
-            predefinedThemes = allThemes.Where(t => t.IsPredefined).ToList();
-            customThemes = allThemes.Where(t => !t.IsPredefined).ToList();
-
-            var settings = await DatabaseService.GetThemeSettingsAsync();
-            currentThemeId = settings.SelectedThemeId;
+            isDarkMode = await ThemeService.GetIsDarkModeAsync();
         }
         catch (Exception ex)
         {
-            await Application.Current.MainPage.DisplayAlert("Error", $"Failed to load themes: {ex.Message}", "OK");
+            await Application.Current.MainPage.DisplayAlert("Error", $"Failed to load theme: {ex.Message}", "OK");
         }
         finally
         {
             isLoading = false;
         }
+    }
+
+    private async Task SelectTheme(bool darkMode)
+    {
+        if (isDarkMode == darkMode)
+            return;
+
+        try
+        {
+            await ThemeService.SetDarkModeAsync(darkMode);
+            isDarkMode = darkMode;
+            
+            await Application.Current.MainPage.DisplayAlert(
+                "Theme Applied",
+                $"{(darkMode ? "Dark" : "Light")} mode has been applied to all pages!",
+                "OK");
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", $"Failed to apply theme: {ex.Message}", "OK");
+        }
+    }
+
+    private void OnThemeChanged(object sender, EventArgs e)
+    {
+        InvokeAsync(async () =>
+        {
+            isDarkMode = await ThemeService.GetIsDarkModeAsync();
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        ThemeService.ThemeChanged -= OnThemeChanged;
     }
 }

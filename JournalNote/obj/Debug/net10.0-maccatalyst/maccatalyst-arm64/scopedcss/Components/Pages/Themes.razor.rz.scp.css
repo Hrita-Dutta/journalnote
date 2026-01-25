@@ -1,20 +1,20 @@
-.container {
+.container[b-y44fd1fsg0] {
     max-width: 1000px;
 }
 
-.text-center h1 {
+.text-center h1[b-y44fd1fsg0] {
     font-size: 2.5rem;
     font-weight: 700;
     color: #343a40;
 }
 
-.text-center .lead {
+.text-center .lead[b-y44fd1fsg0] {
     color: #6c757d;
     font-size: 1.1rem;
 }
 
 /* Theme Cards */
-.theme-card {
+.theme-card[b-y44fd1fsg0] {
     background-color: white;
     border: 3px solid #dee2e6;
     border-radius: 16px;
@@ -26,93 +26,93 @@
     min-height: 400px;
 }
 
-.theme-card:hover {
+.theme-card:hover[b-y44fd1fsg0] {
     transform: translateY(-8px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     border-color: #4a90e2;
 }
 
-.theme-card.active {
+.theme-card.active[b-y44fd1fsg0] {
     border-color: #4a90e2;
     border-width: 4px;
     box-shadow: 0 10px 30px rgba(74, 144, 226, 0.3);
 }
 
-.theme-icon {
+.theme-icon[b-y44fd1fsg0] {
     font-size: 4rem;
     margin-bottom: 1rem;
 }
 
-.theme-title {
+.theme-title[b-y44fd1fsg0] {
     font-size: 1.5rem;
     font-weight: 700;
     color: #343a40;
     margin-bottom: 0.5rem;
 }
 
-.theme-description {
+.theme-description[b-y44fd1fsg0] {
     color: #6c757d;
     font-size: 1rem;
     margin-bottom: 1.5rem;
 }
 
 /* Theme Preview */
-.theme-preview {
+.theme-preview[b-y44fd1fsg0] {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     margin: 1.5rem 0;
 }
 
-.preview-header {
+.preview-header[b-y44fd1fsg0] {
     height: 50px;
 }
 
-.preview-body {
+.preview-body[b-y44fd1fsg0] {
     padding: 1.5rem;
     min-height: 120px;
 }
 
-.preview-line {
+.preview-line[b-y44fd1fsg0] {
     height: 12px;
     border-radius: 6px;
     margin-bottom: 10px;
 }
 
-.preview-line.short {
+.preview-line.short[b-y44fd1fsg0] {
     width: 60%;
 }
 
 /* Light Theme Preview */
-.light-preview .preview-header {
+.light-preview .preview-header[b-y44fd1fsg0] {
     background-color: #4a90e2;
 }
 
-.light-preview .preview-body {
+.light-preview .preview-body[b-y44fd1fsg0] {
     background-color: #ffffff;
 }
 
-.light-preview .preview-line {
+.light-preview .preview-line[b-y44fd1fsg0] {
     background-color: #343a40;
     opacity: 0.2;
 }
 
 /* Dark Theme Preview */
-.dark-preview .preview-header {
+.dark-preview .preview-header[b-y44fd1fsg0] {
     background-color: #5c7cfa;
 }
 
-.dark-preview .preview-body {
+.dark-preview .preview-body[b-y44fd1fsg0] {
     background-color: #2d2d2d;
 }
 
-.dark-preview .preview-line {
+.dark-preview .preview-line[b-y44fd1fsg0] {
     background-color: #e9ecef;
     opacity: 0.3;
 }
 
 /* Active Badge */
-.active-badge {
+.active-badge[b-y44fd1fsg0] {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -126,42 +126,42 @@
 }
 
 /* Info Card */
-.card {
+.card[b-y44fd1fsg0] {
     border: none;
     border-radius: 12px;
 }
 
-.card-title {
+.card-title[b-y44fd1fsg0] {
     font-size: 1.3rem;
     font-weight: 600;
     color: #343a40;
 }
 
-.current-theme-info {
+.current-theme-info[b-y44fd1fsg0] {
     margin: 1rem 0;
 }
 
-.info-row {
+.info-row[b-y44fd1fsg0] {
     display: flex;
     justify-content: space-between;
     padding: 0.75rem 0;
     border-bottom: 1px solid #e9ecef;
 }
 
-.info-row:last-child {
+.info-row:last-child[b-y44fd1fsg0] {
     border-bottom: none;
 }
 
-.info-label {
+.info-label[b-y44fd1fsg0] {
     font-weight: 600;
     color: #495057;
 }
 
-.info-value {
+.info-value[b-y44fd1fsg0] {
     color: #6c757d;
 }
 
-.alert-info {
+.alert-info[b-y44fd1fsg0] {
     background-color: #d1ecf1;
     color: #0c5460;
     border: none;
@@ -170,11 +170,11 @@
 }
 
 /* Spinner */
-.spinner-border {
+.spinner-border[b-y44fd1fsg0] {
     border-width: 0.3em;
 }
 
-hr {
+hr[b-y44fd1fsg0] {
     border: 0;
     height: 1px;
     background-color: #dee2e6;
@@ -183,24 +183,24 @@ hr {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .text-center h1 {
+    .text-center h1[b-y44fd1fsg0] {
         font-size: 2rem;
     }
 
-    .theme-card {
+    .theme-card[b-y44fd1fsg0] {
         min-height: auto;
         padding: 1.5rem;
     }
 
-    .theme-icon {
+    .theme-icon[b-y44fd1fsg0] {
         font-size: 3rem;
     }
 
-    .theme-title {
+    .theme-title[b-y44fd1fsg0] {
         font-size: 1.3rem;
     }
 
-    .info-row {
+    .info-row[b-y44fd1fsg0] {
         flex-direction: column;
         gap: 0.25rem;
     }

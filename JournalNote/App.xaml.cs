@@ -1,14 +1,11 @@
-﻿namespace JournalNote;
-
-public partial class App : Application
+﻿namespace JournalNote
 {
-    public App()
+    public partial class App : Application
     {
-        InitializeComponent();
-    }
-
-    protected override Window CreateWindow(IActivationState? activationState)
-    {
-        return new Window(new MainPage()) { Title = "JournalNote" };
+        public App()
+        {
+            InitializeComponent();
+            MainPage = new MainPage();
+        }
     }
 }

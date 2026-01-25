@@ -1,3 +1,37 @@
+/* Theme CSS Variables */
+:root {
+    /* Light Theme (Default) */
+    --primary-color: #4A90E2;
+    --secondary-color: #6C757D;
+    --background-color: #F8F9FA;
+    --surface-color: #FFFFFF;
+    --text-color: #343A40;
+    --text-secondary-color: #6C757D;
+    --border-color: #DEE2E6;
+    --sidebar-color: #343A40;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+    --primary-color: #5C7CFA;
+    --secondary-color: #ADB5BD;
+    --background-color: #1A1A1A;
+    --surface-color: #2D2D2D;
+    --text-color: #E9ECEF;
+    --text-secondary-color: #ADB5BD;
+    --border-color: #495057;
+    --sidebar-color: #212529;
+}
+
+/* Apply theme colors to body */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+/* Rest of your existing app.css content below... */
+
+
 /* Smooth Scrolling */
 html {
     scroll-behavior:  smooth;

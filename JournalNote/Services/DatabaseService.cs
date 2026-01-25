@@ -4,8 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using AppTheme = JournalNote.Models.AppTheme;
+
 
 namespace JournalNote.Services
 {
@@ -14,6 +15,10 @@ namespace JournalNote.Services
         private SQLiteAsyncConnection _database;
         private readonly string _databasePath;
 
+        // prevents double-init if multiple callers hit InitAsync at the same time
+        private readonly SemaphoreSlim _initLock = new(1, 1);
+        private bool _isInitialized;
+
         public DatabaseService()
         {
             _databasePath = Path.Combine(FileSystem.AppDataDirectory, "journal.db");
@@ -21,26 +26,38 @@ namespace JournalNote.Services
 
         private async Task InitAsync()
         {
-            if (_database != null)
+            if (_isInitialized && _database != null)
                 return;
 
-            _database = new SQLiteAsyncConnection(_databasePath);
-            
-            // Create all tables
-            await _database.CreateTableAsync<JournalEntry>();
-            await _database.CreateTableAsync<Mood>();
-            await _database.CreateTableAsync<Tag>();
-            await _database.CreateTableAsync<AppTheme>();
-            await _database.CreateTableAsync<ThemeSettings>();
+            await _initLock.WaitAsync();
+            try
+            {
+                if (_isInitialized && _database != null)
+                    return;
 
-            // Seed initial data
-            await SeedMoodsAsync();
-            await SeedTagsAsync();
-            await SeedPredefinedThemesAsync(); 
+                _database = new SQLiteAsyncConnection(_databasePath);
+
+                // Create all tables
+                await _database.CreateTableAsync<JournalEntry>();
+                await _database.CreateTableAsync<Mood>();
+                await _database.CreateTableAsync<Tag>();
+                await _database.CreateTableAsync<ThemeSettings>();
+
+                // Seed initial data (these methods MUST NOT call InitAsync)
+                await SeedMoodsAsync();
+                await SeedTagsAsync();
+                
+
+                _isInitialized = true;
+            }
+            finally
+            {
+                _initLock.Release();
+            }
         }
 
         // ====== SEED MOODS ======
-        // ====== SEED MOODS ======
+        // NOTE: does NOT call InitAsync (called by InitAsync already)
         private async Task SeedMoodsAsync()
         {
             try
@@ -51,21 +68,21 @@ namespace JournalNote.Services
 
                 var moods = new List<Mood>
                 {
-                    // Positive Moods
+                    // Positive
                     new Mood { Name = "Happy", Category = "Positive", Icon = "" },
                     new Mood { Name = "Excited", Category = "Positive", Icon = "" },
                     new Mood { Name = "Relaxed", Category = "Positive", Icon = "" },
                     new Mood { Name = "Grateful", Category = "Positive", Icon = "" },
                     new Mood { Name = "Confident", Category = "Positive", Icon = "" },
 
-                    // Neutral Moods
+                    // Neutral
                     new Mood { Name = "Calm", Category = "Neutral", Icon = "" },
                     new Mood { Name = "Thoughtful", Category = "Neutral", Icon = "" },
                     new Mood { Name = "Curious", Category = "Neutral", Icon = "" },
                     new Mood { Name = "Nostalgic", Category = "Neutral", Icon = "" },
                     new Mood { Name = "Bored", Category = "Neutral", Icon = "" },
 
-                    // Negative Moods
+                    // Negative
                     new Mood { Name = "Sad", Category = "Negative", Icon = "" },
                     new Mood { Name = "Angry", Category = "Negative", Icon = "" },
                     new Mood { Name = "Stressed", Category = "Negative", Icon = "" },
@@ -82,6 +99,7 @@ namespace JournalNote.Services
         }
 
         // ====== SEED TAGS ======
+        // NOTE: does NOT call InitAsync (called by InitAsync already)
         private async Task SeedTagsAsync()
         {
             try
@@ -155,7 +173,7 @@ namespace JournalNote.Services
 
             var existingEntry = await GetJournalEntryByDateAsync(journalEntry.Date);
             if (existingEntry != null)
-                throw new Exception("An entry already exists for this date.  Please update it instead.");
+                throw new Exception("An entry already exists for this date. Please update it instead.");
 
             journalEntry.CreatedAt = DateTime.Now;
             journalEntry.UpdatedAt = DateTime.Now;
@@ -166,7 +184,7 @@ namespace JournalNote.Services
         public async Task<JournalEntry> GetJournalEntryByDateAsync(string date)
         {
             await InitAsync();
-            
+
             try
             {
                 return await _database.Table<JournalEntry>()
@@ -182,7 +200,7 @@ namespace JournalNote.Services
         public async Task<List<JournalEntry>> GetAllJournalEntriesAsync()
         {
             await InitAsync();
-            
+
             return await _database.Table<JournalEntry>()
                 .OrderByDescending(e => e.Date)
                 .ToListAsync();
@@ -191,7 +209,7 @@ namespace JournalNote.Services
         public async Task<JournalEntry> GetJournalEntryByIdAsync(int id)
         {
             await InitAsync();
-            
+
             return await _database.Table<JournalEntry>()
                 .Where(e => e.Id == id)
                 .FirstOrDefaultAsync();
@@ -200,9 +218,8 @@ namespace JournalNote.Services
         public async Task<int> UpdateJournalEntryAsync(JournalEntry journalEntry)
         {
             await InitAsync();
-            
+
             journalEntry.UpdatedAt = DateTime.Now;
-            
             return await _database.UpdateAsync(journalEntry);
         }
 
@@ -215,19 +232,18 @@ namespace JournalNote.Services
         public async Task<int> DeleteJournalEntryByIdAsync(int id)
         {
             await InitAsync();
-            
+
             var journalEntry = await GetJournalEntryByIdAsync(id);
             if (journalEntry != null)
                 return await _database.DeleteAsync(journalEntry);
-            
+
             return 0;
         }
 
         public async Task<bool> HasJournalEntryForDateAsync(string date)
         {
             await InitAsync();
-            var journalEntry = await GetJournalEntryByDateAsync(date);
-            return journalEntry != null;
+            return await _database.Table<JournalEntry>().Where(e => e.Date == date).FirstOrDefaultAsync() != null;
         }
 
         public async Task<int> GetJournalEntryCountAsync()
@@ -300,7 +316,6 @@ namespace JournalNote.Services
                 .OrderBy(t => t.Name)
                 .ToListAsync();
         }
-        
 
         public async Task<Tag> GetTagByIdAsync(int id)
         {
@@ -317,9 +332,6 @@ namespace JournalNote.Services
                 .Where(t => t.Name.ToLower() == name.ToLower())
                 .FirstOrDefaultAsync();
         }
-
-        
-
 
         public async Task<List<Tag>> GetTagsForEntryAsync(JournalEntry entry)
         {
@@ -345,7 +357,7 @@ namespace JournalNote.Services
             return tags;
         }
 
-        // DEBUG/MAINTENANCE METHODS 
+        // DEBUG/MAINTENANCE METHODS
         public async Task ForceReseedMoodsAsync()
         {
             await InitAsync();
@@ -365,285 +377,182 @@ namespace JournalNote.Services
             await InitAsync();
             return _databasePath;
         }
-        
+
         // ====== STREAK TRACKING ======
-public async Task<StreakInfo> GetStreakInfoAsync()
-{
-    await InitAsync();
-
-    var allEntries = await GetAllJournalEntriesAsync();
-    
-    if (!allEntries.Any())
-    {
-        return new StreakInfo
+        public async Task<StreakInfo> GetStreakInfoAsync()
         {
-            CurrentStreak = 0,
-            LongestStreak = 0,
-            TotalEntries = 0,
-            MissedDays = 0,
-            LastEntryDate = null,
-            FirstEntryDate = null,
-            CompletionRate = 0
-        };
-    }
+            await InitAsync();
 
-    var entryDates = allEntries
-        .Select(e => DateTime.Parse(e.Date).Date)
-        .OrderBy(d => d)
-        .ToList();
+            var allEntries = await GetAllJournalEntriesAsync();
 
-    var totalEntries = entryDates.Count;
-    var firstEntryDate = entryDates.First();
-    var lastEntryDate = entryDates.Last();
-
-    // Calculate current streak
-    var currentStreak = 0;
-    var today = DateTime.Today.Date;
-    var checkDate = today;
-
-    // Check if there's an entry today or yesterday to start counting
-    if (entryDates.Contains(today) || entryDates.Contains(today.AddDays(-1)))
-    {
-        // Start from yesterday if no entry today
-        if (!entryDates.Contains(today))
-        {
-            checkDate = today.AddDays(-1);
-        }
-
-        while (entryDates.Contains(checkDate))
-        {
-            currentStreak++;
-            checkDate = checkDate.AddDays(-1);
-        }
-    }
-
-    // Calculate longest streak
-    var longestStreak = 0;
-    var tempStreak = 1;
-
-    for (int i = 1; i < entryDates.Count; i++)
-    {
-        var daysDifference = (entryDates[i] - entryDates[i - 1]).Days;
-
-        if (daysDifference == 1)
-        {
-            tempStreak++;
-        }
-        else
-        {
-            if (tempStreak > longestStreak)
+            if (!allEntries.Any())
             {
-                longestStreak = tempStreak;
+                return new StreakInfo
+                {
+                    CurrentStreak = 0,
+                    LongestStreak = 0,
+                    TotalEntries = 0,
+                    MissedDays = 0,
+                    LastEntryDate = null,
+                    FirstEntryDate = null,
+                    CompletionRate = 0
+                };
             }
-            tempStreak = 1;
+
+            // SAFER parsing (skip bad dates)
+            var entryDates = allEntries
+                .Select(e =>
+                {
+                    if (DateTime.TryParse(e.Date, out var dt)) return (DateTime?)dt.Date;
+                    return null;
+                })
+                .Where(d => d.HasValue)
+                .Select(d => d.Value)
+                .OrderBy(d => d)
+                .ToList();
+
+            if (!entryDates.Any())
+            {
+                return new StreakInfo
+                {
+                    CurrentStreak = 0,
+                    LongestStreak = 0,
+                    TotalEntries = 0,
+                    MissedDays = 0,
+                    LastEntryDate = null,
+                    FirstEntryDate = null,
+                    CompletionRate = 0
+                };
+            }
+
+            var totalEntries = entryDates.Count;
+            var firstEntryDate = entryDates.First();
+            var lastEntryDate = entryDates.Last();
+
+            // Current streak
+            var currentStreak = 0;
+            var today = DateTime.Today.Date;
+            var checkDate = today;
+
+            if (entryDates.Contains(today) || entryDates.Contains(today.AddDays(-1)))
+            {
+                if (!entryDates.Contains(today))
+                    checkDate = today.AddDays(-1);
+
+                while (entryDates.Contains(checkDate))
+                {
+                    currentStreak++;
+                    checkDate = checkDate.AddDays(-1);
+                }
+            }
+
+            // Longest streak
+            var longestStreak = 1;
+            var tempStreak = 1;
+
+            for (int i = 1; i < entryDates.Count; i++)
+            {
+                var diff = (entryDates[i] - entryDates[i - 1]).Days;
+                if (diff == 1)
+                {
+                    tempStreak++;
+                }
+                else
+                {
+                    if (tempStreak > longestStreak)
+                        longestStreak = tempStreak;
+
+                    tempStreak = 1;
+                }
+            }
+
+            if (tempStreak > longestStreak)
+                longestStreak = tempStreak;
+
+            // Missed days / completion
+            var totalDaysSinceStart = (today - firstEntryDate).Days + 1;
+            var missedDays = totalDaysSinceStart - totalEntries;
+
+            var completionRate = totalDaysSinceStart > 0
+                ? Math.Round((totalEntries / (double)totalDaysSinceStart) * 100, 1)
+                : 0;
+
+            return new StreakInfo
+            {
+                CurrentStreak = currentStreak,
+                LongestStreak = longestStreak,
+                TotalEntries = totalEntries,
+                MissedDays = missedDays > 0 ? missedDays : 0,
+                LastEntryDate = lastEntryDate,
+                FirstEntryDate = firstEntryDate,
+                CompletionRate = completionRate
+            };
         }
-    }
-
-    if (tempStreak > longestStreak)
-    {
-        longestStreak = tempStreak;
-    }
-
-    // Calculate missed days
-    var totalDaysSinceStart = (today - firstEntryDate).Days + 1;
-    var missedDays = totalDaysSinceStart - totalEntries;
-
-    // Calculate completion rate
-    var completionRate = totalDaysSinceStart > 0 
-        ? Math.Round((totalEntries / (double)totalDaysSinceStart) * 100, 1) 
-        : 0;
-
-    return new StreakInfo
-    {
-        CurrentStreak = currentStreak,
-        LongestStreak = longestStreak,
-        TotalEntries = totalEntries,
-        MissedDays = missedDays > 0 ? missedDays : 0,
-        LastEntryDate = lastEntryDate,
-        FirstEntryDate = firstEntryDate,
-        CompletionRate = completionRate
-    };
-}
-
-// ====== THEME MANAGEMENT METHODS ======
-public async Task<List<AppTheme>> GetAllThemesAsync()
-{
-    await InitAsync();
-    return await _database.Table<AppTheme>().ToListAsync();
-}
-
-public async Task<AppTheme> GetThemeByIdAsync(int id)
-{
-    await InitAsync();
-    return await _database.Table<AppTheme>()
-        .Where(t => t.Id == id)
-        .FirstOrDefaultAsync();
-}
-
-public async Task<int> SaveThemeAsync(AppTheme theme)
-{
-    await InitAsync();
-    
-    if (theme.Id != 0)
-    {
-        return await _database.UpdateAsync(theme);
-    }
-    else
-    {
-        theme.CreatedAt = DateTime.Now;
-        return await _database.InsertAsync(theme);
-    }
-}
-
-public async Task<int> DeleteThemeAsync(int id)
-{
-    await InitAsync();
-    return await _database.DeleteAsync<AppTheme>(id);
-}
-
-public async Task<ThemeSettings> GetThemeSettingsAsync()
-{
-    await InitAsync();
-    var settings = await _database.Table<ThemeSettings>().FirstOrDefaultAsync();
-    
-    if (settings == null)
-    {
-        // Create default settings
-        settings = new ThemeSettings
-        {
-            SelectedThemeId = 1, // Default to Light theme
-            UpdatedAt = DateTime.Now
-        };
-        await _database.InsertAsync(settings);
-    }
-    
-    return settings;
-}
-
-public async Task<int> SaveThemeSettingsAsync(ThemeSettings settings)
-{
-    await InitAsync();
-    settings.UpdatedAt = DateTime.Now;
-    
-    var existing = await _database.Table<ThemeSettings>().FirstOrDefaultAsync();
-    if (existing != null)
-    {
-        settings.Id = existing.Id;
-        return await _database.UpdateAsync(settings);
-    }
-    else
-    {
-        return await _database.InsertAsync(settings);
-    }
-}
-
-public async Task SeedPredefinedThemesAsync()
-{
-    await InitAsync();
-    
-    var existingThemes = await _database.Table<AppTheme>().CountAsync();
-    if (existingThemes > 0)
-        return; // Themes already seeded
-    
-    var themes = new List<AppTheme>
-    {
-        // Light Theme
-        new AppTheme
-        {
-            Name = "Light",
-            PrimaryColor = "#4A90E2",
-            SecondaryColor = "#6C757D",
-            BackgroundColor = "#F8F9FA",
-            SurfaceColor = "#FFFFFF",
-            TextColor = "#343A40",
-            TextSecondaryColor = "#6C757D",
-            IsDark = false,
-            IsPredefined = true,
-            CreatedAt = DateTime.Now
-        },
         
-        // Dark Theme
-        new AppTheme
-        {
-            Name = "Dark",
-            PrimaryColor = "#5C7CFA",
-            SecondaryColor = "#ADB5BD",
-            BackgroundColor = "#1A1A1A",
-            SurfaceColor = "#2D2D2D",
-            TextColor = "#E9ECEF",
-            TextSecondaryColor = "#ADB5BD",
-            IsDark = true,
-            IsPredefined = true,
-            CreatedAt = DateTime.Now
-        },
         
-        // Blue Theme
-        new AppTheme
+// ====== THEME SETTINGS METHODS ======
+        public async Task<ThemeSettings> GetThemeSettingsAsync()
         {
-            Name = "Ocean Blue",
-            PrimaryColor = "#0077B6",
-            SecondaryColor = "#00B4D8",
-            BackgroundColor = "#E3F2FD",
-            SurfaceColor = "#FFFFFF",
-            TextColor = "#01497C",
-            TextSecondaryColor = "#0096C7",
-            IsDark = false,
-            IsPredefined = true,
-            CreatedAt = DateTime.Now
-        },
+            try
+            {
+                await InitAsync();
+                var settings = await _database.Table<ThemeSettings>().FirstOrDefaultAsync();
         
-        // Purple Theme
-        new AppTheme
-        {
-            Name = "Purple Dream",
-            PrimaryColor = "#7950F2",
-            SecondaryColor = "#9775FA",
-            BackgroundColor = "#F3F0FF",
-            SurfaceColor = "#FFFFFF",
-            TextColor = "#5F3DC4",
-            TextSecondaryColor = "#7950F2",
-            IsDark = false,
-            IsPredefined = true,
-            CreatedAt = DateTime.Now
-        },
+                if (settings == null)
+                {
+                    // Create default settings (Light mode)
+                    settings = new ThemeSettings
+                    {
+                        IsDarkMode = false
+                    };
+                    await _database.InsertAsync(settings);
+                    System.Diagnostics.Debug.WriteLine("Created default theme settings");
+                }
         
-        // Green Theme
-        new AppTheme
-        {
-            Name = "Forest Green",
-            PrimaryColor = "#2F9E44",
-            SecondaryColor = "#51CF66",
-            BackgroundColor = "#EBFBEE",
-            SurfaceColor = "#FFFFFF",
-            TextColor = "#2B8A3E",
-            TextSecondaryColor = "#37B24D",
-            IsDark = false,
-            IsPredefined = true,
-            CreatedAt = DateTime.Now
-        },
-        
-        // Midnight Theme
-        new AppTheme
-        {
-            Name = "Midnight",
-            PrimaryColor = "#748FFC",
-            SecondaryColor = "#91A7FF",
-            BackgroundColor = "#0F0F1E",
-            SurfaceColor = "#1A1B2E",
-            TextColor = "#E5E5E5",
-            TextSecondaryColor = "#B8B8D1",
-            IsDark = true,
-            IsPredefined = true,
-            CreatedAt = DateTime.Now
+                return settings;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in GetThemeSettingsAsync: {ex.Message}");
+                // Return default settings on error
+                return new ThemeSettings { IsDarkMode = false };
+            }
         }
-    };
-    
-    foreach (var theme in themes)
-    {
-        await _database.InsertAsync(theme);
-    }
-}
 
-
+        public async Task<int> SaveThemeSettingsAsync(ThemeSettings settings)
+        {
+            try
+            {
+                await InitAsync();
+        
+                if (settings == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("ThemeSettings is null");
+                    return 0;
+                }
+        
+                var existing = await _database.Table<ThemeSettings>().FirstOrDefaultAsync();
+                if (existing != null)
+                {
+                    settings.Id = existing.Id;
+                    var result = await _database.UpdateAsync(settings);
+                    System.Diagnostics.Debug.WriteLine($"Updated theme settings: IsDarkMode={settings.IsDarkMode}");
+                    return result;
+                }
+                else
+                {
+                    var result = await _database.InsertAsync(settings);
+                    System.Diagnostics.Debug.WriteLine($"Inserted theme settings: IsDarkMode={settings.IsDarkMode}");
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in SaveThemeSettingsAsync: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                return 0;
+            }
+        }
+        
     }
 }

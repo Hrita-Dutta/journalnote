@@ -14,7 +14,7 @@ public static class MauiProgram
 
         builder.Services.AddMauiBlazorWebView();
         
-        // Register DatabaseService as Singleton
+      
         builder.Services.AddSingleton<DatabaseService>();
         builder.Services.AddSingleton<ThemeService>();
 
