@@ -8,7 +8,7 @@
 
 <div class="container mt-4">
     <div class="text-center mb-4">
-        <h1>Export Journal Entries</h1>
+        <h1>📄 Export Journal</h1>
         <p class="lead">Export your journal entries to PDF by date range</p>
     </div>
 
@@ -71,7 +71,15 @@
                     @if (!string.IsNullOrEmpty(successMessage))
                     {
                         <div class="alert alert-success">
-                            @successMessage
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div style="white-space: pre-line;">@successMessage</div>
+                                @if (!string.IsNullOrEmpty(lastExportedFile))
+                                {
+                                    <button class="btn btn-sm btn-success ms-2" @onclick="ShareFile">
+                                        📤 Share
+                                    </button>
+                                }
+                            </div>
                         </div>
                     }
 
@@ -86,7 +94,7 @@
                             }
                             else
                             {
-                                <span>Export Journal</span>
+                                <span>📄 Export to PDF</span>
                             }
                         </button>
                     </div>
@@ -123,40 +131,38 @@
                 </div>
             </div>
 
+            @if (!string.IsNullOrEmpty(lastExportedFile))
+            {
+                <div class="alert alert-info mt-3">
+                    <strong>📁 File Location:</strong><br/>
+                    <small class="text-break">@lastExportedFile</small><br/>
+                    <button class="btn btn-sm btn-info mt-2" @onclick="CopyPath">
+                        📋 Copy Path
+                    </button>
+                </div>
+            }
+
         </div>
     </div>
 </div>
 
 @code {
-    private DateTime startDate = DateTime.Now.AddDays(-7);
+    private DateTime startDate = DateTime.Now.AddDays(-30);
     private DateTime endDate = DateTime.Now;
     private bool includeMoods = true;
     private bool includeTags = true;
     private bool isExporting = false;
     private string errorMessage = string.Empty;
     private string successMessage = string.Empty;
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            // Test database connection
-            await DatabaseService.GetAllEntriesAsync();
-            System.Diagnostics.Debug.WriteLine("Export page initialized successfully");
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Export page initialization error: {ex.Message}");
-            errorMessage = "Error loading export page. Please try again.";
-        }
-    }
+    private string lastExportedFile = string.Empty;
 
     private async Task ExportToPdf()
     {
         errorMessage = string.Empty;
         successMessage = string.Empty;
+        lastExportedFile = string.Empty;
 
-        System.Diagnostics.Debug.WriteLine("Export button clicked");
+        System.Diagnostics.Debug.WriteLine(">>> EXPORT BUTTON CLICKED");
 
         if (startDate > endDate)
         {
@@ -165,11 +171,11 @@
         }
 
         isExporting = true;
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
 
         try
         {
-            System.Diagnostics.Debug.WriteLine($"Creating export request: {startDate} to {endDate}");
+            await Task.Delay(100);
 
             var request = new ExportRequest
             {
@@ -179,107 +185,115 @@
                 IncludeTags = includeTags
             };
 
-            System.Diagnostics.Debug.WriteLine("Calling PdfExportService...");
+            System.Diagnostics.Debug.WriteLine($"Request: {startDate:yyyy-MM-dd} to {endDate:yyyy-MM-dd}");
+
             var filePath = await PdfExportService.ExportToPdfAsync(request);
 
-            if (filePath == null)
+            if (string.IsNullOrEmpty(filePath))
             {
-                errorMessage = "No entries found in the selected date range";
-                System.Diagnostics.Debug.WriteLine("No entries found");
+                errorMessage = "No entries found in the selected date range. Try selecting 'All Time'.";
+                System.Diagnostics.Debug.WriteLine(">>> No file path returned");
                 return;
             }
 
-            System.Diagnostics.Debug.WriteLine($"PDF created at: {filePath}");
+            lastExportedFile = filePath;
+            System.Diagnostics.Debug.WriteLine($">>> File created: {filePath}");
 
-            // Try to open the file
+            // Check if file exists
+            var fileExists = File.Exists(filePath);
+            System.Diagnostics.Debug.WriteLine($">>> File exists: {fileExists}");
+
+            if (!fileExists)
+            {
+                errorMessage = "PDF file was not created. Please try again.";
+                return;
+            }
+
+            // Try to open file
             try
             {
                 await Launcher.OpenAsync(new OpenFileRequest
                 {
-                    File = new ReadOnlyFile(filePath)
+                    File = new ReadOnlyFile(filePath),
+                    Title = "Open Journal Export"
                 });
-
-                successMessage = $"PDF exported successfully! File: {Path.GetFileName(filePath)}";
-                System.Diagnostics.Debug.WriteLine("PDF opened successfully");
+                successMessage = "✅ PDF exported and opened successfully!";
             }
             catch (Exception openEx)
             {
-                System.Diagnostics.Debug.WriteLine($"Error opening PDF: {openEx.Message}");
-                successMessage = $"PDF created successfully! Saved to: {filePath}";
+                System.Diagnostics.Debug.WriteLine($">>> Launcher error -1712: {openEx.Message}");
+                successMessage = $"✅ PDF created successfully!\nFile: {Path.GetFileName(filePath)}\n\nClick 'Share' to open or send the file.";
             }
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Export error: {ex.Message}");
-            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
-            
-            if (ex.InnerException != null)
-            {
-                System.Diagnostics.Debug.WriteLine($"Inner exception: {ex.InnerException.Message}");
-            }
-
+            System.Diagnostics.Debug.WriteLine($">>> EXPORT EXCEPTION: {ex.Message}");
             errorMessage = $"Export failed: {ex.Message}";
         }
         finally
         {
             isExporting = false;
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task ShareFile()
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(lastExportedFile) || !File.Exists(lastExportedFile))
+            {
+                errorMessage = "File not found. Please export again.";
+                return;
+            }
+
+            await Share.RequestAsync(new ShareFileRequest
+            {
+                Title = "Share Journal Export",
+                File = new ShareFile(lastExportedFile)
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($">>> Share error: {ex.Message}");
+            errorMessage = $"Cannot share file: {ex.Message}";
+        }
+    }
+
+    private async Task CopyPath()
+    {
+        try
+        {
+            await Clipboard.SetTextAsync(lastExportedFile);
+            successMessage = "✅ File path copied to clipboard!";
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($">>> Copy error: {ex.Message}");
         }
     }
 
     private void SelectLastWeek()
     {
-        try
-        {
-            endDate = DateTime.Now;
-            startDate = DateTime.Now.AddDays(-7);
-            System.Diagnostics.Debug.WriteLine("Selected last 7 days");
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error selecting last week: {ex.Message}");
-        }
+        endDate = DateTime.Now;
+        startDate = DateTime.Now.AddDays(-7);
     }
 
     private void SelectLastMonth()
     {
-        try
-        {
-            endDate = DateTime.Now;
-            startDate = DateTime.Now.AddDays(-30);
-            System.Diagnostics.Debug.WriteLine("Selected last 30 days");
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error selecting last month: {ex.Message}");
-        }
+        endDate = DateTime.Now;
+        startDate = DateTime.Now.AddDays(-30);
     }
 
     private void SelectThisMonth()
     {
-        try
-        {
-            endDate = DateTime.Now;
-            startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            System.Diagnostics.Debug.WriteLine("Selected this month");
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error selecting this month: {ex.Message}");
-        }
+        endDate = DateTime.Now;
+        startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
     }
 
     private void SelectAllTime()
     {
-        try
-        {
-            endDate = DateTime.Now;
-            startDate = DateTime.Now.AddYears(-10);
-            System.Diagnostics.Debug.WriteLine("Selected all time");
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error selecting all time: {ex.Message}");
-        }
+        endDate = DateTime.Now;
+        startDate = DateTime.Now.AddYears(-10);
     }
 }
