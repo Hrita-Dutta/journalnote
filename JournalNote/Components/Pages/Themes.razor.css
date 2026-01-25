@@ -1,0 +1,18 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.text-center h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #343a40;
+}
+
+.text-center .lead {
+    color: #6c757d;
+}
+
+.spinner-border {
+    border-width: 0.3em;
+}
