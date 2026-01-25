@@ -1,13 +1,14 @@
-@page "/themes"
+@page "/analytics"
+@using JournalNote.Models
 @using JournalNote.Services
-@inject ThemeService ThemeService
+@inject DatabaseService DatabaseService
 
-<PageTitle>Themes - JournalNote</PageTitle>
+<PageTitle>Analytics - JournalNote</PageTitle>
 
 <div class="container mt-4">
     <div class="text-center mb-4">
-        <h1>Theme Settings</h1>
-        <p class="lead">Switch between light and dark mode</p>
+        <h1>Analytics & Insights</h1>
+        <p class="lead">Deep dive into your journaling patterns and habits</p>
     </div>
 
     <hr />
@@ -16,162 +17,43 @@
     {
         <div class="text-center py-5">
             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
-            <p class="mt-3">Loading theme settings...</p>
+            <p class="mt-3">Analyzing your journal data...</p>
         </div>
     }
-    else
+    else if (analyticsData?.GeneralStats?.TotalEntries == 0)
     {
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                
-                <!-- Theme Selector Cards -->
-                <div class="row g-4 mb-4">
-                    
-                    <!-- Light Theme Card -->
-                    <div class="col-md-6">
-                        <div class="theme-card @(!isDarkMode ? "active" : "")" @onclick="() => SelectTheme(false)">
-                            
-                            <h3 class="theme-title">Light Mode</h3>
-                            <p class="theme-description">Bright and clean interface</p>
-                            <div class="theme-preview light-preview">
-                                <div class="preview-header"></div>
-                                <div class="preview-body">
-                                    <div class="preview-line"></div>
-                                    <div class="preview-line"></div>
-                                    <div class="preview-line short"></div>
-                                </div>
-                            </div>
-                            
-                            @if (!isDarkMode)
-                            {
-                                <div class="active-badge">
-                                    <span>✓ Active</span>
-                                </div>
-                            }
-                        </div>
-                    </div>
-
-                    <!-- Dark Theme Card -->
-                    <div class="col-md-6">
-                        <div class="theme-card @(isDarkMode ? "active" : "")" @onclick="() => SelectTheme(true)">
-                            <h3 class="theme-title">Dark Mode</h3>
-                            <p class="theme-description">Easy on the eyes at night</p>
-                            
-                            <div class="theme-preview dark-preview">
-                                <div class="preview-header"></div>
-                                <div class="preview-body">
-                                    <div class="preview-line"></div>
-                                    <div class="preview-line"></div>
-                                    <div class="preview-line short"></div>
-                                </div>
-                            </div>
-                            
-                            @if (isDarkMode)
-                            {
-                                <div class="active-badge">
-                                    <span>✓ Active</span>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Current Theme Info -->
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Current Theme</h5>
-                        <hr />
-                        
-                        <div class="current-theme-info">
-                            <div class="info-row">
-                                <span class="info-label">Selected Mode:</span>
-                                <span class="info-value">
-                                    @(isDarkMode ? "🌙 Dark Mode" : "☀️ Light Mode")
-                                </span>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Status:</span>
-                                <span class="info-value">Applied to all pages</span>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Persistence:</span>
-                                <span class="info-value">Saved across app restarts</span>
-                            </div>
-                        </div>
-
-                        <div class="alert alert-info mt-3 mb-0">
-                            <strong>💡 Tip:</strong> Your theme preference is saved automatically and will be applied every time you open the app.
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+        <div class="alert alert-secondary text-center">
+            <h4>No Data Yet</h4>
+            <p>Start creating journal entries to see your analytics and insights!</p>
+            <a href="/entry" class="btn btn-success">Create Your First Entry</a>
         </div>
     }
 </div>
 
 @code {
-    private bool isDarkMode = false;
+    private AnalyticsData? analyticsData;
     private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadTheme();
-        ThemeService.ThemeChanged += OnThemeChanged;
+        await LoadAnalytics();
     }
 
-    private async Task LoadTheme()
+    private async Task LoadAnalytics()
     {
         isLoading = true;
 
         try
         {
-            isDarkMode = await ThemeService.GetIsDarkModeAsync();
+            analyticsData = await DatabaseService.GetAnalyticsDataAsync();
         }
         catch (Exception ex)
         {
-            await Application.Current.MainPage.DisplayAlert("Error", $"Failed to load theme: {ex.Message}", "OK");
+            await Application.Current.MainPage.DisplayAlert("Error", $"Failed to load analytics: {ex.Message}", "OK");
         }
         finally
         {
             isLoading = false;
         }
-    }
-
-    private async Task SelectTheme(bool darkMode)
-    {
-        if (isDarkMode == darkMode)
-            return;
-
-        try
-        {
-            await ThemeService.SetDarkModeAsync(darkMode);
-            isDarkMode = darkMode;
-            
-            await Application.Current.MainPage.DisplayAlert(
-                "Theme Applied",
-                $"{(darkMode ? "Dark" : "Light")} mode has been applied to all pages!",
-                "OK");
-        }
-        catch (Exception ex)
-        {
-            await Application.Current.MainPage.DisplayAlert("Error", $"Failed to apply theme: {ex.Message}", "OK");
-        }
-    }
-
-    private void OnThemeChanged(object sender, EventArgs e)
-    {
-        InvokeAsync(async () =>
-        {
-            isDarkMode = await ThemeService.GetIsDarkModeAsync();
-            StateHasChanged();
-        });
-    }
-
-    public void Dispose()
-    {
-        ThemeService.ThemeChanged -= OnThemeChanged;
     }
 }
