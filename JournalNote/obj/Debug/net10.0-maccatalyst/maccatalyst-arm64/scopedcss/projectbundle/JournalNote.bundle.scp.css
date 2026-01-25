@@ -664,41 +664,6 @@ hr[b-xmckefsjnr] {
     background: #555;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    h1[b-xmckefsjnr] {
-        font-size: 2rem;
-    }
-
-    .stat-card[b-xmckefsjnr] {
-        padding: 1.5rem 1rem;
-    }
-
-    .stat-value[b-xmckefsjnr] {
-        font-size: 2rem;
-    }
-
-    .activity-item[b-xmckefsjnr] {
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-    }
-
-    .activity-count[b-xmckefsjnr] {
-        text-align: left;
-    }
-
-    .section-title[b-xmckefsjnr] {
-        font-size: 1.5rem;
-    }
-
-    .word-stat-value[b-xmckefsjnr] {
-        font-size: 1.5rem;
-    }
-
-    .journey-value[b-xmckefsjnr] {
-        font-size: 1.1rem;
-    }
-}
 /* /Components/Pages/Calendar.razor.rz.scp.css */
 .container[b-2ubn3vrjr1] {
     max-width: 1400px;
