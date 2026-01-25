@@ -196,3 +196,67 @@ hr {
 .tag-list::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
 .tag-list::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
 .tag-list::-webkit-scrollbar-thumb:hover { background: #555; }
+.word-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.word-stat-item {
+    padding: 1.25rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #4a90e2;
+}
+
+.word-stat-label {
+    font-size: 0.95rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.word-stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #4a90e2;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.activity-item {
+    display: grid;
+    grid-template-columns: 130px 1fr 100px;
+    align-items: center;
+    gap: 1rem;
+}
+
+.activity-date {
+    font-size: 0.9rem;
+    color: #495057;
+    font-weight: 600;
+}
+
+.activity-bar {
+    height: 24px;
+    background-color: #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.activity-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4a90e2, #5c7cfa);
+    border-radius: 12px;
+    transition: width 0.3s ease;
+}
+
+.activity-count {
+    font-size: 0.9rem;
+    color: #495057;
+    font-weight: 600;
+    text-align: right;
+}

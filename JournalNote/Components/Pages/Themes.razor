@@ -177,6 +177,67 @@
         </div>
     </div>
 </div>
+<div class="section mb-4">
+    <h3 class="section-title">Writing Statistics</h3>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Word Count Overview</h5>
+                    <hr />
+
+                    <div class="word-stats">
+                        <div class="word-stat-item">
+                            <div class="word-stat-label">Total Words Written</div>
+                            <div class="word-stat-value">@analyticsData!.WordTrends.TotalWords.ToString("N0")</div>
+                        </div>
+
+                        <div class="word-stat-item">
+                            <div class="word-stat-label">Average Words per Entry</div>
+                            <div class="word-stat-value">@analyticsData!.WordTrends.AverageWordCount</div>
+                        </div>
+
+                        <div class="word-stat-item">
+                            <div class="word-stat-label">Shortest Entry</div>
+                            <div class="word-stat-value">@analyticsData!.WordTrends.ShortestEntry words</div>
+                        </div>
+
+                        <div class="word-stat-item">
+                            <div class="word-stat-label">Longest Entry</div>
+                            <div class="word-stat-value">@analyticsData!.WordTrends.LongestEntry words</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Writing Activity (Last 7 Days)</h5>
+                    <hr />
+
+                    <div class="activity-list">
+                        @foreach (var daily in analyticsData!.WordTrends.DailyWordCounts.TakeLast(7).Reverse())
+                        {
+                            <div class="activity-item">
+                                <div class="activity-date">@daily.Date.ToString("MMM dd, yyyy")</div>
+                                <div class="activity-bar">
+                                    <div class="activity-bar-fill"
+                                         style="width: @CalculateActivityBarWidth(daily.WordCount, analyticsData!.WordTrends.LongestEntry)%">
+                                    </div>
+                                </div>
+                                <div class="activity-count">@daily.WordCount words</div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
             </div>
         </div>
@@ -185,6 +246,12 @@
 </div>
 
 @code {
+    private double CalculateActivityBarWidth(int wordCount, int maxWordCount)
+    {
+        if (maxWordCount == 0) return 0;
+        return (wordCount * 100.0 / maxWordCount);
+    }
+
     private AnalyticsData? analyticsData;
     private bool isLoading = true;
 
