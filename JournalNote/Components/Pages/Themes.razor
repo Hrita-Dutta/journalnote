@@ -124,6 +124,59 @@
         </div>
     </div>
 </div>
+<div class="section mb-4">
+    <h3 class="section-title">Tag Usage Statistics</h3>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h5 class="card-title">Most Used Tags</h5>
+                    <hr />
+
+                    <div class="info-box mb-3">
+                        <div class="info-row">
+                            <span class="info-label">Most Popular Tag:</span>
+                            <span class="info-value">@analyticsData!.TagStats.MostUsedTag</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Total Tag Usage:</span>
+                            <span class="info-value">@analyticsData!.TagStats.TotalTagUsage</span>
+                        </div>
+                    </div>
+
+                    @foreach (var tag in analyticsData!.TagStats.TagCounts.Take(10))
+                    {
+                        <div class="data-bar-item mb-3">
+                            <div class="data-bar-header">
+                                <span class="tag-badge" style="background-color: @tag.Color">@tag.TagName</span>
+                                <span class="data-count">@tag.Count uses</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: @tag.Percentage%; background-color: @tag.Color"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="col-md-6">
+                    <h5 class="card-title">All Tags</h5>
+                    <hr />
+
+                    <div class="tag-list">
+                        @foreach (var tag in analyticsData!.TagStats.TagCounts.Take(20))
+                        {
+                            <div class="tag-item">
+                                <span class="tag-badge" style="background-color: @tag.Color">@tag.TagName</span>
+                                <span class="tag-count">@tag.Count times (@tag.Percentage.ToString("0.0")%)</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
             </div>
         </div>
