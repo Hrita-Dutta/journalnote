@@ -553,7 +553,230 @@ namespace JournalNote.Services
                 return 0;
             }
         }
+        // ====== ANALYTICS METHODS ======
+public async Task<AnalyticsData> GetAnalyticsDataAsync()
+{
+    await InitAsync();
 
+    var entries = await _database.Table<JournalEntry>().ToListAsync();
+    var moods = await _database.Table<Mood>().ToListAsync();
+    var tags = await _database.Table<Tag>().ToListAsync();
+
+    if (entries.Count == 0)
+    {
+        return new AnalyticsData
+        {
+            MoodStats = new MoodDistribution
+            {
+                MoodCounts = new List<MoodCount>(),
+                MostFrequentMood = "N/A",
+                TotalMoodEntries = 0,
+                CategoryCounts = new Dictionary<string, int>()
+            },
+            TagStats = new TagDistribution
+            {
+                TagCounts = new List<TagCount>(),
+                MostUsedTag = "N/A",
+                TotalTagUsage = 0
+            },
+            WordTrends = new WordCountTrends
+            {
+                AverageWordCount = 0,
+                TotalWords = 0,
+                ShortestEntry = 0,
+                LongestEntry = 0,
+                DailyWordCounts = new List<WordCountByDate>()
+            },
+            GeneralStats = new GeneralStats
+            {
+                TotalEntries = 0,
+                DaysActive = 0,
+                AverageEntriesPerWeek = 0,
+                FirstEntryDate = DateTime.Now,
+                LastEntryDate = DateTime.Now
+            }
+        };
+    }
+
+    return new AnalyticsData
+    {
+        MoodStats = await CalculateMoodDistributionAsync(entries, moods),
+        TagStats = await CalculateTagDistributionAsync(entries, tags),
+        WordTrends = CalculateWordCountTrendsAsync(entries),
+        GeneralStats = CalculateGeneralStatsAsync(entries)
+    };
+}
+
+private async Task<MoodDistribution> CalculateMoodDistributionAsync(List<JournalEntry> entries, List<Mood> moods)
+{
+    var moodCounts = new Dictionary<int, int>();
+    var categoryCounts = new Dictionary<string, int>
+    {
+        { "Positive", 0 },
+        { "Neutral", 0 },
+        { "Negative", 0 }
+    };
+
+    // Count primary moods
+    foreach (var entry in entries)
+    {
+        if (entry.PrimaryMoodId.HasValue)
+        {
+            if (!moodCounts.ContainsKey(entry.PrimaryMoodId.Value))
+                moodCounts[entry.PrimaryMoodId.Value] = 0;
+            
+            moodCounts[entry.PrimaryMoodId.Value]++;
+        }
+
+        // Count secondary moods
+        if (!string.IsNullOrEmpty(entry.SecondaryMoodIds))
+        {
+            var secondaryIds = entry.SecondaryMoodIds.Split(',');
+            foreach (var idStr in secondaryIds)
+            {
+                if (int.TryParse(idStr.Trim(), out int moodId))
+                {
+                    if (!moodCounts.ContainsKey(moodId))
+                        moodCounts[moodId] = 0;
+                    
+                    moodCounts[moodId]++;
+                }
+            }
+        }
+    }
+
+    var totalMoodCount = moodCounts.Values.Sum();
+    var moodCountList = new List<MoodCount>();
+
+    foreach (var kvp in moodCounts.OrderByDescending(x => x.Value))
+    {
+        var mood = moods.FirstOrDefault(m => m.Id == kvp.Key);
+        if (mood != null)
+        {
+            moodCountList.Add(new MoodCount
+            {
+                MoodName = mood.Name,
+                Category = mood.Category,
+                Count = kvp.Value,
+                Percentage = totalMoodCount > 0 ? (kvp.Value * 100.0 / totalMoodCount) : 0
+            });
+
+            // Count by category
+            if (categoryCounts.ContainsKey(mood.Category))
+                categoryCounts[mood.Category] += kvp.Value;
+        }
+    }
+
+    var mostFrequent = moodCountList.FirstOrDefault();
+
+    return new MoodDistribution
+    {
+        MoodCounts = moodCountList,
+        MostFrequentMood = mostFrequent?.MoodName ?? "N/A",
+        TotalMoodEntries = totalMoodCount,
+        CategoryCounts = categoryCounts
+    };
+}
+
+private async Task<TagDistribution> CalculateTagDistributionAsync(List<JournalEntry> entries, List<Tag> tags)
+{
+    var tagCounts = new Dictionary<int, int>();
+
+    foreach (var entry in entries)
+    {
+        if (!string.IsNullOrEmpty(entry.TagIds))
+        {
+            var tagIds = entry.TagIds.Split(',');
+            foreach (var idStr in tagIds)
+            {
+                if (int.TryParse(idStr.Trim(), out int tagId))
+                {
+                    if (!tagCounts.ContainsKey(tagId))
+                        tagCounts[tagId] = 0;
+                    
+                    tagCounts[tagId]++;
+                }
+            }
+        }
+    }
+
+    var totalTagCount = tagCounts.Values.Sum();
+    var tagCountList = new List<TagCount>();
+
+    foreach (var kvp in tagCounts.OrderByDescending(x => x.Value))
+    {
+        var tag = tags.FirstOrDefault(t => t.Id == kvp.Key);
+        if (tag != null)
+        {
+            tagCountList.Add(new TagCount
+            {
+                TagName = tag.Name,
+                Color = tag.Color,
+                Count = kvp.Value,
+                Percentage = totalTagCount > 0 ? (kvp.Value * 100.0 / totalTagCount) : 0
+            });
+        }
+    }
+
+    var mostUsed = tagCountList.FirstOrDefault();
+
+    return new TagDistribution
+    {
+        TagCounts = tagCountList,
+        MostUsedTag = mostUsed?.TagName ?? "N/A",
+        TotalTagUsage = totalTagCount
+    };
+}
+
+private WordCountTrends CalculateWordCountTrendsAsync(List<JournalEntry> entries)
+{
+    var wordCounts = new List<int>();
+    var dailyWordCounts = new List<WordCountByDate>();
+
+    foreach (var entry in entries)
+    {
+        var content = System.Text.RegularExpressions.Regex.Replace(entry.Content ?? "", "<.*?>", string.Empty);
+        var wordCount = content.Split(new[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries).Length;
+        
+        wordCounts.Add(wordCount);
+        dailyWordCounts.Add(new WordCountByDate
+        {
+            Date = DateTime.Parse(entry.Date),
+            WordCount = wordCount
+        });
+    }
+
+    var totalWords = wordCounts.Sum();
+    var avgWords = wordCounts.Count > 0 ? (int)(totalWords / (double)wordCounts.Count) : 0;
+
+    return new WordCountTrends
+    {
+        AverageWordCount = avgWords,
+        TotalWords = totalWords,
+        ShortestEntry = wordCounts.Count > 0 ? wordCounts.Min() : 0,
+        LongestEntry = wordCounts.Count > 0 ? wordCounts.Max() : 0,
+        DailyWordCounts = dailyWordCounts.OrderBy(x => x.Date).ToList()
+    };
+}
+
+private GeneralStats CalculateGeneralStatsAsync(List<JournalEntry> entries)
+{
+    var dates = entries.Select(e => DateTime.Parse(e.Date)).OrderBy(d => d).ToList();
+    var firstDate = dates.First();
+    var lastDate = dates.Last();
+    var totalDays = (lastDate - firstDate).Days + 1;
+    var totalWeeks = totalDays / 7.0;
+    var avgPerWeek = totalWeeks > 0 ? entries.Count / totalWeeks : entries.Count;
+
+    return new GeneralStats
+    {
+        TotalEntries = entries.Count,
+        DaysActive = dates.Distinct().Count(),
+        AverageEntriesPerWeek = Math.Round(avgPerWeek, 1),
+        FirstEntryDate = firstDate,
+        LastEntryDate = lastDate
+    };
+}
         
     }
 }
