@@ -24,6 +24,9 @@
 </div>
 
 @code {
+    private List<AppTheme> predefinedThemes = new();
+    private List<AppTheme> customThemes = new();
+    private int currentThemeId;
     private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
@@ -34,9 +37,15 @@
     private async Task LoadThemes()
     {
         isLoading = true;
+
         try
         {
-            // next commits
+            var allThemes = await DatabaseService.GetAllThemesAsync();
+            predefinedThemes = allThemes.Where(t => t.IsPredefined).ToList();
+            customThemes = allThemes.Where(t => !t.IsPredefined).ToList();
+
+            var settings = await DatabaseService.GetThemeSettingsAsync();
+            currentThemeId = settings.SelectedThemeId;
         }
         catch (Exception ex)
         {
