@@ -27,14 +27,14 @@
     <StaticWebAssetEndpoint Include="JournalNote.styles.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\JournalNote.styles.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-Reez3Jr6VLxxayh04PRLK/Co/0HEcGCgC5UKrNuhz4U="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"26256"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022Reez3Jr6VLxxayh04PRLK/Co/0HEcGCgC5UKrNuhz4U=\u0022"},{"Name":"Last-Modified","Value":"Sat, 24 Jan 2026 07:25:56 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-8wS6xh\u002BInasQKrAKo7cgK1wwR\u002BKAF69h\u002BmeM7R8OKq8="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"35904"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u00228wS6xh\u002BInasQKrAKo7cgK1wwR\u002BKAF69h\u002BmeM7R8OKq8=\u0022"},{"Name":"Last-Modified","Value":"Sun, 25 Jan 2026 11:36:04 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
-    <StaticWebAssetEndpoint Include="JournalNote.xt9eekyo8s.styles.css">
+    <StaticWebAssetEndpoint Include="JournalNote.z8roxhswwi.styles.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\JournalNote.styles.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"xt9eekyo8s"},{"Name":"integrity","Value":"sha256-Reez3Jr6VLxxayh04PRLK/Co/0HEcGCgC5UKrNuhz4U="},{"Name":"label","Value":"JournalNote.styles.css"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"26256"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022Reez3Jr6VLxxayh04PRLK/Co/0HEcGCgC5UKrNuhz4U=\u0022"},{"Name":"Last-Modified","Value":"Sat, 24 Jan 2026 07:25:56 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"z8roxhswwi"},{"Name":"integrity","Value":"sha256-8wS6xh\u002BInasQKrAKo7cgK1wwR\u002BKAF69h\u002BmeM7R8OKq8="},{"Name":"label","Value":"JournalNote.styles.css"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"35904"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u00228wS6xh\u002BInasQKrAKo7cgK1wwR\u002BKAF69h\u002BmeM7R8OKq8=\u0022"},{"Name":"Last-Modified","Value":"Sun, 25 Jan 2026 11:36:04 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="js/quill-editor.js">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\quill-editor.js'))</AssetFile>
