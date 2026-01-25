@@ -43,6 +43,7 @@ namespace JournalNote.Services
                 await _database.CreateTableAsync<Tag>();
                 await _database.CreateTableAsync<ThemeSettings>();
                 await _database.CreateTableAsync<SecuritySettings>();
+                
 
                 // Seed initial data (these methods MUST NOT call InitAsync)
                 await SeedMoodsAsync();
