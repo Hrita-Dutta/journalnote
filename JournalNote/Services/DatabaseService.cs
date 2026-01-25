@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AppTheme = JournalNote.Models.AppTheme;
 
 namespace JournalNote.Services
 {
@@ -29,10 +30,13 @@ namespace JournalNote.Services
             await _database.CreateTableAsync<JournalEntry>();
             await _database.CreateTableAsync<Mood>();
             await _database.CreateTableAsync<Tag>();
+            await _database.CreateTableAsync<AppTheme>();
+            await _database.CreateTableAsync<ThemeSettings>();
 
             // Seed initial data
             await SeedMoodsAsync();
             await SeedTagsAsync();
+            await SeedPredefinedThemesAsync(); 
         }
 
         // ====== SEED MOODS ======
@@ -460,5 +464,186 @@ public async Task<StreakInfo> GetStreakInfoAsync()
         CompletionRate = completionRate
     };
 }
+
+// ====== THEME MANAGEMENT METHODS ======
+public async Task<List<AppTheme>> GetAllThemesAsync()
+{
+    await InitAsync();
+    return await _database.Table<AppTheme>().ToListAsync();
+}
+
+public async Task<AppTheme> GetThemeByIdAsync(int id)
+{
+    await InitAsync();
+    return await _database.Table<AppTheme>()
+        .Where(t => t.Id == id)
+        .FirstOrDefaultAsync();
+}
+
+public async Task<int> SaveThemeAsync(AppTheme theme)
+{
+    await InitAsync();
+    
+    if (theme.Id != 0)
+    {
+        return await _database.UpdateAsync(theme);
+    }
+    else
+    {
+        theme.CreatedAt = DateTime.Now;
+        return await _database.InsertAsync(theme);
+    }
+}
+
+public async Task<int> DeleteThemeAsync(int id)
+{
+    await InitAsync();
+    return await _database.DeleteAsync<AppTheme>(id);
+}
+
+public async Task<ThemeSettings> GetThemeSettingsAsync()
+{
+    await InitAsync();
+    var settings = await _database.Table<ThemeSettings>().FirstOrDefaultAsync();
+    
+    if (settings == null)
+    {
+        // Create default settings
+        settings = new ThemeSettings
+        {
+            SelectedThemeId = 1, // Default to Light theme
+            UpdatedAt = DateTime.Now
+        };
+        await _database.InsertAsync(settings);
+    }
+    
+    return settings;
+}
+
+public async Task<int> SaveThemeSettingsAsync(ThemeSettings settings)
+{
+    await InitAsync();
+    settings.UpdatedAt = DateTime.Now;
+    
+    var existing = await _database.Table<ThemeSettings>().FirstOrDefaultAsync();
+    if (existing != null)
+    {
+        settings.Id = existing.Id;
+        return await _database.UpdateAsync(settings);
+    }
+    else
+    {
+        return await _database.InsertAsync(settings);
+    }
+}
+
+public async Task SeedPredefinedThemesAsync()
+{
+    await InitAsync();
+    
+    var existingThemes = await _database.Table<AppTheme>().CountAsync();
+    if (existingThemes > 0)
+        return; // Themes already seeded
+    
+    var themes = new List<AppTheme>
+    {
+        // Light Theme
+        new AppTheme
+        {
+            Name = "Light",
+            PrimaryColor = "#4A90E2",
+            SecondaryColor = "#6C757D",
+            BackgroundColor = "#F8F9FA",
+            SurfaceColor = "#FFFFFF",
+            TextColor = "#343A40",
+            TextSecondaryColor = "#6C757D",
+            IsDark = false,
+            IsPredefined = true,
+            CreatedAt = DateTime.Now
+        },
+        
+        // Dark Theme
+        new AppTheme
+        {
+            Name = "Dark",
+            PrimaryColor = "#5C7CFA",
+            SecondaryColor = "#ADB5BD",
+            BackgroundColor = "#1A1A1A",
+            SurfaceColor = "#2D2D2D",
+            TextColor = "#E9ECEF",
+            TextSecondaryColor = "#ADB5BD",
+            IsDark = true,
+            IsPredefined = true,
+            CreatedAt = DateTime.Now
+        },
+        
+        // Blue Theme
+        new AppTheme
+        {
+            Name = "Ocean Blue",
+            PrimaryColor = "#0077B6",
+            SecondaryColor = "#00B4D8",
+            BackgroundColor = "#E3F2FD",
+            SurfaceColor = "#FFFFFF",
+            TextColor = "#01497C",
+            TextSecondaryColor = "#0096C7",
+            IsDark = false,
+            IsPredefined = true,
+            CreatedAt = DateTime.Now
+        },
+        
+        // Purple Theme
+        new AppTheme
+        {
+            Name = "Purple Dream",
+            PrimaryColor = "#7950F2",
+            SecondaryColor = "#9775FA",
+            BackgroundColor = "#F3F0FF",
+            SurfaceColor = "#FFFFFF",
+            TextColor = "#5F3DC4",
+            TextSecondaryColor = "#7950F2",
+            IsDark = false,
+            IsPredefined = true,
+            CreatedAt = DateTime.Now
+        },
+        
+        // Green Theme
+        new AppTheme
+        {
+            Name = "Forest Green",
+            PrimaryColor = "#2F9E44",
+            SecondaryColor = "#51CF66",
+            BackgroundColor = "#EBFBEE",
+            SurfaceColor = "#FFFFFF",
+            TextColor = "#2B8A3E",
+            TextSecondaryColor = "#37B24D",
+            IsDark = false,
+            IsPredefined = true,
+            CreatedAt = DateTime.Now
+        },
+        
+        // Midnight Theme
+        new AppTheme
+        {
+            Name = "Midnight",
+            PrimaryColor = "#748FFC",
+            SecondaryColor = "#91A7FF",
+            BackgroundColor = "#0F0F1E",
+            SurfaceColor = "#1A1B2E",
+            TextColor = "#E5E5E5",
+            TextSecondaryColor = "#B8B8D1",
+            IsDark = true,
+            IsPredefined = true,
+            CreatedAt = DateTime.Now
+        }
+    };
+    
+    foreach (var theme in themes)
+    {
+        await _database.InsertAsync(theme);
+    }
+}
+
+
     }
 }
