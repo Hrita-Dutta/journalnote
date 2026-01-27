@@ -175,8 +175,6 @@
 </div>
 
 @code {
-    // Date parameter from URL - users navigate to specific dates
-    // via Calendar (/entry/2025-01-15) or Home page links
     // Direct access to /entry creates entry for today
     [Parameter] public string? DateParam { get; set; }
 
@@ -250,7 +248,6 @@
 
     // Date changes not allowed - one entry per day rule
     // Users must navigate from Calendar or Home to change date
-    // Removed OnDateChanged method
 
     private async Task LoadJournalEntryForDate()
     {

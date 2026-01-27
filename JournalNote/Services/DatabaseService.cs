@@ -101,7 +101,6 @@ namespace JournalNote.Services
         }
 
         // ====== SEED TAGS ======
-        // NOTE: does NOT call InitAsync (called by InitAsync already)
         private async Task SeedTagsAsync()
         {
             try
