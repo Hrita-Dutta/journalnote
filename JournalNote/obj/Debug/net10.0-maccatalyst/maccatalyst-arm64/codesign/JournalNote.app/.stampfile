@@ -1,1 +1,0 @@
--v --force --timestamp=none --sign - --entitlements /Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/obj/Debug/net10.0-maccatalyst/maccatalyst-arm64/Entitlements.xcent /Applications/C#/Class/Coursework/Solved/journalnote/JournalNote/bin/Debug/net10.0-maccatalyst/maccatalyst-arm64/JournalNote.app
