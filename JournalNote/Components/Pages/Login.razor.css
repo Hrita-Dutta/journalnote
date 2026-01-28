@@ -3,7 +3,7 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: gray;
     padding: 1rem;
 }
 
@@ -17,16 +17,7 @@
     animation: slideIn 0.4s ease-out;
 }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+
 
 .auth-header {
     text-align: center;
@@ -36,7 +27,7 @@
 .auth-header h1 {
     font-size: 2.5rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: blueviolet;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -93,7 +84,7 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: gray;
     border: none;
     padding: 1.25rem;
     font-size: 1.2rem;
@@ -105,11 +96,6 @@
     box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
 }
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(79, 172, 254, 0.6);
-    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-}
 
 .btn-primary:active {
     transform: translateY(0);

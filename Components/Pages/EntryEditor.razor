@@ -1,0 +1,436 @@
+@page "/entry"
+@page "/entry/{DateParam}"
+@using JournalNote.Components.Shared
+@using JournalNote.Models
+@using JournalNote.Services
+@inject DatabaseService DatabaseService
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<PageTitle>Journal Entry</PageTitle>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>@pageTitle</h2>
+        <button class="btn btn-secondary" @onclick="NavigateToHome">
+            ← Back
+        </button>
+    </div>
+
+    <hr />
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @errorMessage
+            <button class="btn-close" @onclick="() => errorMessage = string.Empty"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @successMessage
+            <button class="btn-close" @onclick="() => successMessage = string.Empty"></button>
+        </div>
+    }
+
+    @if (isLoadingJournalEntry)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary"></div>
+            <p class="mt-3">Loading entry...</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <!-- Main Content Column -->
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <!-- Date and Title Row -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label"><strong>Date:</strong></label>
+                                <div class="date-display">
+                                    @selectedDate.ToString("MMMM dd, yyyy")
+                                </div>
+                                <small class="text-muted">One entry per day</small>
+                            </div>
+
+                            <div class="col-md-8">
+                                <label class="form-label"><strong>Title:</strong></label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       @bind="currentJournalEntry.Title" 
+                                       placeholder="Enter title" 
+                                       maxlength="200" />
+                            </div>
+                        </div>
+
+                        <!-- Content Editor -->
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Content:</strong></label>
+                            <div id="editor" style="height: 400px;background: white;border: 2px solid #e0e6ed;border-radius: 10px;"></div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2 flex-wrap mt-4">
+                            @if (isEditMode)
+                            {
+                                <button class="btn btn-primary" disabled="@isSaving" @onclick="UpdateJournalEntry">
+                                    @if (isSaving)
+                                    {
+                                        <span class="spinner-border spinner-border-sm me-2"></span>
+                                    }
+                                    Update Entry
+                                </button>
+                                <button class="btn btn-danger" disabled="@isSaving" @onclick="DeleteJournalEntry">
+                                    Delete Entry
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-success" disabled="@isSaving" @onclick="CreateJournalEntry">
+                                    @if (isSaving)
+                                    {
+                                        <span class="spinner-border spinner-border-sm me-2"></span>
+                                    }
+                                    Save Entry
+                                </button>
+                            }
+                            <button class="btn btn-outline-secondary" @onclick="NavigateToHome">
+                                Cancel
+                            </button>
+                        </div>
+
+                        @if (isEditMode && currentJournalEntry.Id > 0)
+                        {
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    <strong>Created:</strong> @currentJournalEntry.CreatedAt.ToString("MMM dd, yyyy h:mm tt") • 
+                                    <strong>Updated:</strong> @currentJournalEntry.UpdatedAt.ToString("MMM dd, yyyy h:mm tt")
+                                </small>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Column -->
+            <div class="col-lg-4">
+                <!-- Primary Mood -->
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <label class="form-label mb-2">
+                            <strong>Primary Mood:</strong> 
+                            <span class="text-danger">*Required</span>
+                        </label>
+                        <MoodSelector 
+                            MoodsByCategory="@moodsByCategory"
+                            SelectedMoodId="@selectedPrimaryMoodId"
+                            OnMoodSelected="@OnPrimaryMoodSelected"
+                            MaxSelection="1"
+                            AllowDeselect="false" />
+                    </div>
+                </div>
+
+                <!-- Secondary Moods -->
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <label class="form-label mb-2">
+                            <strong>Secondary Moods:</strong> 
+                            <span class="text-muted">(Up to 2)</span>
+                        </label>
+                        <MoodSelector 
+                            MoodsByCategory="@moodsByCategory"
+                            SelectedMoodIds="@selectedSecondaryMoodIds"
+                            OnMoodSelected="@OnSecondaryMoodSelected"
+                            MaxSelection="2"
+                            AllowDeselect="true" />
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <label class="form-label mb-2">
+                            <strong>Tags:</strong> 
+                            <span class="text-muted">(Optional)</span>
+                        </label>
+                        <TagSelector
+                            Title=""
+                            AllTags="@allTags"
+                            PredefinedTags="@predefinedTags"
+                            CustomTags="@customTags"
+                            SelectedTagIds="@selectedTagIds"
+                            OnTagToggled="@OnTagToggled"
+                            OnCustomTagAdded="@OnCustomTagAdded" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    // Date parameter from URL - users navigate to specific dates
+    // via Calendar (/entry/2025-01-15) or Home page links
+    // Direct access to /entry creates entry for today
+    [Parameter] public string? DateParam { get; set; }
+
+    private JournalEntry currentJournalEntry = new();
+    private DateTime selectedDate = DateTime.Today;
+    private bool isEditMode;
+    private bool isLoadingJournalEntry;
+    private bool isSaving;
+    private bool quillReady;
+    private string errorMessage = string.Empty;
+    private string successMessage = string.Empty;
+    private string pageTitle = "Create Journal Entry";
+
+    private Dictionary<string, List<Mood>> moodsByCategory = new();
+    private int? selectedPrimaryMoodId;
+    private List<int> selectedSecondaryMoodIds = new();
+
+    private List<Tag> allTags = new();
+    private List<Tag> predefinedTags = new();
+    private List<Tag> customTags = new();
+    private List<int> selectedTagIds = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMoodsAsync();
+        await LoadTagsAsync();
+
+        if (DateTime.TryParse(DateParam, out var parsed))
+            selectedDate = parsed;
+
+        await LoadJournalEntryForDate();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initQuill", "editor");
+            quillReady = true;
+            await SyncQuillContent();
+        }
+    }
+
+    private async Task LoadMoodsAsync()
+    {
+        try
+        {
+            var moods = await DatabaseService.GetAllMoodsAsync();
+            moodsByCategory = moods.GroupBy(m => m.Category)
+                .ToDictionary(g => g.Key, g => g.ToList());
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading moods: {ex.Message}";
+        }
+    }
+
+    private async Task LoadTagsAsync()
+    {
+        try
+        {
+            allTags = await DatabaseService.GetAllTagsAsync();
+            predefinedTags = await DatabaseService.GetPredefinedTagsAsync();
+            customTags = new List<Tag>();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading tags: {ex.Message}";
+        }
+    }
+
+    // Date changes not allowed - one entry per day rule
+    // Users must navigate from Calendar or Home to change date
+    // Removed OnDateChanged method
+
+    private async Task LoadJournalEntryForDate()
+    {
+        isLoadingJournalEntry = true;
+        errorMessage = string.Empty;
+        successMessage = string.Empty;
+
+        try
+        {
+            var dateKey = selectedDate.ToString("yyyy-MM-dd");
+            var entry = await DatabaseService.GetJournalEntryByDateAsync(dateKey);
+
+            if (entry != null)
+            {
+                currentJournalEntry = entry;
+                isEditMode = true;
+                pageTitle = $"Edit Entry - {selectedDate:MMM dd, yyyy}";
+                selectedPrimaryMoodId = entry.PrimaryMoodId;
+
+                selectedSecondaryMoodIds = entry.SecondaryMoodIds?
+                    .Split(',')
+                    .Select(s => int.TryParse(s.Trim(), out var id) ? id : (int?)null)
+                    .Where(id => id.HasValue)
+                    .Select(id => id!.Value)
+                    .ToList() ?? new();
+
+                selectedTagIds = entry.TagIds?
+                    .Split(',')
+                    .Select(s => int.TryParse(s.Trim(), out var id) ? id : (int?)null)
+                    .Where(id => id.HasValue)
+                    .Select(id => id!.Value)
+                    .ToList() ?? new();
+            }
+            else
+            {
+                currentJournalEntry = new JournalEntry { Date = dateKey };
+                isEditMode = false;
+                pageTitle = $"Create Entry - {selectedDate:MMM dd, yyyy}";
+                selectedPrimaryMoodId = null;
+                selectedSecondaryMoodIds.Clear();
+                selectedTagIds.Clear();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading entry: {ex.Message}";
+        }
+        finally
+        {
+            isLoadingJournalEntry = false;
+        }
+    }
+
+    private Task OnPrimaryMoodSelected(int id)
+    {
+        selectedPrimaryMoodId = id;
+        return Task.CompletedTask;
+    }
+
+    private Task OnSecondaryMoodSelected(int _) => Task.CompletedTask;
+
+    private Task OnTagToggled(int _)
+    {
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private Task OnCustomTagAdded(Tag newTag)
+    {
+        return Task.CompletedTask;
+    }
+
+    private async Task SyncQuillContent()
+    {
+        if (quillReady)
+            await JS.InvokeVoidAsync("setQuillHtml", currentJournalEntry.Content ?? "");
+    }
+
+    private async Task CreateJournalEntry()
+    {
+        if (!await ValidateAndFillEntry()) return;
+        isSaving = true;
+
+        try
+        {
+            await DatabaseService.AddJournalEntryAsync(currentJournalEntry);
+            successMessage = "Entry created successfully!";
+            await LoadJournalEntryForDate();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error creating entry: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private async Task UpdateJournalEntry()
+    {
+        if (!await ValidateAndFillEntry()) return;
+        isSaving = true;
+
+        try
+        {
+            await DatabaseService.UpdateJournalEntryAsync(currentJournalEntry);
+            successMessage = "Entry updated successfully!";
+            await LoadJournalEntryForDate();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating entry: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private async Task<bool> ValidateAndFillEntry()
+    {
+        errorMessage = string.Empty;
+        successMessage = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(currentJournalEntry.Title))
+        {
+            errorMessage = "Title is required.";
+            return false;
+        }
+
+        if (!selectedPrimaryMoodId.HasValue)
+        {
+            errorMessage = "Primary mood is required.";
+            return false;
+        }
+
+        var html = await JS.InvokeAsync<string>("getQuillHtml");
+        if (string.IsNullOrWhiteSpace(html) || html == "<p><br></p>")
+        {
+            errorMessage = "Content is required.";
+            return false;
+        }
+
+        currentJournalEntry.Content = html;
+        currentJournalEntry.PrimaryMoodId = selectedPrimaryMoodId;
+        currentJournalEntry.SecondaryMoodIds = string.Join(",", selectedSecondaryMoodIds);
+        currentJournalEntry.TagIds = string.Join(",", selectedTagIds);
+
+        return true;
+    }
+
+    private async Task DeleteJournalEntry()
+    {
+        var confirmed = await Application.Current.MainPage.DisplayAlert(
+            "Confirm Delete",
+            "Are you sure you want to delete this entry? This action cannot be undone.",
+            "Yes, Delete",
+            "Cancel"
+        );
+
+        if (!confirmed) return;
+        isSaving = true;
+
+        try
+        {
+            await DatabaseService.DeleteJournalEntryAsync(currentJournalEntry);
+            successMessage = "Entry deleted successfully! Redirecting...";
+            await Task.Delay(1000);
+            Navigation.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error deleting entry: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void NavigateToHome() => Navigation.NavigateTo("/");
+}

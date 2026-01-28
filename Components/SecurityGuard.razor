@@ -1,0 +1,72 @@
+@using JournalNote.Services
+@inject SecurityService SecurityService
+@inject NavigationManager Navigation
+
+@if (isChecking)
+{
+    <div class="security-check">
+        <div class="spinner-border text-primary"></div>
+        <p>Loading...</p>
+    </div>
+}
+else if (needsAuth)
+{
+    <div class="security-check">
+        <p>Redirecting...</p>
+    </div>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private bool isChecking = true;
+    private bool needsAuth = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckAuth();
+    }
+
+    private async Task CheckAuth()
+    {
+        isChecking = true;
+
+        try
+        {
+            var isRegistered = await SecurityService.IsRegisteredAsync();
+
+            if (!isRegistered)
+            {
+                System.Diagnostics.Debug.WriteLine("Not registered, redirecting to /register");
+                needsAuth = true;
+                Navigation.NavigateTo("/register", true);
+                return;
+            }
+
+            if (!SecurityService.IsAuthenticated)
+            {
+                System.Diagnostics.Debug.WriteLine("Not authenticated, redirecting to /login");
+                needsAuth = true;
+                Navigation.NavigateTo("/login", true);
+                return;
+            }
+
+            System.Diagnostics.Debug.WriteLine("Authenticated, showing content");
+            needsAuth = false;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Auth check error: {ex.Message}");
+            needsAuth = false;
+        }
+        finally
+        {
+            isChecking = false;
+        }
+    }
+}

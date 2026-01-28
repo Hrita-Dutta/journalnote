@@ -1,0 +1,117 @@
+@using JournalNote.Models
+
+<div class="mood-selector-compact">
+    <div class="mood-categories">
+        @foreach (var category in new[] { "Positive", "Neutral", "Negative" })
+        {
+            var categoryMoods = MoodsByCategory.ContainsKey(category) ? MoodsByCategory[category] : new List<Mood>();
+            
+            if (categoryMoods.Any())
+            {
+                <div class="mood-category-compact">
+                    <span class="category-label @GetCategoryClass(category)">@category</span>
+                    <div class="mood-pills">
+                        @foreach (var mood in categoryMoods)
+                        {
+                            <button type="button" 
+                                    class="mood-pill @(IsSelected(mood.Id) ? "selected" : "")"
+                                    @onclick="() => OnMoodClick(mood.Id)"
+                                    disabled="@(!CanSelect && !IsSelected(mood.Id))">
+                                @mood.Name
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    @if (HasSelectedMoods())
+    {
+        <div class="selected-moods-display">
+            <small><strong>Selected:</strong></small>
+            @if (SelectedMoodId.HasValue)
+            {
+                var mood = GetMoodById(SelectedMoodId.Value);
+                if (mood != null)
+                {
+                    <span class="selected-mood-badge">@mood.Name</span>
+                }
+            }
+            @foreach (var moodId in SelectedMoodIds)
+            {
+                var mood = GetMoodById(moodId);
+                if (mood != null)
+                {
+                    <span class="selected-mood-badge">@mood.Name</span>
+                }
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "Select Mood";
+    [Parameter] public Dictionary<string, List<Mood>> MoodsByCategory { get; set; } = new();
+    [Parameter] public int? SelectedMoodId { get; set; }
+    [Parameter] public List<int> SelectedMoodIds { get; set; } = new();
+    [Parameter] public EventCallback<int> OnMoodSelected { get; set; }
+    [Parameter] public int MaxSelection { get; set; } = 1;
+    [Parameter] public bool AllowDeselect { get; set; } = false;
+
+    private bool CanSelect => MaxSelection == 1 ? SelectedMoodId == null : SelectedMoodIds.Count < MaxSelection;
+
+    private bool IsSelected(int moodId)
+    {
+        if (MaxSelection == 1)
+            return SelectedMoodId == moodId;
+        else
+            return SelectedMoodIds.Contains(moodId);
+    }
+
+    private bool HasSelectedMoods()
+    {
+        return SelectedMoodId.HasValue || SelectedMoodIds.Any();
+    }
+
+    private Mood GetMoodById(int moodId)
+    {
+        foreach (var category in MoodsByCategory.Values)
+        {
+            var mood = category.FirstOrDefault(m => m.Id == moodId);
+            if (mood != null) return mood;
+        }
+        return null;
+    }
+
+    private async Task OnMoodClick(int moodId)
+    {
+        if (MaxSelection == 1)
+        {
+            if (SelectedMoodId == moodId && AllowDeselect)
+                SelectedMoodId = null;
+            else
+                SelectedMoodId = moodId;
+        }
+        else
+        {
+            if (SelectedMoodIds.Contains(moodId))
+                SelectedMoodIds.Remove(moodId);
+            else if (SelectedMoodIds.Count < MaxSelection)
+                SelectedMoodIds.Add(moodId);
+        }
+
+        await OnMoodSelected.InvokeAsync(moodId);
+    }
+
+    private string GetCategoryClass(string category)
+    {
+        return category.ToLower() switch
+        {
+            "positive" => "category-positive",
+            "neutral" => "category-neutral",
+            "negative" => "category-negative",
+            _ => ""
+        };
+    }
+}

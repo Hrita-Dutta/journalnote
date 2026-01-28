@@ -101,6 +101,7 @@ namespace JournalNote.Services
         }
 
         // ====== SEED TAGS ======
+        // NOTE: does NOT call InitAsync (called by InitAsync already)
         private async Task SeedTagsAsync()
         {
             try
@@ -523,6 +524,7 @@ namespace JournalNote.Services
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Error in GetThemeSettingsAsync: {ex.Message}");
                 // Return default settings on error
                 return new ThemeSettings { IsDarkMode = false };
             }

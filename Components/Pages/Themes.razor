@@ -1,7 +1,6 @@
 @page "/themes"
 @using JournalNote.Services
 @inject ThemeService ThemeService
-@implements IDisposable
 
 <PageTitle>Themes - JournalNote</PageTitle>
 
@@ -87,7 +86,7 @@
                             <div class="info-row">
                                 <span class="info-label">Selected Mode:</span>
                                 <span class="info-value">
-                                    @(isDarkMode ? "Dark Mode" : "Light Mode")
+                                    @(isDarkMode ? "🌙 Dark Mode" : "☀️ Light Mode")
                                 </span>
                             </div>
                             

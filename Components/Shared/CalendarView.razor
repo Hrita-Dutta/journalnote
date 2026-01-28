@@ -1,0 +1,147 @@
+@using JournalNote.Models
+
+<div class="calendar-view">
+    <!-- Calendar Header -->
+    <div class="calendar-header">
+        <button class="btn btn-sm btn-outline-primary" @onclick="PreviousMonth">
+            ◀
+        </button>
+        <h4 class="calendar-title">@CurrentMonth.ToString("MMMM yyyy")</h4>
+        <button class="btn btn-sm btn-outline-primary" @onclick="NextMonth">
+            ▶
+        </button>
+    </div>
+
+    <!-- Day Names Header -->
+    <div class="calendar-day-names">
+        <div class="day-name">Sun</div>
+        <div class="day-name">Mon</div>
+        <div class="day-name">Tue</div>
+        <div class="day-name">Wed</div>
+        <div class="day-name">Thu</div>
+        <div class="day-name">Fri</div>
+        <div class="day-name">Sat</div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="calendar-grid">
+        @foreach (var day in CalendarDays)
+        {
+            <div class="calendar-day @GetDayClass(day)" @onclick="() => SelectDay(day)">
+                <div class="day-number">@day.DayOfMonth</div>
+                @if (day.HasEntry)
+                {
+                    <div class="entry-indicator">●</div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Legend -->
+    <div class="calendar-legend">
+        <div class="legend-item">
+            <span class="legend-dot today"></span>
+            <span>Today</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot has-entry"></span>
+            <span>Has Entry</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot selected"></span>
+            <span>Selected</span>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public DateTime CurrentMonth { get; set; } = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+    [Parameter]
+    public DateTime SelectedDate { get; set; } = DateTime.Today;
+
+    [Parameter]
+    public List<string> EntryDates { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<DateTime> OnDateSelected { get; set; }
+
+    private List<CalendarDay> CalendarDays { get; set; } = new();
+
+    protected override void OnParametersSet()
+    {
+        GenerateCalendarDays();
+    }
+
+    private void GenerateCalendarDays()
+    {
+        CalendarDays.Clear();
+
+        var firstDayOfMonth = new DateTime(CurrentMonth.Year, CurrentMonth.Month, 1);
+        var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+        // Get the first Sunday before or on the first day of the month
+        var startDate = firstDayOfMonth.AddDays(-(int)firstDayOfMonth.DayOfWeek);
+
+        // Generate 42 days (6 weeks) to fill the calendar grid
+        for (int i = 0; i < 42; i++)
+        {
+            var currentDate = startDate.AddDays(i);
+            var dateString = currentDate.ToString("yyyy-MM-dd");
+
+            CalendarDays.Add(new CalendarDay
+            {
+                Date = currentDate,
+                IsCurrentMonth = currentDate.Month == CurrentMonth.Month,
+                IsToday = currentDate.Date == DateTime.Today.Date,
+                HasEntry = EntryDates.Contains(dateString),
+                IsSelected = currentDate.Date == SelectedDate.Date
+            });
+        }
+    }
+
+    private string GetDayClass(CalendarDay day)
+    {
+        var classes = new List<string>();
+
+        if (! day.IsCurrentMonth)
+            classes.Add("other-month");
+
+        if (day.IsToday)
+            classes.Add("today");
+
+        if (day.HasEntry)
+            classes.Add("has-entry");
+
+        if (day.IsSelected)
+            classes.Add("selected");
+
+        return string.Join(" ", classes);
+    }
+
+    private async Task SelectDay(CalendarDay day)
+    {
+        SelectedDate = day.Date;
+        GenerateCalendarDays(); // Refresh to update selected state
+        await OnDateSelected.InvokeAsync(day.Date);
+    }
+
+    private void PreviousMonth()
+    {
+        CurrentMonth = CurrentMonth.AddMonths(-1);
+        GenerateCalendarDays();
+    }
+
+    private void NextMonth()
+    {
+        CurrentMonth = CurrentMonth.AddMonths(1);
+        GenerateCalendarDays();
+    }
+
+    public void RefreshCalendar()
+    {
+        GenerateCalendarDays();
+        StateHasChanged();
+    }
+}

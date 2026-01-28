@@ -36,7 +36,7 @@
 .auth-header h1 {
     font-size: 2.2rem;
     font-weight: 800;
-    background: blueviolet;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -71,7 +71,7 @@
     border: 3px solid #e9ecef;
     border-radius: 16px;
     transition: all 0.3s ease;
-    background: white;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
 }
 
 .pin-input::placeholder {
@@ -93,7 +93,7 @@
 }
 
 .btn-success {
-    background: rebeccapurple;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
     padding: 1.25rem;
     font-size: 1.1rem;
@@ -108,7 +108,7 @@
 .btn-success:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
-    background:rebeccapurple;
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
 }
 
 .btn-success:active {
@@ -116,7 +116,7 @@
 }
 
 .alert-danger {
-    background: #9c573f;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
     color: white;
     border: none;
     border-radius: 12px;

@@ -1,0 +1,636 @@
+@page "/entries"
+@using JournalNote.Models
+@using JournalNote.Services
+@using JournalNote.Components.Shared
+@inject DatabaseService DatabaseService
+@inject NavigationManager Navigation
+
+<PageTitle>All Entries - JournalNote</PageTitle>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>All Journal Entries</h1>
+            <p class="lead mb-0">Browse and manage your journal entries</p>
+        </div>
+        <button class="btn btn-success" @onclick="CreateNewEntry">
+            New Entry
+        </button>
+    </div>
+
+    <hr />
+
+    <!-- Filter Section -->
+        <!-- Filter Section -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <!-- Search Row -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-12">
+                    <label class="form-label"><strong>Search:</strong></label>
+                    <input type="text" 
+                           class="form-control form-control-lg" 
+                           placeholder="Search by title or content..." 
+                           @bind="searchTerm"
+                           @bind:event="oninput" />
+                </div>
+            </div>
+
+            <!-- Date and Sort Row -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <label class="form-label"><strong>From Date:</strong></label>
+                    <input type="date" 
+                           class="form-control" 
+                           @bind="fromDate" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label"><strong>To Date:</strong></label>
+                    <input type="date" 
+                           class="form-control" 
+                           @bind="toDate" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label"><strong>Sort By:</strong></label>
+                    <select class="form-select" @bind="sortBy">
+                        <option value="date-desc">Date (Newest First)</option>
+                        <option value="date-asc">Date (Oldest First)</option>
+                        <option value="title-asc">Title (A-Z)</option>
+                        <option value="title-desc">Title (Z-A)</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label"><strong>View:</strong></label>
+                    <div class="btn-group w-100" role="group">
+                        <button type="button" 
+                                class="btn @(viewMode == "list" ? "btn-primary" : "btn-outline-primary")"
+                                @onclick='() => viewMode = "list"'>
+                            ☰ List
+                        </button>
+                        <button type="button" 
+                                class="btn @(viewMode == "grid" ? "btn-primary" : "btn-outline-primary")"
+                                @onclick='() => viewMode = "grid"'>
+                            ⊞ Grid
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mood Filter -->
+            <div class="mb-3">
+                <label class="form-label"><strong>Filter by Mood:</strong></label>
+                <div class="filter-chips">
+                    @foreach (var mood in allMoods)
+                    {
+                        <button type="button" 
+                                class="filter-chip @(selectedMoodIds.Contains(mood.Id) ? "selected" : "")"
+                                @onclick="() => ToggleMood(mood.Id)">
+                            @mood.Name
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Tag Filter -->
+            <div class="mb-3">
+                <label class="form-label"><strong>Filter by Tags:</strong></label>
+                <div class="filter-chips">
+                    @foreach (var tag in allTags)
+                    {
+                        <button type="button" 
+                                class="filter-chip @(selectedTagIds.Contains(tag.Id) ? "selected" : "")"
+                                style="@(selectedTagIds.Contains(tag.Id) ? $"background-color: {tag.Color}; color: white; border-color: {tag.Color};" : $"border-color: {tag.Color}; color: {tag.Color};")"
+                                @onclick="() => ToggleTag(tag.Id)">
+                            @tag.Name
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Active Filters -->
+            @if (HasActiveFilters())
+            {
+                <div class="active-filters-section">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><strong>Active Filters:</strong></span>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="ClearAllFilters">
+                            Clear All
+                        </button>
+                    </div>
+                    <div class="active-filters mt-2">
+                        @if (!string.IsNullOrEmpty(searchTerm))
+                        {
+                            <span class="filter-tag">
+                                Search: "@searchTerm"
+                                <button @onclick="ClearSearch">×</button>
+                            </span>
+                        }
+                        @if (fromDate.HasValue)
+                        {
+                            <span class="filter-tag">
+                                From: @fromDate.Value.ToString("MMM dd, yyyy")
+                                <button @onclick="ClearFromDate">×</button>
+                            </span>
+                        }
+                        @if (toDate.HasValue)
+                        {
+                            <span class="filter-tag">
+                                To: @toDate.Value.ToString("MMM dd, yyyy")
+                                <button @onclick="ClearToDate">×</button>
+                            </span>
+                        }
+                        @foreach (var moodId in selectedMoodIds)
+                        {
+                            var mood = allMoods.FirstOrDefault(m => m.Id == moodId);
+                            if (mood != null)
+                            {
+                                <span class="filter-tag">
+                                    @mood.Name
+                                    <button @onclick="() => RemoveMoodFilter(moodId)">×</button>
+                                </span>
+                            }
+                        }
+                        @foreach (var tagId in selectedTagIds)
+                        {
+                            var tag = allTags.FirstOrDefault(t => t.Id == tagId);
+                            if (tag != null)
+                            {
+                                <span class="filter-tag" style="background-color: @tag.Color">
+                                    @tag.Name
+                                    <button @onclick="() => RemoveTagFilter(tagId)">×</button>
+                                </span>
+                            }
+                        }
+                    </div>
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            Showing @filteredEntries.Count of @allEntries.Count entries
+                        </small>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
+            <p class="mt-3">Loading entries...</p>
+        </div>
+    }
+    else if (!filteredEntries.Any())
+    {
+        <div class="alert alert-secondary text-center py-5">
+            <h4>No entries found</h4>
+            @if (HasActiveFilters())
+            {
+                <p>No entries match your filter criteria.</p>
+                <button class="btn btn-primary" @onclick="ClearAllFilters">Clear All Filters</button>
+            }
+            else
+            {
+                <p>Start your journaling journey today!</p>
+                <button class="btn btn-success" @onclick="CreateNewEntry">Create Your First Entry</button>
+            }
+        </div>
+    }
+    else
+    {
+        <!-- List View -->
+        @if (viewMode == "list")
+        {
+            <div class="entries-list">
+                @foreach (var entry in paginatedEntries)
+                {
+                    <div class="entry-card list-view shadow-sm mb-3">
+                        <div class="entry-header">
+                            <div>
+                                <h5 class="entry-title">@entry.Title</h5>
+                                <small class="text-muted">@FormatDate(entry.Date)</small>
+                            </div>
+                            <div class="entry-actions">
+                                <button class="btn btn-sm btn-outline-primary" @onclick="() => ViewEntry(entry.Date)">
+                                    View
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => EditEntry(entry.Date)">
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="entry-meta">
+                            @if (entry.PrimaryMoodId.HasValue)
+                            {
+                                <div class="meta-row">
+                                    <strong>Mood:</strong>
+                                    <span class="meta-value">@GetMoodDisplay(entry)</span>
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(entry.TagIds))
+                            {
+                                <div class="meta-row">
+                                    <strong>Tags:</strong>
+                                    <div class="meta-tags">
+                                        @foreach (var tag in GetTagsForEntry(entry).Take(3))
+                                        {
+                                            <span class="tag-badge-tiny" style="background-color: @tag.Color">@tag.Name</span>
+                                        }
+                                        @if (GetTagsForEntry(entry).Count > 3)
+                                        {
+                                            <span class="text-muted">+@(GetTagsForEntry(entry).Count - 3) more</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="entry-preview">
+                            @((MarkupString)GetPreview(entry.Content, 150))
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <!-- Grid View -->
+            <div class="row g-3">
+                @foreach (var entry in paginatedEntries)
+                {
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="entry-card grid-view shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-truncate">@entry.Title</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">@FormatDate(entry.Date)</h6>
+
+                                @if (entry.PrimaryMoodId.HasValue)
+                                {
+                                    <p class="mood-display-small mb-2">
+                                        <strong>Mood:</strong> @GetMoodDisplay(entry)
+                                    </p>
+                                }
+
+                                @if (!string.IsNullOrEmpty(entry.TagIds))
+                                {
+                                    <div class="tags-display-small mb-2">
+                                        <strong>Tags:</strong>
+                                        <div class="tags-list-small mt-1">
+                                            @foreach (var tag in GetTagsForEntry(entry).Take(3))
+                                            {
+                                                <span class="tag-badge-small" style="background-color: @tag.Color">@tag.Name</span>
+                                            }
+                                            @if (GetTagsForEntry(entry).Count > 3)
+                                            {
+                                                <span class="tag-badge-small" style="background-color: #95a5a6">+@(GetTagsForEntry(entry).Count - 3)</span>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+
+                                <div class="entry-preview-grid">
+                                    @((MarkupString)GetPreview(entry.Content, 100))
+                                </div>
+
+                                <div class="d-flex gap-2 mt-3">
+                                    <button class="btn btn-sm btn-outline-primary flex-fill" @onclick="() => ViewEntry(entry.Date)">View</button>
+                                    <button class="btn btn-sm btn-outline-secondary flex-fill" @onclick="() => EditEntry(entry.Date)">Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- Pagination -->
+        <Pagination 
+            PaginationInfo="@paginationInfo"
+            PageSize="@pageSize"
+            OnPageChange="@OnPageChanged"
+            OnPageSizeChange="@OnPageSizeChanged" />
+    }
+</div>
+
+@code {
+    private List<JournalEntry> allEntries = new();
+    private List<JournalEntry> filteredEntries = new();
+    private List<JournalEntry> paginatedEntries = new();
+    private List<Mood> allMoods = new();
+    private List<Tag> allTags = new();
+
+    private bool isLoading = true;
+    
+    private string _searchTerm = string.Empty;
+    private string searchTerm
+    {
+        get => _searchTerm;
+        set
+        {
+            _searchTerm = value;
+            ApplyFilters();
+        }
+    }
+
+    private DateTime? _fromDate;
+    private DateTime? fromDate
+    {
+        get => _fromDate;
+        set
+        {
+            _fromDate = value;
+            ApplyFilters();
+        }
+    }
+
+    private DateTime? _toDate;
+    private DateTime? toDate
+    {
+        get => _toDate;
+        set
+        {
+            _toDate = value;
+            ApplyFilters();
+        }
+    }
+
+    private string _sortBy = "date-desc";
+    private string sortBy
+    {
+        get => _sortBy;
+        set
+        {
+            _sortBy = value;
+            ApplyFilters();
+        }
+    }
+
+    private List<int> selectedMoodIds = new();
+    private List<int> selectedTagIds = new();
+    private string viewMode = "list";
+
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private PaginationInfo paginationInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+
+        try
+        {
+            allEntries = await DatabaseService.GetAllJournalEntriesAsync();
+            allMoods = await DatabaseService.GetAllMoodsAsync();
+            allTags = await DatabaseService.GetAllTagsAsync();
+
+            ApplyFilters();
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", $"Failed to load entries: {ex.Message}", "OK");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ApplyFilters()
+    {
+        filteredEntries = allEntries.Where(entry =>
+        {
+            // Search filter
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var search = searchTerm.ToLower();
+                if (!entry.Title.ToLower().Contains(search) && 
+                    !entry.Content.ToLower().Contains(search))
+                    return false;
+            }
+
+            // Date from filter
+            if (fromDate.HasValue)
+            {
+                if (DateTime.Parse(entry.Date) < fromDate.Value.Date)
+                    return false;
+            }
+
+            // Date to filter
+            if (toDate.HasValue)
+            {
+                if (DateTime.Parse(entry.Date) > toDate.Value.Date)
+                    return false;
+            }
+
+            // Mood filter
+            if (selectedMoodIds.Any())
+            {
+                var entryMoodIds = new List<int>();
+                
+                if (entry.PrimaryMoodId.HasValue)
+                    entryMoodIds.Add(entry.PrimaryMoodId.Value);
+
+                if (!string.IsNullOrEmpty(entry.SecondaryMoodIds))
+                {
+                    entryMoodIds.AddRange(entry.SecondaryMoodIds
+                        .Split(',')
+                        .Where(s => !string.IsNullOrWhiteSpace(s))
+                        .Select(s => int.Parse(s.Trim())));
+                }
+
+                if (!selectedMoodIds.Any(moodId => entryMoodIds.Contains(moodId)))
+                    return false;
+            }
+
+            // Tag filter
+            if (selectedTagIds.Any())
+            {
+                if (string.IsNullOrEmpty(entry.TagIds))
+                    return false;
+
+                var entryTagIds = entry.TagIds
+                    .Split(',')
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Select(s => int.Parse(s.Trim()))
+                    .ToList();
+
+                if (!selectedTagIds.Any(tagId => entryTagIds.Contains(tagId)))
+                    return false;
+            }
+
+            return true;
+        }).ToList();
+
+        SortEntries();
+        currentPage = 1;
+        UpdatePagination();
+    }
+
+    private void SortEntries()
+    {
+        filteredEntries = sortBy switch
+        {
+            "date-desc" => filteredEntries.OrderByDescending(e => e.Date).ToList(),
+            "date-asc" => filteredEntries.OrderBy(e => e.Date).ToList(),
+            "title-asc" => filteredEntries.OrderBy(e => e.Title).ToList(),
+            "title-desc" => filteredEntries.OrderByDescending(e => e.Title).ToList(),
+            _ => filteredEntries.OrderByDescending(e => e.Date).ToList()
+        };
+    }
+
+    private void UpdatePagination()
+    {
+        paginationInfo = new PaginationInfo(currentPage, pageSize, filteredEntries.Count);
+
+        paginatedEntries = filteredEntries
+            .Skip((currentPage - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+    }
+
+    private async Task OnPageChanged(int newPage)
+    {
+        currentPage = newPage;
+        UpdatePagination();
+    }
+
+    private async Task OnPageSizeChanged(int newPageSize)
+    {
+        pageSize = newPageSize;
+        currentPage = 1;
+        UpdatePagination();
+    }
+
+    private void ToggleMood(int moodId)
+    {
+        if (selectedMoodIds.Contains(moodId))
+            selectedMoodIds.Remove(moodId);
+        else
+            selectedMoodIds.Add(moodId);
+
+        ApplyFilters();
+    }
+
+    private void ToggleTag(int tagId)
+    {
+        if (selectedTagIds.Contains(tagId))
+            selectedTagIds.Remove(tagId);
+        else
+            selectedTagIds.Add(tagId);
+
+        ApplyFilters();
+    }
+
+    private void ClearSearch()
+    {
+        searchTerm = string.Empty;
+    }
+
+    private void ClearFromDate()
+    {
+        fromDate = null;
+    }
+
+    private void ClearToDate()
+    {
+        toDate = null;
+    }
+
+    private void RemoveMoodFilter(int moodId)
+    {
+        selectedMoodIds.Remove(moodId);
+        ApplyFilters();
+    }
+
+    private void RemoveTagFilter(int tagId)
+    {
+        selectedTagIds.Remove(tagId);
+        ApplyFilters();
+    }
+
+    private bool HasActiveFilters()
+    {
+        return !string.IsNullOrWhiteSpace(searchTerm) ||
+               fromDate.HasValue ||
+               toDate.HasValue ||
+               selectedMoodIds.Any() ||
+               selectedTagIds.Any();
+    }
+
+    private void ClearAllFilters()
+    {
+        _searchTerm = string.Empty;
+        _fromDate = null;
+        _toDate = null;
+        _sortBy = "date-desc";
+        selectedMoodIds.Clear();
+        selectedTagIds.Clear();
+        ApplyFilters();
+    }
+
+    private string GetMoodDisplay(JournalEntry entry)
+    {
+        if (!entry.PrimaryMoodId.HasValue)
+            return "";
+
+        var mood = allMoods.FirstOrDefault(m => m.Id == entry.PrimaryMoodId.Value);
+        return mood != null ? mood.Name : "";
+    }
+
+    private List<Tag> GetTagsForEntry(JournalEntry entry)
+    {
+        if (string.IsNullOrEmpty(entry.TagIds))
+            return new List<Tag>();
+
+        var tagIds = entry.TagIds.Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => int.Parse(s.Trim())).ToList();
+        return allTags.Where(t => tagIds.Contains(t.Id)).ToList();
+    }
+
+    private string GetPreview(string htmlContent, int maxLength)
+    {
+        if (string.IsNullOrWhiteSpace(htmlContent))
+            return "<p>No content</p>";
+
+        var textContent = System.Text.RegularExpressions.Regex.Replace(htmlContent, "<.*?>", " ");
+        textContent = textContent.Trim();
+
+        if (string.IsNullOrWhiteSpace(textContent))
+            return "<p>No content</p>";
+
+        if (textContent.Length <= maxLength)
+            return $"<p>{textContent}</p>";
+
+        return $"<p>{textContent.Substring(0, maxLength)}...</p>";
+    }
+
+    private string FormatDate(string dateString)
+    {
+        if (DateTime.TryParse(dateString, out DateTime date))
+            return date.ToString("MMMM dd, yyyy");
+        return dateString;
+    }
+
+    private void CreateNewEntry()
+    {
+        Navigation.NavigateTo("/entry");
+    }
+
+    private void ViewEntry(string date)
+    {
+        Navigation.NavigateTo($"/entry/{date}");
+    }
+
+    private void EditEntry(string date)
+    {
+        Navigation.NavigateTo($"/entry/{date}");
+    }
+}

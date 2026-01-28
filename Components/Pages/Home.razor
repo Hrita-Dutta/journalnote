@@ -12,7 +12,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="welcome-card">
-                <h1 class="display-5 fw-bold">Welcome to JournalNote</h1>
+                <h1 class="display-5 fw-bold">📔 Welcome to JournalNote</h1>
                 <p class="lead">@GetGreeting()</p>
                 <p class="text-muted mb-0">@DateTime.Now.ToString("dddd, MMMM dd, yyyy")</p>
             </div>
@@ -24,7 +24,7 @@
         <!-- Total Entries -->
         <div class="col-md-3 col-sm-6 mb-3">
             <div class="stat-card stat-card-blue">
-                
+                <div class="stat-icon">📝</div>
                 <div class="stat-content">
                     <h3>@totalEntries</h3>
                     <p>Total Entries</p>
@@ -35,7 +35,7 @@
         <!-- Current Streak -->
         <div class="col-md-3 col-sm-6 mb-3">
             <div class="stat-card stat-card-green">
-              
+                <div class="stat-icon">🔥</div>
                 <div class="stat-content">
                     <h3>@currentStreak</h3>
                     <p>Day Streak</p>
@@ -46,7 +46,7 @@
         <!-- This Month -->
         <div class="col-md-3 col-sm-6 mb-3">
             <div class="stat-card stat-card-purple">
-               
+                <div class="stat-icon">📅</div>
                 <div class="stat-content">
                     <h3>@thisMonthEntries</h3>
                     <p>This Month</p>
@@ -57,7 +57,7 @@
         <!-- Longest Streak -->
         <div class="col-md-3 col-sm-6 mb-3">
             <div class="stat-card stat-card-orange">
-              
+                <div class="stat-icon">🏆</div>
                 <div class="stat-content">
                     <h3>@longestStreak</h3>
                     <p>Longest Streak</p>
@@ -69,32 +69,32 @@
     <!-- Quick Actions -->
     <div class="row mb-4">
         <div class="col-12">
-            <h4 class="mb-3">Quick Actions</h4>
+            <h4 class="mb-3">⚡ Quick Actions</h4>
         </div>
         <div class="col-md-3 col-sm-6 mb-3">
             <button class="action-card" @onclick='() => Navigation.NavigateTo("/entry")'>
-               
+                <div class="action-icon">✍️</div>
                 <h5>New Entry</h5>
                 <p>Write today's journal</p>
             </button>
         </div>
         <div class="col-md-3 col-sm-6 mb-3">
             <button class="action-card" @onclick='() => Navigation.NavigateTo("/entries")'>
-               
+                <div class="action-icon">📚</div>
                 <h5>Browse</h5>
                 <p>View all entries</p>
             </button>
         </div>
         <div class="col-md-3 col-sm-6 mb-3">
             <button class="action-card" @onclick='() => Navigation.NavigateTo("/calendar")'>
-               
+                <div class="action-icon">📆</div>
                 <h5>Calendar</h5>
                 <p>Month view</p>
             </button>
         </div>
         <div class="col-md-3 col-sm-6 mb-3">
             <button class="action-card" @onclick='() => Navigation.NavigateTo("/analytics")'>
-              
+                <div class="action-icon">📊</div>
                 <h5>Analytics</h5>
                 <p>View insights</p>
             </button>
@@ -107,7 +107,7 @@
         <div class="col-md-8 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Recent Entries</h5>
+                    <h5 class="mb-0">📖 Recent Entries</h5>
                 </div>
                 <div class="card-body">
                     @if (recentEntries != null && recentEntries.Any())
@@ -128,7 +128,7 @@
                     else
                     {
                         <div class="text-center py-5 text-muted">
-                         
+                            <div class="empty-state-icon">📝</div>
                             <p class="mb-3">No entries yet</p>
                             <button class="btn btn-primary" @onclick='() => Navigation.NavigateTo("/entry")'>
                                 Create Your First Entry
@@ -144,7 +144,7 @@
             <!-- Writing Prompt -->
             <div class="card shadow-sm mb-3">
                 <div class="card-header bg-info text-white">
-                    <h6 class="mb-0">Writing Prompt</h6>
+                    <h6 class="mb-0">💡 Writing Prompt</h6>
                 </div>
                 <div class="card-body">
                     <p class="small mb-3">@GetRandomPrompt()</p>
@@ -257,9 +257,9 @@
     private string GetGreeting()
     {
         var hour = DateTime.Now.Hour;
-        if (hour < 12) return "Good Morning! ";
-        if (hour < 18) return "Good Afternoon! ";
-        return "Good Evening!";
+        if (hour < 12) return "Good Morning! ☀️";
+        if (hour < 18) return "Good Afternoon! 🌤️";
+        return "Good Evening! 🌙";
     }
 
     private string GetRelativeDate(string dateStr)

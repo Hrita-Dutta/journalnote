@@ -1,0 +1,92 @@
+@page "/login"
+@layout EmptyLayout
+@using JournalNote.Services
+@inject SecurityService SecurityService
+@inject NavigationManager Navigation
+
+<PageTitle>Login - JournalNote</PageTitle>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>JournalNote</h1>
+            <p>Enter your 4-digit PIN to continue</p>
+        </div>
+
+        <div class="auth-body">
+            <div class="mb-4">
+                <label class="form-label">PIN</label>
+                <input type="password" 
+                       class="form-control pin-input" 
+                       @bind="pin"
+                       @bind:event="oninput"
+                       @onkeyup="OnKeyPress"
+                       maxlength="4"
+                       placeholder="Enter PIN"
+                       autofocus>
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger mb-3">
+                    @errorMessage
+                </div>
+            }
+
+            <button class="btn btn-primary w-100" @onclick="LoginUser">
+                Login
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string pin = string.Empty;
+    private string errorMessage = string.Empty;
+
+    private async Task OnKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && pin.Length == 4)
+        {
+            await LoginUser();
+        }
+    }
+
+    private async Task LoginUser()
+    {
+        errorMessage = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(pin) || pin.Length != 4)
+        {
+            errorMessage = "Please enter your 4-digit PIN";
+            return;
+        }
+
+        if (!pin.All(char.IsDigit))
+        {
+            errorMessage = "PIN must contain only numbers";
+            return;
+        }
+
+        try
+        {
+            var success = await SecurityService.LoginAsync(pin);
+
+            if (success)
+            {
+                Navigation.NavigateTo("/", true);
+            }
+            else
+            {
+                errorMessage = "Incorrect PIN. Please try again.";
+                pin = string.Empty;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "An error occurred. Please try again.";
+            pin = string.Empty;
+            System.Diagnostics.Debug.WriteLine($"Login error: {ex.Message}");
+        }
+    }
+}

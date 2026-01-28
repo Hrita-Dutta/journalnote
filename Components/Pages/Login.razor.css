@@ -3,7 +3,7 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     padding: 1rem;
 }
 
@@ -34,9 +34,9 @@
 }
 
 .auth-header h1 {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 800;
-    background: blueviolet;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -63,15 +63,15 @@
 }
 
 .pin-input {
-    font-size: 2rem;
+    font-size: 2.2rem;
     text-align: center;
-    letter-spacing: 1.2rem;
+    letter-spacing: 1.5rem;
     font-weight: 800;
-    padding: 1.5rem;
+    padding: 1.75rem;
     border: 3px solid #e9ecef;
     border-radius: 16px;
     transition: all 0.3s ease;
-    background: white;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
 }
 
 .pin-input::placeholder {
@@ -82,8 +82,8 @@
 }
 
 .pin-input:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    border-color: #4facfe;
+    box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1);
     outline: none;
     transform: scale(1.02);
 }
@@ -92,31 +92,31 @@
     opacity: 0;
 }
 
-.btn-success {
-    background: rebeccapurple;
+.btn-primary {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     border: none;
     padding: 1.25rem;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 700;
     border-radius: 12px;
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
 }
 
-.btn-success:hover {
+.btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
-    background:rebeccapurple;
+    box-shadow: 0 6px 25px rgba(79, 172, 254, 0.6);
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
 }
 
-.btn-success:active {
+.btn-primary:active {
     transform: translateY(0);
 }
 
 .alert-danger {
-    background: #9c573f;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
     color: white;
     border: none;
     border-radius: 12px;
@@ -132,30 +132,19 @@
     75% { transform: translateX(10px); }
 }
 
-.info-box {
-    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-    color: #1565c0;
-    padding: 1.25rem;
-    border-radius: 12px;
-    text-align: center;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border-left: 4px solid #1976d2;
-}
-
 @media (max-width: 480px) {
     .auth-card {
         padding: 2rem 1.5rem;
     }
 
     .auth-header h1 {
-        font-size: 1.85rem;
+        font-size: 2rem;
     }
 
     .pin-input {
-        font-size: 1.6rem;
-        letter-spacing: 0.9rem;
-        padding: 1.25rem;
+        font-size: 1.75rem;
+        letter-spacing: 1.2rem;
+        padding: 1.5rem;
     }
 
     .pin-input::placeholder {

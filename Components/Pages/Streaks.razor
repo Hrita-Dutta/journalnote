@@ -1,0 +1,251 @@
+@page "/streaks"
+@using JournalNote.Models
+@using JournalNote.Services
+@inject DatabaseService DatabaseService
+@inject NavigationManager Navigation
+
+<PageTitle>Streaks - JournalNote</PageTitle>
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h1>Your Journaling Streaks</h1>
+        <p class="lead">Track your consistency and progress</p>
+    </div>
+
+    <hr />
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
+            <p class="mt-3">Loading streak data...</p>
+        </div>
+    }
+    else if (streakInfo.TotalEntries == 0)
+    {
+        <div class="alert alert-info text-center py-5">
+            <h4>No Entries Yet</h4>
+            <p>Start journaling today to begin tracking your streaks!</p>
+            <button class="btn btn-success mt-3" @onclick="CreateEntry">
+                Create Your First Entry
+            </button>
+        </div>
+    }
+    else
+    {
+        <!-- Main Streak Cards -->
+        <div class="row g-4 mb-4">
+            <!-- Current Streak -->
+            <div class="col-md-4">
+                <div class="streak-card current-streak">
+                    <div class="streak-value">@streakInfo.CurrentStreak</div>
+                    <div class="streak-label">Current Streak</div>
+                    <div class="streak-sublabel">
+                        @if (streakInfo.CurrentStreak == 0)
+                        {
+                            <span>Start writing today!</span>
+                        }
+                        else if (streakInfo.CurrentStreak == 1)
+                        {
+                            <span>Day in a row</span>
+                        }
+                        else
+                        {
+                            <span>Days in a row</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Longest Streak -->
+            <div class="col-md-4">
+                <div class="streak-card longest-streak">
+                    <div class="streak-value">@streakInfo.LongestStreak</div>
+                    <div class="streak-label">Longest Streak</div>
+                    <div class="streak-sublabel">Personal best</div>
+                </div>
+            </div>
+
+            <!-- Total Entries -->
+            <div class="col-md-4">
+                <div class="streak-card total-entries">
+                    <div class="streak-value">@streakInfo.TotalEntries</div>
+                    <div class="streak-label">Total Entries</div>
+                    <div class="streak-sublabel">Lifetime journal entries</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row g-4 mb-4">
+            <!-- Missed Days -->
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h5>Missed Days</h5>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-big-number">@streakInfo.MissedDays</div>
+                        <p class="text-muted mb-0">
+                            Since @streakInfo.FirstEntryDate?.ToString("MMM dd, yyyy")
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completion Rate -->
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h5>Completion Rate</h5>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-big-number">@streakInfo.CompletionRate%</div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar" 
+                                 role="progressbar" 
+                                 style="width: @streakInfo.CompletionRate%; background-color: #4a90e2;"
+                                 aria-valuenow="@streakInfo.CompletionRate" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                                @streakInfo.CompletionRate%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Journey Info -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Your Journaling Journey</h5>
+                <hr />
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>First Entry:</strong>
+                        <p class="mb-0">@streakInfo.FirstEntryDate?.ToString("MMMM dd, yyyy")</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Last Entry:</strong>
+                        <p class="mb-0">@streakInfo.LastEntryDate?.ToString("MMMM dd, yyyy")</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Days Since Start:</strong>
+                        <p class="mb-0">@((DateTime.Today - streakInfo.FirstEntryDate.Value).Days + 1) days</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Average per Week:</strong>
+                        <p class="mb-0">@GetAveragePerWeek() entries</p>
+                    </div>
+                </div>
+
+                <!-- Motivation Message -->
+                <div class="motivation-box mt-4">
+                    <h6>@GetMotivationMessage()</h6>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2 mt-4">
+                    @if (streakInfo.LastEntryDate?.Date != DateTime.Today.Date)
+                    {
+                        <button class="btn btn-success" @onclick="CreateEntry">
+                            Write Today's Entry
+                        </button>
+                    }
+                    <button class="btn btn-primary" @onclick="ViewAllEntries">
+                        View All Entries
+                    </button>
+                    <button class="btn btn-outline-primary" @onclick="ViewCalendar">
+                        View Calendar
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private StreakInfo streakInfo = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStreakData();
+    }
+
+    private async Task LoadStreakData()
+    {
+        isLoading = true;
+
+        try
+        {
+            streakInfo = await DatabaseService.GetStreakInfoAsync();
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", $"Failed to load streak data: {ex.Message}", "OK");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private double GetAveragePerWeek()
+    {
+        if (streakInfo.FirstEntryDate == null)
+            return 0;
+
+        var daysSinceStart = (DateTime.Today - streakInfo.FirstEntryDate.Value).Days + 1;
+        var weeksSinceStart = daysSinceStart / 7.0;
+
+        if (weeksSinceStart < 1)
+            return streakInfo.TotalEntries;
+
+        return Math.Round(streakInfo.TotalEntries / weeksSinceStart, 1);
+    }
+
+    private string GetMotivationMessage()
+    {
+        if (streakInfo.CurrentStreak == 0)
+        {
+            return "Don't break the chain! Start a new streak today.";
+        }
+        else if (streakInfo.CurrentStreak == 1)
+        {
+            return "Great start! Keep the momentum going.";
+        }
+        else if (streakInfo.CurrentStreak < 7)
+        {
+            return $"You're on a {streakInfo.CurrentStreak}-day streak! Keep it up!";
+        }
+        else if (streakInfo.CurrentStreak < 30)
+        {
+            return $"Awesome! {streakInfo.CurrentStreak} days strong! You're building a great habit.";
+        }
+        else if (streakInfo.CurrentStreak < 100)
+        {
+            return $"Amazing! {streakInfo.CurrentStreak} days! You're a journaling champion!";
+        }
+        else
+        {
+            return $"Incredible! {streakInfo.CurrentStreak} days! You're a true journaling master!";
+        }
+    }
+
+    private void CreateEntry()
+    {
+        Navigation.NavigateTo("/entry");
+    }
+
+    private void ViewAllEntries()
+    {
+        Navigation.NavigateTo("/entries");
+    }
+
+    private void ViewCalendar()
+    {
+        Navigation.NavigateTo("/calendar");
+    }
+}
